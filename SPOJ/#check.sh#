@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if diff file1 file2 >/dev/null; then
+    echo Sameselect  in ; do
+    $
+    done
+else
+  echo Different
+fi
