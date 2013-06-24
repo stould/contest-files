@@ -20,9 +20,7 @@ void quicksort(int lo, int hi) {
         while (a[i]<x) i++;
         while (a[j]>x) j--;
         if (i<=j) {
-            h=a[i];
-            a[i]=a[j];
-            a[j]=h;
+            swap(a[i], a[j]);
             i++;
             j--;
         }
