@@ -42,33 +42,36 @@ template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 
 using namespace std;
 
-typedef long long Int;
+typedef long long ll;
 typedef unsigned uint;
 
-int R, G, B;
-
-Int func(int R, int G, int B) {
-    Int ans = 0LL;
-
-    int i;
-
-    for (i = 0; i < 3; i++) {
-        int n_r = R - i;
-        int n_g = G - i;
-        int n_b = B - i;
-
-        if (n_r < 0 || n_g < 0 || n_b < 0) continue;
-
-        ans = max(ans, (Int) i + (n_r / 3 + n_g / 3 + n_b / 3));
-    }
-
-    return ans;
-}
+int K, N, T;
+int x[60];
 
 int main(void) {
-    scanf("%d%d%d", &R, &G, &B);
+    int i, l, h, gap;
 
-    printf("%I64d\n", func(R, G, B));
+    T = 1;
 
+    for ( ; scanf("%d", &K) == 1; ) {
+        for ( ; K--; ) {
+            scanf("%d", &N);
+
+            l = 110, h = -110, gap = -100;
+
+            for (i = 0; i < N; i++) {
+                scanf("%d", &x[i]);
+
+                chmin(l, x[i]);
+                chmax(h, x[i]);
+            }
+
+            sort (x, x + N);
+
+            for (i = 1; i < N; i++) chmax(gap, x[i] - x[i - 1]);
+
+            printf("Class %d\nMax %d, Min %d, Largest gap %d\n", T++, h, l, gap);
+        }
+    }
     return 0;
 }

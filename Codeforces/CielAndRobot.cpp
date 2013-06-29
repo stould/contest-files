@@ -52,7 +52,7 @@ char str[MAXN];
 int x[MAXN], y[MAXN];
 map<char, int> m_x, m_y;
 
-void build(void) {
+void build (void) {
     m_x['U'] = 0; m_y['U'] = 1;
     m_x['D'] = 0; m_y['D'] =-1;
     m_x['L'] =-1; m_y['L'] = 0;
@@ -61,8 +61,6 @@ void build(void) {
     int i, xx = 0, yy = 0;
 
     x[0] = y[0] = 0;
-
-
 
     for (i = 0; i < N; i++) {
         xx += m_x[str[i]];
@@ -73,7 +71,7 @@ void build(void) {
     }
 }
 
-int main(void) {
+int main (void) {
     int i, done = 0;
     scanf("%d%d%s", &A, &B, str);
 
@@ -85,11 +83,16 @@ int main(void) {
         printf("Yes\n"); return 0;
     }
 
-    for (i = 1; i <= N; i++) {
-        int div_a = x[i] / A, mod_a = x[i] % A;
-        int div_b = y[i] / B, mod_b = y[i] % B;
+    for (i = 0; i <= N; i++) {
+        int n_a = A - x[i], n_b = B - y[i];
 
-        if (div_a == div_b && mod_a == mod_b) {
+        int scale = x[N] != 0 ? n_a / x[N] : 0;
+
+        if (y[N] != 0) scale = y[N] != 0 ? n_b / y[N] : 0;
+
+        if (scale < 0) continue;
+
+        if (scale * x[N] == n_a && scale * y[N] == n_b) {
             printf("Yes\n"); return 0;
         }
     }
