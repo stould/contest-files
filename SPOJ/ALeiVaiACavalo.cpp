@@ -92,7 +92,6 @@ int max_flow(int source, int sink) {
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     while(scanf("%d%d%d", &N, &M, &K) == 3) {
         REP(i, MAXN) {
             graph[i].clear();
@@ -102,7 +101,7 @@ int main(void) {
         }
         REP(i, N) {
             scanf("%d", &now);
-            REP(j, N) capacity[0][i] = now;
+            capacity[0][i+1] = now;
         }
         REP(i, M) {
             capacity[N+i+1][N+M+1] = 1;
