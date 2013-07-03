@@ -39,76 +39,69 @@ template<typename T> T lcm(T a, T b) {
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
 typedef long double ld;
 
-int T, a[5], dp[110][5][15], N;
+int T, a[5], N;
 char s[109];
-/*
-//current position, type of the last ballon used, number of repeated ballons of type 'last', id of the last
-int rec(int pos, int last, int repeated, int last_id) {
-    if (pos >= N) return 0;
-    if (repeated > 9) return 0;
 
-    if (dp[pos][last][repeated] != -1) return dp[pos][last][repeated];
+Int dp[110][5][110];
 
-    int& ans = dp[pos][last][repeated] = 0;
-
-    int now = s[pos] - 'a';
-
-
-    //Use current ballon
-    ans = a[now] + rec(pos + 1, now, repeated + 1, pos);
-
-    if (now == last) {
-        ans = max(ans, 2 * a[now] + rec(pos + 1, last, repeated + 1, pos));
+Int p(int a, int b) {
+    Int ans = 1;
+    while (b > 0) {
+        if (b & 1) {
+            ans = (ans * a);
+        }
+        a = (a * 1LL * a);
+        b >>= 1;
     }
-
-    //Igonore current ballon
-    ans = max(ans, rec(pos + 1, last, repeated, last_id));
-
     return ans;
 }
 
-*/
+Int rec(int pos, int last, int repeated) {
+    if(pos >= N) return 0LL;
 
-int func(void) {
-    queue<pair<int, int> > q;
+    Int& ans = dp[pos][last][repeated];
 
-    q.push(make_pair(-1, 0));
+    if(ans != -1LL) return ans;
 
-    int i;
+    ans = 0LL;
 
-    for ( ; !q.empty(); ) {
-        pair<int, int> curr = q.front(); q.pop();
+    int now = s[pos] - 'a';
 
-        int last = curr.first != -1 ? a[s[curr.first]-'a'] ? -1;
+    if(last == now) {
+        if (repeated <= 9) {
+            ans = (Int) (p(2, repeated) * a[now]) + rec(pos + 1, now, repeated + 1);
+        } else {
+            ans = (Int) (p(2, 9) * a[now]) + rec(pos + 1, now, repeated + 1);
+        }
+    }
+    ans = max(ans, a[now] + rec(pos + 1, now, 1));
 
-        for (i = curr.first + 1; i < N; i++) {
-            int pos = a[s[i]-'a'];
+    return ans = max(ans, rec(pos + 1, last, repeated));
+}
 
-            if (pos == last) {
-                q.push(make_pair(i, curr.second + (min(a[last] * 2, a[last]))))
+void clear (void) {
+    int i, j, k;
+
+    for (i = 0; i < 110; i++) {
+        for (j = 0; j < 5; j++) {
+            for (k = 0; k < 110; k++) {
+                dp[i][j][k] = -1LL;
             }
         }
     }
 }
+
 int main(void) {
-    int i, j, k;
     freopen("i.in", "r", stdin);
     scanf("%d", &T);
 
     for ( ; T--; ) {
         scanf("%d%d%d%s", &a[0], &a[1], &a[2], s);
-        N = strlen(s);
-        for (i = 0; i < 110; i++) {
-            for (j = 0; j < 5; j++) {
-                for (k = 0; k < 15; k++) {
-                    dp[i][j][k] = -1;
-                }
-            }
-        }
-        printf("%d\n", rec(0, 3, 0, -1));
+        N = strlen(s); clear();
+        printf("%d\n", rec(0, 5, 0));
     }
     return 0;
 }
