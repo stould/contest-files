@@ -45,6 +45,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+<<<<<<< HEAD
 const int MAXN = 1700;
 const int INF = 10010100;
 
@@ -157,6 +158,65 @@ int main(void) {
         }
 
         printf("%c\n", max_flow(s, t) ? 'Y' : 'N');
+=======
+const int MAXN = 50;
+int N, M, G, A, B;
+int played[MAXN], against[MAXN], mp[MAXN];
+char ot;
+
+void clear (void) {
+    int i;
+
+    for (i = 0; i < MAXN; i++) {
+        played[i] = against[i] = mp[i] = 0;
+    }
+}
+
+int main(void) {
+    freopen("i.in", "r", stdin);
+ //   freopen("o.ot", "w", stdout);
+
+    int i;
+
+    for ( ; scanf("%d%d%d", &N, &M, &G) == 3 && (N + M + G != 0); ) {
+        clear ();
+        for (i = 0; i < G; i++) {
+            scanf("%d %c%d", &A, &ot, &B);
+
+            if (ot == '=') {
+                mp[A] += 1;
+                mp[B] += 1;
+            } else if (ot == '<') {
+                mp[B] += 2;
+            } else {
+                mp[A] += 2;
+            }
+
+            played[A] += 1;
+            played[B] += 1;
+
+            if (A == 0) against[B] += 1;
+            if (B == 0) against[A] += 1;
+        }
+
+        int pt = ((N - 1) * M - played[0]) * 2, ok = 1;
+
+        for (i = 1; i < N; i++) {
+            mp[i] += ((N - 1) * M - played[i] - (M - against[i]));
+        }
+
+        for (i = 1; i < N; i++) {
+            if (mp[i] > mp[0] + pt) {
+                    ok = 0;
+            }
+        }
+
+        if (ok) {
+            puts("Y");
+        } else {
+            puts("N");
+        }
+>>>>>>> 0d3e1cfabe8eee57447e671cfa60d4357db82392
     }
     return 0;
 }
