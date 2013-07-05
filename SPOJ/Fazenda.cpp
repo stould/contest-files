@@ -43,7 +43,7 @@ typedef long long ll;
 typedef long double ld;
 
 const int MAXN = 1007;
-int N, X, Y, L, C, matrix[MAXN][MAXN];
+int N, X, Y, L, C, matrix[MAXN][MAXN], vis[MAXN][MAXN];
 int dx[4] = {0, 0, -1, 1};
 int dy[4] = {1, -1, 0, 0};
 
@@ -52,14 +52,17 @@ int main(void) {
     for( ; scanf("%d", &N) && N != 0; ) {
         int area = 0, perimeter = 0;
 
-        REP(i, MAXN) REP(j, MAXN) matrix[i][j] = 0;
+        for (i = 0; i < MAXN; i++) {
+            for (j = 0; j < MAXN; j++) {
+                matrix[i][j] = vis[i][j] = 0;
+            }
+        }
 
         REP(i, N) {
             scanf("%d%d%d%d", &X, &Y, &L, &C);
-            for(int a = 1000 - Y; a >= 1000 - Y - L; a--) {
-                for(int b = X; b <= X + C; b++) {
-                    //cout << (1000-a) << " " << b << "\n";
-                    matrix[a][b] = 1;
+            for (i = X; i < X + L; i++) {
+                for (j = Y; j < Y + C; j++) {
+
                 }
             }
         }
@@ -71,21 +74,6 @@ int main(void) {
             printf("\n");
         }
 
-
-        REP(i, 1001) REP(j, 1001) if(matrix[i][j] == 1) {
-            area += 1;
-            int cnt = 0;
-            REP(k, 4) {
-                int ni = i + dx[k], nj = j + dy[k];
-                if(ni < 0 || nj < 0 || ni > 1000 || nj > 1000) continue;
-                if(matrix[ni][nj] == 0) {
-                    perimeter += 1;
-                    cnt += 1;
-                }
-            }
-            //printf("%d %d %d\n", i, j, cnt);
-        }
-        //printf("\n");
         printf("%d %d\n", area, perimeter);
     }
     return 0;
