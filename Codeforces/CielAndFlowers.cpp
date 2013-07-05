@@ -47,28 +47,28 @@ typedef unsigned uint;
 
 int R, G, B;
 
-Int funcA(int R, int G, int B) {
-    Int ans = (Int) min(R, min(G, B));
+Int func(int R, int G, int B) {
+    Int ans = 0LL;
 
-    R -= ans;
-    G -= ans;
-    B -= ans;
+    int i;
 
-    if (R > 0) ans += (Int) floor(R / 3);
-    if (G > 0) ans += (Int) floor(G / 3);
-    if (B > 0) ans += (Int) floor(B / 3);
+    for (i = 0; i < 3; i++) {
+        int n_r = R - i;
+        int n_g = G - i;
+        int n_b = B - i;
+
+        if (n_r < 0 || n_g < 0 || n_b < 0) continue;
+
+        ans = max(ans, (Int) i + (n_r / 3 + n_g / 3 + n_b / 3));
+    }
 
     return ans;
-}
-
-Int funcB(int R, int G, int B) {
-    return (Int) floor (R / 3) + floor (G / 3) + floor (B / 3);
 }
 
 int main(void) {
     scanf("%d%d%d", &R, &G, &B);
 
-    printf("%lld\n", max(funcA(R, G, B), funcB(R, G, B)));
+    printf("%I64d\n", func(R, G, B));
 
     return 0;
 }

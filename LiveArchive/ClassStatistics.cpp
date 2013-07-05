@@ -42,61 +42,36 @@ template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 
 using namespace std;
 
-typedef long long Int;
+typedef long long ll;
 typedef unsigned uint;
 
-const int MAXN = 109;
-int A, B, N;
-char str[MAXN];
-
-int x[MAXN], y[MAXN];
-map<char, int> m_x, m_y;
-
-void build(void) {
-    m_x['U'] = 0; m_y['U'] = 1;
-    m_x['D'] = 0; m_y['D'] =-1;
-    m_x['L'] =-1; m_y['L'] = 0;
-    m_x['R'] = 1; m_y['R'] = 0;
-
-    int i, xx = 0, yy = 0;
-
-    x[0] = y[0] = 0;
-
-
-
-    for (i = 0; i < N; i++) {
-        xx += m_x[str[i]];
-        yy += m_y[str[i]];
-
-        x[i+1] = xx;
-        y[i+1] = yy;
-    }
-}
+int K, N, T;
+int x[60];
 
 int main(void) {
-    int i, done = 0;
-    scanf("%d%d%s", &A, &B, str);
+    int i, l, h, gap;
 
-    N = strlen(str);
+    T = 1;
 
-    build();
+    for ( ; scanf("%d", &K) == 1; ) {
+        for ( ; K--; ) {
+            scanf("%d", &N);
 
-    if (A == 0 && B == 0) {
-        printf("Yes\n"); return 0;
-    }
+            l = 110, h = -110, gap = -100;
 
-    for (i = 1; i <= N; i++) {
-        int div_a = x[i] / A, mod_a = x[i] % A;
-        int div_b = y[i] / B, mod_b = y[i] % B;
+            for (i = 0; i < N; i++) {
+                scanf("%d", &x[i]);
 
-        if (div_a == div_b && mod_a == mod_b) {
-            printf("Yes\n"); return 0;
+                chmin(l, x[i]);
+                chmax(h, x[i]);
+            }
+
+            sort (x, x + N);
+
+            for (i = 1; i < N; i++) chmax(gap, x[i] - x[i - 1]);
+
+            printf("Class %d\nMax %d, Min %d, Largest gap %d\n", T++, h, l, gap);
         }
     }
-
-    printf("No\n");
-
     return 0;
 }
-//4 2
-//UURRDL
