@@ -104,7 +104,7 @@ int func (void) {
 
             if (next >= 0 && next < R * C) {
                 int next_cost = dist[now] + ct[i];
-                int heuristic = abs(ni - RT) + abs(nj - CT);
+                int heuristic = max(abs(ni - RT),abs(nj - CT))*2;
 
                 if (next_cost < dist[next]) {
                     dist[next] = next_cost;
