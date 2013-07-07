@@ -115,7 +115,6 @@ int func (void) {
             }
         }
     }
-
     return dist[conv(RT,CT)];
 
 }
