@@ -37,44 +37,41 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+
 using namespace std;
 
 typedef long long ll;
-typedef long double ld;
+typedef unsigned uint;
 
-const int MAXN = 1007;
-int N, X, Y, L, C, matrix[MAXN][MAXN], vis[MAXN][MAXN];
-int dx[4] = {0, 0, -1, 1};
-int dy[4] = {1, -1, 0, 0};
+int K, N, T;
+int x[60];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    for( ; scanf("%d", &N) && N != 0; ) {
-        int area = 0, perimeter = 0;
+    int i, l, h, gap;
 
-        for (i = 0; i < MAXN; i++) {
-            for (j = 0; j < MAXN; j++) {
-                matrix[i][j] = vis[i][j] = 0;
+    T = 1;
+
+    for ( ; scanf("%d", &K) == 1; ) {
+        for ( ; K--; ) {
+            scanf("%d", &N);
+
+            l = 110, h = -110, gap = -100;
+
+            for (i = 0; i < N; i++) {
+                scanf("%d", &x[i]);
+
+                chmin(l, x[i]);
+                chmax(h, x[i]);
             }
+
+            sort (x, x + N);
+
+            for (i = 1; i < N; i++) chmax(gap, x[i] - x[i - 1]);
+
+            printf("Class %d\nMax %d, Min %d, Largest gap %d\n", T++, h, l, gap);
         }
-
-        REP(i, N) {
-            scanf("%d%d%d%d", &X, &Y, &L, &C);
-            for (i = X; i < X + L; i++) {
-                for (j = Y; j < Y + C; j++) {
-
-                }
-            }
-        }
-
-        for(int i = 1000 - 10; i < 1000; i++) {
-            for(int j = 1000 - 10; j < 1000; j++) {
-                printf("%d ", matrix[i][j]);
-            }
-            printf("\n");
-        }
-
-        printf("%d %d\n", area, perimeter);
     }
     return 0;
 }

@@ -39,27 +39,59 @@ template<typename T> T lcm(T a, T b) {
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
 typedef long double ld;
 
-int T, a[5], dp[110][5][15], N;
+int T, a[5], N;
 char s[109];
 
-int rec(int pos, int last, int repeated) {
-    if(pos >= N) return 0;
+Int dp[110][5][110];
 
-    if(dp[pos][last][repeated] != -1) return dp[pos][last][repeated];
+Int p(int a, int b) {
+    Int ans = 1;
+    while (b > 0) {
+        if (b & 1) {
+            ans = (ans * a);
+        }
+        a = (a * 1LL * a);
+        b >>= 1;
+    }
+    return ans;
+}
 
-    dp[pos][last][repeated] = 0;
+Int rec(int pos, int last, int repeated) {
+    if(pos >= N) return 0LL;
+
+    Int& ans = dp[pos][last][repeated];
+
+    if(ans != -1LL) return ans;
+
+    ans = 0LL;
 
     int now = s[pos] - 'a';
 
-    if(repeated <= 9 && last == now) {
-        dp[pos][last][repeated] = a[now] * (2, repeated) + rec(pos + 1, now, repeated + 1);
+    if(last == now) {
+        if (repeated <= 9) {
+            ans = (Int) (p(2, repeated) * a[now]) + rec(pos + 1, now, repeated + 1);
+        } else {
+            ans = (Int) (p(2, 9) * a[now]) + rec(pos + 1, now, repeated + 1);
+        }
     }
-    dp[pos][last][repeated] = max(dp[pos][last][repeated], a[now] + rec(pos + 1, now, 1));
-    printf("%d %d %d\n", pos, last, dp[pos][last][repeated]);
-    return dp[pos][last][repeated] = max(dp[pos][last][repeated], rec(pos + 1, last, repeated));
+    ans = max(ans, a[now] + rec(pos + 1, now, 1));
+
+    return ans = max(ans, rec(pos + 1, last, repeated));
+}
+
+void clear (void) {
+    int i, j, k;
+
+    for (i = 0; i < 110; i++) {
+        for (j = 0; j < 5; j++) {
+            for (k = 0; k < 110; k++) {
+                dp[i][j][k] = -1LL;
+            }
+        }
+    }
 }
 
 int main(void) {
@@ -68,8 +100,8 @@ int main(void) {
 
     for ( ; T--; ) {
         scanf("%d%d%d%s", &a[0], &a[1], &a[2], s);
-        N = strlen(s); memset(dp, -1, sizeof(dp));
-        printf("%d\n", rec(0, 3, 1)); //last = 3, represente que não houve letra antecessora ao caso base
+        N = strlen(s); clear();
+        printf("%d\n", rec(0, 5, 0));
     }
     return 0;
 }

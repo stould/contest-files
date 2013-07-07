@@ -20,9 +20,7 @@ void quicksort(int lo, int hi) {
         while (a[i]<x) i++;
         while (a[j]>x) j--;
         if (i<=j) {
-            h=a[i];
-            a[i]=a[j];
-            a[j]=h;
+            swap(a[i], a[j]);
             i++;
             j--;
         }
@@ -420,6 +418,83 @@ for (int i = 0; i < n; ++i) {
 	}
 }
 //*********************************************
+//LCA O(<Nlog(N)>, <log(N)>)
+const int MAXN = 100007;
+int N, Q, A, B;
+vector<pair<int, int> > adj[MAXN];
+int parent[MAXN], L[MAXN], vis[MAXN];
+vector<int> level[MAXN];
+int P[MAXN][20];
+Int dist[MAXN];
+
+void dfs(int pos, int par){
+    if(parent[pos] == -1){
+        parent[pos] = par;
+
+        for(int i = adj[pos].size() - 1,to;i >= 0;--i){
+            to = adj[pos][i].first;
+            if(to != par) {
+                dist[to] = dist[pos] + adj[pos][i].second;
+                dfs(to,pos);
+            }
+        }
+    }
+}
+
+int get_level(int u){
+    if(L[u]!=-1) return L[u];
+    else if(parent[u]==-1) return 0;
+    return 1+get_level(parent[u]);
+}
+
+void init(){
+  for(int i = 0;i<N;++i) L[i] = get_level(i);
+
+  for(int i = 0;i < N;++i) level[L[i]].push_back(i);
+
+  memset(P,-1,sizeof(P));
+
+  for(int i = 0;i<N;++i) P[i][0] = parent[i];
+
+  for(int j = 1;(1<<j)<N;++j)
+      for(int i = 0;i<N;++i)
+        if(P[i][j-1]!=-1)
+          P[i][j] = P[P[i][j-1]][j-1];
+}
+
+int LCA(int p, int q){
+    if(L[p]<L[q]) swap(p,q);
+
+    int log = 1;
+    while((1<<log)<=L[p]) ++log;
+    --log;
+
+    for(int i = log;i>=0;--i)
+        if(L[p]-(1<<i)>=L[q])
+            p = P[p][i];
+
+    if(p==q) return p;
+
+    for(int i = log;i>=0;--i){
+        if(P[p][i]!=-1 && P[p][i]!=P[q][i]){
+            p = P[p][i];
+            q = P[q][i];
+        }
+    }
+
+    return parent[p];
+}
+
+for (i = 0; i <= N; i++) {
+    vis[i] = 0;
+    L[i] = parent[i] = -1;
+    adj[i].clear();
+}
+
+dfs(0, -2);
+parent[0] = -1;
+init();
+//*********************************************
 //Dijkstra
 struct MyLess {
     bool operator()(int x, int y) {
@@ -598,83 +673,65 @@ for(int i = 0; i < m; i++) {
 }
 //*******************************************************
 //Max Flow dinic O(V^2*E)
-map<int, int> v[1000];
-typedef map<int, int>::iterator iter;
-int n;
- 
-int bfs(int s, int t) {
-        queue<pair<int, int> > q;
-        int visit[n];
-        fill(visit,visit+n,0);
-        q.push(make_pair(s, 0));
-        while (!q.empty()) {
-                int tmp = q.front().first;
-                int level = q.front().second;
-                if (tmp == t) return level;
-                q.pop();
-                if (!visit[tmp]) {
-                        visit[tmp] = 1;
-                        for (map<int, int>::iterator it = v[tmp].begin();
-                                        it != v[tmp].end(); it++)
-                        {
-                                if (it->second > 0 && !visit[it->first])
-                                        q.push(make_pair(it->first, level + 1));
-                        }
-                }
-        }
-        return 0;
+const int MAXN = 211;
+const int INF = 1000000000;
+
+int c[MAXN][MAXN], f[MAXN][MAXN], s, t, d[MAXN], ptr[MAXN], q[MAXN];
+
+void add_edge (int a, int b, int f) {
+    c[a][b] = f;
 }
- 
-int dfs(int s, int t, int lv, vector<int> *cf) {
-        int tmp;
-        if (s == t) {
-                int min = INT_MAX;
-                for (vector<int>::iterator it = cf->begin(); it != cf->end(); it++)
-                        if (min > *it) min = *it;
-                return min;
-        }
-        if (lv == 0) return 0;
-        for (iter it = v[s].begin(); it != v[s].end(); it++) {
-                cf->push_back(it->second);
-                if (it->second > 0 && (tmp = dfs(it->first, t, lv - 1, cf))) {
-                        it->second -= tmp;
-                        if (v[it->first].find(s) != v[it->first].end()) v[it->first].insert(
-                                        make_pair(s, tmp));
-                        else v[it->first][s] -= tmp;
-                        return tmp;
-                }
-                cf->pop_back();
-        }
-        return 0;
+
+bool bfs() {
+	int qh=0, qt=0;
+	q[qt++] = s;
+	memset (d, -1, MAXN * sizeof d[0]);
+	d[s] = 0;
+	while (qh < qt) {
+		int v = q[qh++];
+		for (int to=0; to<MAXN; ++to)
+			if (d[to] == -1 && f[v][to] < c[v][to]) {
+				q[qt++] = to;
+				d[to] = d[v] + 1;
+			}
+	}
+	return d[t] != -1;
 }
- 
-int augment(int s, int t, int lv) {
-        int sum = 0;
-        int tmp;
-        while ((tmp = dfs(s, t, lv, new vector<int>))) {
-                sum += tmp;
-        }
-        return sum;
+
+int dfs (int v, int flow) {
+	if (!flow)  return 0;
+	if (v == t)  return flow;
+	for (int & to=ptr[v]; to<MAXN; ++to) {
+		if (d[to] != d[v] + 1)  continue;
+		int pushed = dfs (to, min (flow, c[v][to] - f[v][to]));
+		if (pushed) {
+			f[v][to] += pushed;
+			f[to][v] -= pushed;
+			return pushed;
+		}
+	}
+	return 0;
 }
- 
-int maxflow(int s, int t) {
-        int sum = 0;
-        int level;
-        while ((level = bfs(s, t))) {
-                sum += augment(s, t, level);
-        }
-        return sum;
+
+int dinic() {
+	int flow = 0;
+	for (;;) {
+		if (!bfs())  break;
+		memset (ptr, 0, MAXN * sizeof ptr[0]);
+		while (int pushed = dfs (s, INF))
+			flow += pushed;
+	}
+	return flow;
 }
- 
+
 int main() {
-        int e, s, t;
-        int a, b, w;
-        cin >> n >> e >> s >> t;
-        for (int i = 0; i < e; i++) {
-                cin >> a >> b >> w;
-                v[a].insert(make_pair(b, w));
+        for (i = 0; i < MAXN; i++) {
+            d[i] = ptr[i] = q[i] = 0;
+            for (j = 0; j < MAXN; j++) {
+                c[i][j] = f[i][j] = 0;
+            }
         }
-        cout << maxflow(s, t) << endl;
+
         return 0;
 }
 //*******************************************************
@@ -820,7 +877,33 @@ int flow(vector<int> e[], vector<int> c[], int s, int t) {
 	}
 }
 //*****************************Geometria*************************************//
+//*********************************
+//Distance between point - line
+double dot(pair<int, int> &A, pair<int, int> &B, pair<int, int> &C) {
+    return (double) (B.first - A.first) * (C.first - B.first) + (B.second - A.second) * (C.second - B.second);
+}
 
+double cross(pair<int, int> &A, pair<int, int> &B, pair<int, int> &C) {
+    return (double) (B.first-A.first) * (C.second-A.second) - (B.second-A.second) * (C.first-A.first);
+}
+
+double _distance(pair<int, int> A, pair<int, int> B) {
+    int d1 = A.first - B.first;
+    int d2 = A.second - B.second;
+    return sqrt(d1*d1+d2*d2);
+}
+
+double linePointDist(pair<int, int> A, pair<int, int> B, pair<int, int> C, bool isSegment) {
+    double dist = cross(A,B,C) / _distance(A,B);
+    if(isSegment) {
+        int dot1 = dot(A,B,C);
+        if(dot1 > 0)return _distance(B,C);
+        int dot2 = dot(B,A,C);
+        if(dot2 > 0)return _distance(A,C);
+    }
+    return abs(dist);
+}
+//*********************************
 Cordenadas integrais em um segmento, incluindo os pontos iniciais e finais:
 Segmento entre pontos (x1, y1) e (x2, y2) = gcd(abs(x1 - x2), abs(y1 - y2)) + 1
 
@@ -1714,11 +1797,11 @@ int lcm(int a, int b) {
 #include <cstdlib>
 #include <cmath>
 using namespace std;
- 
+
 const int N1 = 50001, N2 = 5133;
 bool isPrime[N1];
 int prime[N2], nPrime, totient[N1];
- 
+
 void sieveAndTotient() {
     // reset
     for (int i = 0; i < N1; ++i)
@@ -1752,7 +1835,7 @@ void sieveAndTotient() {
             isPrime[i] = true;
         }
 }
- 
+
 int main() {
     sieveAndTotient();
     int in;
@@ -1760,6 +1843,20 @@ int main() {
         cout << totient[in] << endl;
     return 0;
 }
+//*******************************************************
+//Euler Phi Function (Get coprime numbers) - Faster
+ int fi(int n) 
+     { 
+       int result = n; 
+       for(int i=2;i*i <= n;i++) 
+       { 
+         if (n % i == 0) result -= result / i; 
+         while (n % i == 0) n /= i; 
+       } 
+       if (n > 1) result -= result / n; 
+       return result; 
+     } 
+
 //*******************************************************
 //Fast method to get factorial of N MOD P, in O(N log(P))
 //*******************************************************
@@ -1778,9 +1875,9 @@ int factmod (int n, int p) {
 //*******************************************************
 #include <cstdio>
 using namespace std;
- 
+
 typedef long long int64;
- 
+
 int64 totient(int64 n) {
     if (n == 1)
         return 1ll;
@@ -1805,7 +1902,7 @@ int64 totient(int64 n) {
         out -= out / n;
     return out;
 }
- 
+
 int main() {
     int64 n;
     scanf("%lld", &n);

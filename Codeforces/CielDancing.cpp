@@ -37,44 +37,42 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+
 using namespace std;
 
 typedef long long ll;
-typedef long double ld;
+typedef unsigned uint;
 
-const int MAXN = 1007;
-int N, X, Y, L, C, matrix[MAXN][MAXN], vis[MAXN][MAXN];
-int dx[4] = {0, 0, -1, 1};
-int dy[4] = {1, -1, 0, 0};
+const int MAXN = 107;
+int N, M;
+int vis_N[MAXN], vis_M[MAXN];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    for( ; scanf("%d", &N) && N != 0; ) {
-        int area = 0, perimeter = 0;
+    int i, j;
 
-        for (i = 0; i < MAXN; i++) {
-            for (j = 0; j < MAXN; j++) {
-                matrix[i][j] = vis[i][j] = 0;
+    scanf("%d%d", &N, &M);
+
+    memset(vis_N, 0, sizeof(vis_N));
+    memset(vis_M, 0, sizeof(vis_M));
+
+    vector<pair<int, int> > vp;
+
+    for (i = 1; i <= N; i++) {
+        for (j = 1; j <= M; j++) {
+            if (!vis_N[i] || !vis_M[j]) {
+                vp.push_back(make_pair(i, j));
+                vis_N[i] = vis_M[j] = 1;
             }
         }
-
-        REP(i, N) {
-            scanf("%d%d%d%d", &X, &Y, &L, &C);
-            for (i = X; i < X + L; i++) {
-                for (j = Y; j < Y + C; j++) {
-
-                }
-            }
-        }
-
-        for(int i = 1000 - 10; i < 1000; i++) {
-            for(int j = 1000 - 10; j < 1000; j++) {
-                printf("%d ", matrix[i][j]);
-            }
-            printf("\n");
-        }
-
-        printf("%d %d\n", area, perimeter);
     }
+
+    printf("%d\n", (int) vp.size());
+
+    for (i = 0; i < (int) vp.size(); i++) {
+        printf("%d %d\n", vp[i].first, vp[i].second);
+    }
+
     return 0;
 }

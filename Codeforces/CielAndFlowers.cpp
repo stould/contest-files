@@ -37,44 +37,38 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 1007;
-int N, X, Y, L, C, matrix[MAXN][MAXN], vis[MAXN][MAXN];
-int dx[4] = {0, 0, -1, 1};
-int dy[4] = {1, -1, 0, 0};
+int R, G, B;
+
+Int func(int R, int G, int B) {
+    Int ans = 0LL;
+
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        int n_r = R - i;
+        int n_g = G - i;
+        int n_b = B - i;
+
+        if (n_r < 0 || n_g < 0 || n_b < 0) continue;
+
+        ans = max(ans, (Int) i + (n_r / 3 + n_g / 3 + n_b / 3));
+    }
+
+    return ans;
+}
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    for( ; scanf("%d", &N) && N != 0; ) {
-        int area = 0, perimeter = 0;
+    scanf("%d%d%d", &R, &G, &B);
 
-        for (i = 0; i < MAXN; i++) {
-            for (j = 0; j < MAXN; j++) {
-                matrix[i][j] = vis[i][j] = 0;
-            }
-        }
+    printf("%I64d\n", func(R, G, B));
 
-        REP(i, N) {
-            scanf("%d%d%d%d", &X, &Y, &L, &C);
-            for (i = X; i < X + L; i++) {
-                for (j = Y; j < Y + C; j++) {
-
-                }
-            }
-        }
-
-        for(int i = 1000 - 10; i < 1000; i++) {
-            for(int j = 1000 - 10; j < 1000; j++) {
-                printf("%d ", matrix[i][j]);
-            }
-            printf("\n");
-        }
-
-        printf("%d %d\n", area, perimeter);
-    }
     return 0;
 }
