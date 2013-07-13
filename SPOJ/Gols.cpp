@@ -42,64 +42,63 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 
-int in() { int x; scanf("%d", &x); return x; }
+int in() {
+    int x;
+    scanf("%d", &x);
+    return x;
+}
 
 const int INF = 100010101;
 const int MAXN = 1000009;
+
 int T, E, P, J, acc, now, v[MAXN];
 char name[25], best[25];
 
-int naive(int a, int b) {
-    int i, min_a = INT_MAX, max_a = INT_MIN;
+int rmq_both(void) {
+    int i, ans = 0;
 
-    for (i = a; i <= b; i++) {
-        min_a = min(min_a, v[i]);
-        max_a = max(max_a, v[i]);
-    }
-    return min_a + max_a;
-}
+    deque<int> Q1, Q2;
 
-pair<int, int> tree[MAXN*4];
+    for (i = 0; i < J; i++) {
+        while (!Q1.empty() && v[i] >= v[Q1.back()]) {
+            Q1.pop_back();
+        }
+        Q1.push_back(i);
 
-void build(int a[], int v, int tl, int tr){
-    if (tl == tr) {
-        tree[v].first = a[tl];
-        tree[v].second = a[tl];
-    } else {
-        int tm = (tl + tr) >> 1;
-        build (a, 2 * v, tl, tm);
-        build (a, 2 * v + 1, tm + 1, tr);
-        tree[v].first = min (tree[2 * v].first, tree[2 * v + 1].first);
-        tree[v].second = max (tree[2 * v].second, tree[2 * v + 1].second);
+        while (!Q2.empty() && v[i] <= v[Q2.back()]) {
+            Q2.pop_back();
+        }
+        Q2.push_back(i);
     }
-}
 
-int rmq_min(int v, int tl, int tr, int l, int r){
-    if (l > r) {
-        return INF;
-    }
-    if (tl == l && tr == r) {
-        return tree[v].first;
-    } else {
-        int tm = (tl + tr) >> 1;
-        return min(rmq_min(2 * v, tl, tm, l, min(tm, r)),rmq_min(2 * v + 1,tm + 1, tr, max(l ,tm + 1), r));
-    }
-}
+    for (i = J; i < P; i++) {
+        ans += v[Q1.front()];
+        ans += v[Q2.front()];
 
-int rmq_max(int v, int tl, int tr, int l, int r){
-    if (l > r) {
-        return -INF;
+        while (!Q1.empty() && v[i] >= v[Q1.back()]) {
+            Q1.pop_back();
+        }
+        while (!Q1.empty() && Q1.front() <= i-J) {
+            Q1.pop_front();
+        }
+        Q1.push_back(i);
+
+        while (!Q2.empty() && v[i] <= v[Q2.back()]) {
+            Q2.pop_back();
+        }
+        while (!Q2.empty() && Q2.front() <= i-J) {
+            Q2.pop_front();
+        }
+        Q2.push_back(i);
     }
-    if (tl == l && tr == r) {
-        return tree[v].second;
-    } else {
-        int tm = (tl + tr) >> 1;
-        return max(rmq_max(2 * v, tl, tm, l, min(tm, r)), rmq_max(2 * v + 1,tm + 1, tr, max(l ,tm + 1), r));
-    }
+
+    ans += v[Q1.front()];
+    ans += v[Q2.front()];
+
+    return ans;
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     T = in();
 
     int i;
@@ -118,14 +117,9 @@ int main(void) {
                 v[i] = in();
             }
 
-            build(v, 1, 0, MAXN);
+            now += rmq_both();
 
-            for (i = 0; i + J <= P; i++) {
-                now += rmq_min(1, 0, MAXN, i, i + J - 1);
-                now += rmq_max(1, 0, MAXN, i, i + J - 1);
-            }
-
-            if (now > acc) {
+            if (now > acc || now == acc && string(name) < string(best)) {
                 acc = now;
                 strcpy(best, name);
             }

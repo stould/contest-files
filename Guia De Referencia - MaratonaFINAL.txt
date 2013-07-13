@@ -673,65 +673,83 @@ for(int i = 0; i < m; i++) {
 }
 //*******************************************************
 //Max Flow dinic O(V^2*E)
-const int MAXN = 211;
-const int INF = 1000000000;
+map<int, int> v[1000];
+typedef map<int, int>::iterator iter;
+int n;
 
-int c[MAXN][MAXN], f[MAXN][MAXN], s, t, d[MAXN], ptr[MAXN], q[MAXN];
-
-void add_edge (int a, int b, int f) {
-    c[a][b] = f;
+int bfs(int s, int t) {
+        queue<pair<int, int> > q;
+        int visit[n];
+        fill(visit,visit+n,0);
+        q.push(make_pair(s, 0));
+        while (!q.empty()) {
+                int tmp = q.front().first;
+                int level = q.front().second;
+                if (tmp == t) return level;
+                q.pop();
+                if (!visit[tmp]) {
+                        visit[tmp] = 1;
+                        for (map<int, int>::iterator it = v[tmp].begin();
+                                        it != v[tmp].end(); it++)
+                        {
+                                if (it->second > 0 && !visit[it->first])
+                                        q.push(make_pair(it->first, level + 1));
+                        }
+                }
+        }
+        return 0;
 }
 
-bool bfs() {
-	int qh=0, qt=0;
-	q[qt++] = s;
-	memset (d, -1, MAXN * sizeof d[0]);
-	d[s] = 0;
-	while (qh < qt) {
-		int v = q[qh++];
-		for (int to=0; to<MAXN; ++to)
-			if (d[to] == -1 && f[v][to] < c[v][to]) {
-				q[qt++] = to;
-				d[to] = d[v] + 1;
-			}
-	}
-	return d[t] != -1;
+int dfs(int s, int t, int lv, vector<int> *cf) {
+        int tmp;
+        if (s == t) {
+                int min = INT_MAX;
+                for (vector<int>::iterator it = cf->begin(); it != cf->end(); it++)
+                        if (min > *it) min = *it;
+                return min;
+        }
+        if (lv == 0) return 0;
+        for (iter it = v[s].begin(); it != v[s].end(); it++) {
+                cf->push_back(it->second);
+                if (it->second > 0 && (tmp = dfs(it->first, t, lv - 1, cf))) {
+                        it->second -= tmp;
+                        if (v[it->first].find(s) != v[it->first].end()) v[it->first].insert(
+                                        make_pair(s, tmp));
+                        else v[it->first][s] -= tmp;
+                        return tmp;
+                }
+                cf->pop_back();
+        }
+        return 0;
 }
 
-int dfs (int v, int flow) {
-	if (!flow)  return 0;
-	if (v == t)  return flow;
-	for (int & to=ptr[v]; to<MAXN; ++to) {
-		if (d[to] != d[v] + 1)  continue;
-		int pushed = dfs (to, min (flow, c[v][to] - f[v][to]));
-		if (pushed) {
-			f[v][to] += pushed;
-			f[to][v] -= pushed;
-			return pushed;
-		}
-	}
-	return 0;
+int augment(int s, int t, int lv) {
+        int sum = 0;
+        int tmp;
+        while ((tmp = dfs(s, t, lv, new vector<int>))) {
+                sum += tmp;
+        }
+        return sum;
 }
 
-int dinic() {
-	int flow = 0;
-	for (;;) {
-		if (!bfs())  break;
-		memset (ptr, 0, MAXN * sizeof ptr[0]);
-		while (int pushed = dfs (s, INF))
-			flow += pushed;
-	}
-	return flow;
+int maxflow(int s, int t) {
+        int sum = 0;
+        int level;
+        while ((level = bfs(s, t))) {
+                sum += augment(s, t, level);
+        }
+        return sum;
 }
 
 int main() {
-        for (i = 0; i < MAXN; i++) {
-            d[i] = ptr[i] = q[i] = 0;
-            for (j = 0; j < MAXN; j++) {
-                c[i][j] = f[i][j] = 0;
-            }
+        int e, s, t;
+        int a, b, w;
+        cin >> n >> e >> s >> t;
+        for (int i = 0; i < e; i++) {
+                cin >> a >> b >> w;
+                v[a].insert(make_pair(b, w));
         }
-
+        cout << maxflow(s, t) << endl;
         return 0;
 }
 //*******************************************************
@@ -967,11 +985,11 @@ vector<point> convex_hull(vector<point> &P) {
     sort(P.begin(), P.end());
 
     for (int i = 0; i < n; i++) {
-        while (k >= 2 && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
+        while (k >= 2 && cross(H[k-2], H[k-1], P[i]) <= /*change to < to remove equal points */ 0) k--;
         H[k++] = P[i];
     }
     for (int i = n-2, t = k+1; i >= 0; i--) {
-        while (k >= t && cross(H[k-2], H[k-1], P[i]) <= 0) k--;
+        while (k >= t && cross(H[k-2], H[k-1], P[i]) <= /*change to < to remove equal points */ 0) k--;
         H[k++] = P[i];
     }
     H.resize(k);
@@ -1219,6 +1237,48 @@ int main(void) {
     }
 }
 /* *************************** DATA STRUCTURES ***************************/
+//*******************************************************
+//Trie
+struct Trie {
+    Trie *child[MAXN];
+    int prefixes;
+    int words;
+
+    Trie() {
+        int i;
+        prefixes = words = 0;
+        for(i = 0; i < MAXN; i++) {
+            child[i] = NULL;
+        }
+    }
+
+    void addWord(string s, int pos = 0) {
+        if(pos == s.size()) {
+            words++;
+            return;
+        }
+
+        int letter_pos = s[pos] - 'a';
+
+        Trie *t = child[letter_pos];
+
+        if(child[letter_pos] == NULL) {
+            t = child[letter_pos] = new Trie();
+            t->prefixes = 1;
+        } else {
+            t->prefixes = t->prefixes + 1;
+        }
+        t->addWord(s, pos + 1);
+    }
+
+    int count(string s, int pos = 0, int k = 0) {
+        if(pos == s.size()) return k;
+        Trie *t = child[s[pos] - 'a'];
+        if(t == NULL) return 0;
+        return t->count(s, pos + 1, (prefixes == t->prefixes) ? k: k + 1);
+    }
+};
+//*******************************************************
 //Union Find
 struct UnionFind {
     int N, *id, *sz;
@@ -1342,7 +1402,7 @@ int sum(int x, int y) {
     int result = 0;
     for (int i = x; i> = 0; i = (i & (i +1)) - 1) {
         for (int j = y; j> = 0; j = (j & (j +1)) - 1) {
-            result + = t [i] [j];
+            result += t[i][j];
         }
     }
     return result;
@@ -1602,7 +1662,26 @@ struct SegmentTreeRMQ {
         }
     }
 };
-
+/*********************************************************************/
+//Sliding RMQ in O(N)
+void maxSlidingWindow(int A[], int n, int w, int B[]) {
+  deque<int> Q;
+  for (int i = 0; i < w; i++) {
+    while (!Q.empty() && A[i] >= A[Q.back()])
+      Q.pop_back();
+    Q.push_back(i);
+  }
+  for (int i = w; i < n; i++) {
+    B[i-w] = A[Q.front()];
+    while (!Q.empty() && A[i] >= A[Q.back()])
+      Q.pop_back();
+    while (!Q.empty() && Q.front() <= i-w)
+      Q.pop_front();
+    Q.push_back(i);
+  }
+  B[n-w] = A[Q.front()];
+}
+/*********************************************************************/
 /**************************** NUMBER THEORY ***************************/
 /*********************************************************************/
 //Contando a soma de todos os numeros do intervalo sum(a, b)

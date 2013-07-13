@@ -9,6 +9,7 @@
 #include <stack>
 #include <memory>
 #include <iomanip>
+#include <numeric>
 #include <functional>
 #include <new>
 #include <algorithm>
@@ -20,65 +21,70 @@
 #include <cctype>
 #include <ctime>
 
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-int T, N, M, a, b, c, dist[110];
-vector<pair<int, int> > graph[110];
+const int MAXN = 110;
+const int INF = 10010010;
 
-struct MyLess {
-    bool operator()(int x, int y) {
-        return dist[x] > dist[y];
-    }
-};
-
-int dijsktra(int source, int destiny) {
-	for(int i = 0; i <= 110; i++) {
-		dist[i] = INT_MAX;
-	}
-	priority_queue<int, vector<int>, MyLess> q;
-	dist[source] = 0;
- 	q.push(source);
-
-	while(!q.empty()) {
-		int tmp = q.top(); q.pop();
-		for(int i = 0; i < graph[tmp].size(); i++) {
-            int aux_dist = dist[tmp] + graph[tmp][i].second;
-            int actual_dist = dist[graph[tmp][i].first];
-            if(aux_dist < actual_dist) {
-                dist[graph[tmp][i].first] = aux_dist;
-                q.push(graph[tmp][i].first);
-            }
-        }
-    }
-	return dist[destiny];
-}
+int T, N, M, a, b, c;
+int dp[MAXN][MAXN];
 
 int main(void) {
     freopen("i.in", "r", stdin);
-    cin >> T;
-    while(T--) {
-        cin >> N >> M;
-        REP(i, N) graph[i].clear();
-        for(int i = 0; i < M; i++) {
-            cin >> a >> b >> c; a -= 1; b -= 1;
-            graph[a].push_back(make_pair(b, c));
-            graph[b].push_back(make_pair(a, c));
+
+    int i, j, k;
+
+    T = in();
+
+    for ( ; T--; ) {
+        N = in(), M = in();
+
+        for (i = 0; i < MAXN; i++) {
+            for (j = 0; j < MAXN; j++) {
+                dp[i][j] = INF;
+            }
         }
-        REP(i, N) {
-            printf("%d\n", dijsktra(i, i));
+
+        for(i = 0; i < M; i++) {
+            a = in(), b = in(), c = in();
+            dp[a][b] = dp[b][a] = c;
         }
-        printf("\n");
+
+        for (k = 1; k <= N; k++) {
+            for (i = 1; i <= N; i++) {
+                for (j = 1; j <= N; j++) {
+                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k][j]);
+                }
+            }
+        }
+
+        int x = INT_MAX;
+
+        for (i = 1; i <= N; i++) chmin(x, dp[i][i]);
+
+        if (x == INT_MAX) {
+            puts("impossivel");
+        } else {
+            printf("%d\n", x);
+        }
+
+
+
     }
     return 0;
 }

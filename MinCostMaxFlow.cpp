@@ -38,15 +38,13 @@ template<typename T> T lcm(T a, T b) {
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
 typedef long double ld;
 
 const int MAXN = 110;
-const ll INF = 901010100101010LL;
-int A, B, C, N, M, D, K, DD;
-vector<pair<int, int> > connections;
+const Int INF = 901010100101010LL;
 
-ll cap[MAXN][MAXN], cost[MAXN][MAXN], fnet[MAXN][MAXN], adj[MAXN][MAXN], deg[MAXN], par[MAXN], d[MAXN], pi[MAXN];
+Int cap[MAXN][MAXN], cost[MAXN][MAXN], fnet[MAXN][MAXN], adj[MAXN][MAXN], deg[MAXN], par[MAXN], d[MAXN], pi[MAXN];
 
 bool dijkstra(int n, int s, int t) {
     for(int i = 0; i < n; i++) d[i] = INF, par[i] = -1;
@@ -54,7 +52,7 @@ bool dijkstra(int n, int s, int t) {
     par[s] = -n - 1;
 
     while(1) {
-        ll u = -1, bestD = INF;
+        Int u = -1, bestD = INF;
 
         for(int i = 0; i < n; i++) if(par[i] < 0 && d[i] < bestD) bestD = d[u = i];
 
@@ -82,7 +80,7 @@ bool dijkstra(int n, int s, int t) {
     return par[t] >= 0LL;
 }
 
-int mcmf3(int n, int s, int t, ll &fcost) {
+int mcmf3(int n, int s, int t, Int &fcost) {
     memset(deg, 0LL, sizeof(deg));
 
     for(int i = 0; i < n; i++) {
@@ -96,12 +94,12 @@ int mcmf3(int n, int s, int t, ll &fcost) {
     memset(fnet, 0LL, sizeof(fnet));
     memset(pi, 0LL, sizeof(pi));
 
-    ll flow = fcost = 0LL;
+    Int flow = fcost = 0LL;
 
     while(dijkstra(n, s, t)) {
-        ll bot = INF;
+        Int bot = INF;
         for(int v = t, u = par[v]; v != s; u = par[v]) {
-            bot = min(bot, (ll) (fnet[v][u] ? fnet[v][u] : (cap[u][v] - fnet[u][v])));
+            bot = min(bot, (Int) (fnet[v][u] ? fnet[v][u] : (cap[u][v] - fnet[u][v])));
             v = u;
         }
         for(int v = t, u = par[v]; v != s; u = par[v = u]) {
