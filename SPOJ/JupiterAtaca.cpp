@@ -63,7 +63,6 @@ Int modpow(int a, int n) {
     return (Int) (ans % P);
 }
 
-
 Int func(int l, int h) {
     Int ans = 0LL;
 
@@ -132,7 +131,7 @@ struct FenwickTree {
 
 int main(void) {
     freopen("i.in", "r", stdin);
-//    freopen("o.ot", "w", stdout);
+        //freopen("o.ot", "w", stdout);
 
     int i;
 
@@ -143,14 +142,21 @@ int main(void) {
             f[i] = 0;
             if (i > 0) power[i] = (power[i - 1] * B) % P;
         }
+
+        FenwickTree<Int> fw(L);
+
         for (i = 0; i < N; i++) {
             scanf(" %c%d%d", &opt, &I, &V);
 
             if (opt == 'E') {
-                f[I] = V;
+                fw.update(I, V);
             } else {
-                printf("%lld\n", func(I, V));
+                printf("%lld\n", fw.read(I, V));
             }
+            for (int j = 1; j <= L; j++) {
+                printf("%lld ", fw.read(j, j));
+            }
+            printf("\n");
         }
         printf("-\n");
     }

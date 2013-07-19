@@ -54,7 +54,9 @@ int capacity[MAXN][MAXN];
 int residual[MAXN][MAXN];
 
 int max_flow(int source, int sink) {
-    while(1) {
+    memset(residual, 0, sizeof(residual));
+
+    while (1) {
         int prev[MAXN]; memset(prev, -1, sizeof(prev));
         int actual[MAXN]; memset(actual, 0, sizeof(actual));
         prev[source] = source;
@@ -115,7 +117,6 @@ int main(void) {
         memset(w, 0, sizeof(w));
         memset(cnt, 0, sizeof(cnt));
         memset(capacity, 0, sizeof(capacity));
-        memset(residual, 0, sizeof(residual));
 
         int s = 0, t = N*N+1;
 
