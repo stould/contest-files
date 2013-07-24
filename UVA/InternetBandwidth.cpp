@@ -33,10 +33,12 @@ int max_flow(int source, int sink) {
                     } else {
                         while(prev[v] != v) {
                             u = prev[v];
+                            printf("%d %d\n", v, u);
                             residual[u][v] += actual[sink];
                             residual[v][u] -= actual[sink];
                             v = u;
                         }
+                        printf("\n");
                         goto end;
                     }
                 }
@@ -54,6 +56,7 @@ int max_flow(int source, int sink) {
 }
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     while(scanf("%d", &n) && n != 0) {
         for(i = 0; i < MAXN; i++) {
             graph[i].clear();
