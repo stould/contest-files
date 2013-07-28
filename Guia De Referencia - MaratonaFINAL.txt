@@ -418,8 +418,10 @@ for (int i = 0; i < n; ++i) {
 	}
 }
 //*********************************************
+
 //LCA O(<Nlog(N)>, <log(N)>)
-const int MAXN = 100007;
+
+
 int N, Q, A, B;
 vector<pair<int, int> > adj[MAXN];
 int parent[MAXN], L[MAXN], vis[MAXN];
@@ -486,15 +488,25 @@ int LCA(int p, int q){
 }
 
 for (i = 0; i <= N; i++) {
-    vis[i] = 0;
-    L[i] = parent[i] = -1;
-    adj[i].clear();
-}
+            vis[i] = 0;
+            L[i] = parent[i] = -1;
+            dist[i] = 0LL;
+            adj[i].clear();
+	    }
+		for (i = 1; i < N; i++) {
+			scanf("%d%d", &t, &l);
+			adj[i].push_back(make_pair(t, l));
+			adj[t].push_back(make_pair(i, l));
+		}
 
-dfs(0, -2);
-parent[0] = -1;
-init();
+        dfs(0, -2);
+		parent[0] = -1;
+
+		init();
+
+
 //*********************************************
+
 //Dijkstra
 struct MyLess {
     bool operator()(int x, int y) {
@@ -894,6 +906,83 @@ int flow(vector<int> e[], vector<int> c[], int s, int t) {
 		}
 	}
 }
+
+//Fluxo Maximo de Custo Minimo
+const int MAXN = 110;
+const Int INF = 901010100101010LL;
+
+Int cap[MAXN][MAXN], cost[MAXN][MAXN], fnet[MAXN][MAXN], adj[MAXN][MAXN], deg[MAXN], par[MAXN], d[MAXN], pi[MAXN];
+
+bool dijkstra(int n, int s, int t) {
+    for(int i = 0; i < n; i++) d[i] = INF, par[i] = -1;
+    d[s] = 0;
+    par[s] = -n - 1;
+
+    while(1) {
+        Int u = -1, bestD = INF;
+
+        for(int i = 0; i < n; i++) if(par[i] < 0 && d[i] < bestD) bestD = d[u = i];
+
+        if(bestD == INF) break;
+
+        par[u] = -par[u] - 1;
+
+        for(int i = 0; i < deg[u]; i++) {
+            int v = adj[u][i];
+
+            if(par[v] >= 0LL) continue;
+
+            if(fnet[v][u] && d[v] > (d[u] + pi[u] - pi[v]) - cost[v][u]) {
+                d[v] = (d[u] + pi[u] - pi[v]) - cost[v][u], par[v] = -u - 1;
+            }
+
+            if(fnet[u][v] < cap[u][v] && d[v] > (d[u] + pi[u] - pi[v]) + cost[u][v]) {
+                d[v] = (d[u] + pi[u] - pi[v]) + cost[u][v], par[v] = -u - 1;
+            }
+        }
+    }
+
+    for(int i = 0; i < n; i++) if(pi[i] < INF) pi[i] += d[i];
+
+    return par[t] >= 0LL;
+}
+
+int mcmf3(int n, int s, int t, Int &fcost) {
+    memset(deg, 0LL, sizeof(deg));
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if(cap[i][j] || cap[j][i]) {
+                adj[i][deg[i]++] = j;
+            }
+        }
+    }
+
+    memset(fnet, 0LL, sizeof(fnet));
+    memset(pi, 0LL, sizeof(pi));
+
+    Int flow = fcost = 0LL;
+
+    while(dijkstra(n, s, t)) {
+        Int bot = INF;
+        for(int v = t, u = par[v]; v != s; u = par[v]) {
+            bot = min(bot, (Int) (fnet[v][u] ? fnet[v][u] : (cap[u][v] - fnet[u][v])));
+            v = u;
+        }
+        for(int v = t, u = par[v]; v != s; u = par[v = u]) {
+            if(fnet[v][u]) {
+                fnet[v][u] -= bot;
+                fcost -= bot * cost[v][u];
+            } else {
+                fnet[u][v] += bot;
+                fcost += bot * cost[u][v];
+            }
+        }
+        flow += bot;
+    }
+    return flow;
+}
+
 //*****************************Geometria*************************************//
 //*********************************
 //Distance between point - line

@@ -45,7 +45,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 100007;
+const int MAXN = 100003;
 int N, Q, A, B;
 vector<pair<int, int> > adj[MAXN];
 int parent[MAXN], L[MAXN], vis[MAXN];
@@ -116,7 +116,11 @@ int t, l;
 int main(void) {
     int i;
 
+    int done = 0;
+
 	for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+	    if (done) printf("\n");
+	    done = 1;
 	    for (i = 0; i <= N; i++) {
             vis[i] = 0;
             L[i] = parent[i] = -1;
@@ -136,16 +140,18 @@ int main(void) {
 
         scanf("%d", &Q);
 
-        for ( ; Q--; ) {
+        int x;
+
+        for (x = 0; x < Q; x++) {
             scanf("%d%d", &A, &B);
 
             int root = LCA(A, B);
 
-            Int cost = (dist[A] - dist[root]) + (dist[B] - dist[root]);
+            printf("%lld", (dist[A] - dist[root]) + (dist[B] - dist[root]));
 
-            printf("%lld ", cost);
+            if (x != Q - 1) printf(" ");
+            else printf("\n");
         }
-        printf("\n");
 	}
     return 0;
 }
