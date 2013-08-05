@@ -78,6 +78,7 @@ bool bfs() {
 
 int dfs (int v, int flow) {
 	if (!flow)  return 0;
+	printf("%d, ", v);
 	if (v == t)  return flow;
 	for (int & to=ptr[v]; to<MAXN; ++to) {
 		if (d[to] != d[v] + 1)  continue;
@@ -96,13 +97,17 @@ int dinic() {
 	for (;;) {
 		if (!bfs())  break;
 		memset (ptr, 0, MAXN * sizeof ptr[0]);
-		while (int pushed = dfs (s, INF))
+		while (int pushed = dfs (s, INF)) {
+		    printf("\n");
 			flow += pushed;
+		}
 	}
 	return flow;
 }
 
 int main(void) {
+    freopen("i.in", "r", stdin);
+    //freopen("o.ot", "w", stdout);
     scanf("%d", &X);
 
     int i, j;
@@ -119,7 +124,7 @@ int main(void) {
         s = 0, t = 2*N+1;
 
         for (i = 1; i <= N; i++) {
-            add_edge(s, i, 1);
+            add_edge(s, i, INF);
             add_edge(i+N, t, 1);
         }
 
