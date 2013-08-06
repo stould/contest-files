@@ -46,53 +46,39 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXS = 110;
+const int MAXN = 10009;
 
-int T = 1;
-int N, M;
-
-char S1[MAXS], S2[MAXS];
-int dp[MAXS][MAXS];
-
-string track(int i, int j) {
-    if (i == 0 && j == 0) {
-        return "";
-    } else if (i == 0 && j > 0) {
-        return track(i, j - 1) + S2[j - 1];
-    } else if (i > 0 && j == 0) {
-        return track(i - 1, j) + S1[i - 1];
-    } else {
-        if (S1[i - 1] == S2[j - 1]) {
-            return track(i - 1, j - 1) + S1[i - 1];
-        } else {
-            if (dp[i][j - 1] > dp[i - 1][j]) {
-                return track(i, j - 1) + S2[j - 1];
-            } else {
-                return track(i - 1, j) + S1[i - 1];
-            }
-        }
-    }
-}
+int N;
+int V[MAXN];
 
 int main(void) {
-    int i, j;
+    int i;
 
-    for ( ; scanf("%s%s", S1, S2) == 2 && S1[0] != '#'; ) {
-        N = strlen(S1), M = strlen(S2);
+    for ( ; scanf("%d", &N) && N != 0; ) {
+        int has_positive = 0;
 
-        memset(dp, 0, sizeof(dp));
-
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= M; j++) {
-                if (S1[i - 1] == S2[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
+        for (i = 0; i < N; i++) {
+            V[i] = in();
+            if (V[i] > 0) has_positive = 1;
         }
 
-        printf("Teste %d\n%s\n\n", T++, track(N, M).c_str());
+        if (!has_positive) {
+            puts("Losing streak.");
+        } else {
+            int max_sum = 0, max_yet = 0;
+
+            for (i = 0; i < N; i++) {
+                max_yet += V[i];
+
+                if (max_yet > max_sum) {
+                    max_sum = max_yet;
+                } else if (max_yet < 0) {
+                    max_yet = 0;
+                }
+            }
+
+            printf("The maximum winning streak is %d.\n", max_sum);
+        }
     }
     return 0;
 }

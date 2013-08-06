@@ -46,53 +46,48 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXS = 110;
+const int MAXN = 107;
+const int INF = 10001010LL;
+int T, N, H, W;
 
-int T = 1;
-int N, M;
+int matrix[MAXN][MAXN], dp[MAXN][MAXN];
 
-char S1[MAXS], S2[MAXS];
-int dp[MAXS][MAXS];
+int func(int i, int j) {
+    if (i == H) return 0;
+    if (j < 0 || j >= W) return -INF;
 
-string track(int i, int j) {
-    if (i == 0 && j == 0) {
-        return "";
-    } else if (i == 0 && j > 0) {
-        return track(i, j - 1) + S2[j - 1];
-    } else if (i > 0 && j == 0) {
-        return track(i - 1, j) + S1[i - 1];
-    } else {
-        if (S1[i - 1] == S2[j - 1]) {
-            return track(i - 1, j - 1) + S1[i - 1];
-        } else {
-            if (dp[i][j - 1] > dp[i - 1][j]) {
-                return track(i, j - 1) + S2[j - 1];
-            } else {
-                return track(i - 1, j) + S1[i - 1];
-            }
-        }
-    }
+    int& ret = dp[i][j];
+
+    if (ret != -1) return ret;
+
+    chmax(ret, matrix[i][j] + func(i + 1, j));
+    chmax(ret, matrix[i][j] + func(i + 1, j + 1));
+    chmax(ret, matrix[i][j] + func(i + 1, j - 1));
+
+    return ret;
 }
 
 int main(void) {
+    T = in();
+
     int i, j;
 
-    for ( ; scanf("%s%s", S1, S2) == 2 && S1[0] != '#'; ) {
-        N = strlen(S1), M = strlen(S2);
 
-        memset(dp, 0, sizeof(dp));
+    for ( ; T--; ) {
+        H = in(), W = in();
 
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= M; j++) {
-                if (S1[i - 1] == S2[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                }
+        for (i = 0; i < H; i++) {
+            for (j = 0; j < W; j++) {
+                matrix[i][j] = in();
+                dp[i][j] = -1;
             }
         }
 
-        printf("Teste %d\n%s\n\n", T++, track(N, M).c_str());
+        int ans = 0;
+
+        for (j = 0; j < W; j++) ans = max(ans, func(0, j));
+
+        printf("%d\n", ans);
     }
     return 0;
 }

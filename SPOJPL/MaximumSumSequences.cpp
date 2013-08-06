@@ -46,53 +46,56 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXS = 110;
+const int MAXN = 100007;
+const int INF = 1000101001010010LL;
+int T, N;
 
-int T = 1;
-int N, M;
-
-char S1[MAXS], S2[MAXS];
-int dp[MAXS][MAXS];
-
-string track(int i, int j) {
-    if (i == 0 && j == 0) {
-        return "";
-    } else if (i == 0 && j > 0) {
-        return track(i, j - 1) + S2[j - 1];
-    } else if (i > 0 && j == 0) {
-        return track(i - 1, j) + S1[i - 1];
-    } else {
-        if (S1[i - 1] == S2[j - 1]) {
-            return track(i - 1, j - 1) + S1[i - 1];
-        } else {
-            if (dp[i][j - 1] > dp[i - 1][j]) {
-                return track(i, j - 1) + S2[j - 1];
-            } else {
-                return track(i - 1, j) + S1[i - 1];
-            }
-        }
-    }
-}
+Int V[MAXN];
 
 int main(void) {
-    int i, j;
+    T = in();
 
-    for ( ; scanf("%s%s", S1, S2) == 2 && S1[0] != '#'; ) {
-        N = strlen(S1), M = strlen(S2);
+    int i;
+    Int curr_max = -INF;
 
-        memset(dp, 0, sizeof(dp));
+    for ( ; T--; ) {
+        N = in();
 
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= M; j++) {
-                if (S1[i - 1] == S2[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
+        map<Int, Int> mp;
+
+        for (i = 0; i < N; i++) {
+            V[i] = (Int) in();
+            chmax(curr_max, (Int) V[i]);
+            mp[V[i]] += 1;
         }
 
-        printf("Teste %d\n%s\n\n", T++, track(N, M).c_str());
+        if (curr_max < 0) {
+            printf("%lld %lld\n", curr_max, mp[curr_max]);
+        } else {
+            Int sum = 0, prefix = 0LL, ans = -INF, cnt = 0LL, buff_cnt = 1LL;
+
+            for (i = 0; i < N; i++) {
+                sum += V[i];
+
+                Int curr = sum - prefix;
+
+                if (curr > ans) {
+                    ans = curr;
+                    cnt = buff_cnt;
+                } else if (curr == ans) {
+                    cnt += buff_cnt;
+                }
+
+                if (sum < prefix) {
+                    prefix = sum;
+                    buff_cnt = 1LL;
+                } else if (sum == prefix) {
+                    buff_cnt += 1LL;
+                }
+            }
+
+            printf("%lld %lld\n", ans, cnt);
+        }
     }
     return 0;
 }
