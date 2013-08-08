@@ -46,57 +46,24 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 10007;
-int A, B, N;
-int vis[MAXN];
+map<char, double> buff;
+char str[55];
 
-vector<int> graph[MAXN];
-
-pair<int, int> bfs(int root) {
-    memset(vis, -1, sizeof(vis));
-
-    queue<int> q; q.push(root);
-
-    int i, far_node = -1, distance = INT_MIN;
-
-    vis[root] = 0;
-
-    for ( ; !q.empty(); ) {
-        int curr = q.front(); q.pop();
-
-        for (i = 0; i < graph[curr].size(); i++) {
-            int next = graph[curr][i];
-
-            if (vis[next] == -1) {
-                vis[next] = vis[curr] + 1;
-                q.push(next);
-
-                if (vis[next] > distance) {
-                    distance = vis[next];
-                    far_node = next;
-                }
-            }
-        }
-    }
-
-    return make_pair(far_node, distance);
-}
+int N;
 
 int main(void) {
-    N = in();
+    for ( ; scanf("%s", str) == 1; ) {
+        N = strlen(str);
 
-    int i;
+        if (1 < N && str[1] == '=') {
+            string value = string(str);
 
-    for (i = 0; i < N - 1; i++) {
-        A = in(), B = in();
+            buff[str[0]] = atof(value.substr(2, value.size() - 2).c_str());
 
-        graph[A].push_back(B);
-        graph[B].push_back(A);
+            printf("%.2lf\n", buff[str[0]]);
+        } else {
+
+        }
     }
-
-    pair<int, int> prev = bfs(1);
-
-    printf("%d\n", bfs(prev.first).second);
-
     return 0;
 }

@@ -46,57 +46,37 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 10007;
-int A, B, N;
-int vis[MAXN];
+const int MAXN = 26909;
 
-vector<int> graph[MAXN];
+int N;
+int used[MAXN];
 
-pair<int, int> bfs(int root) {
-    memset(vis, -1, sizeof(vis));
+vector<int> buff;
 
-    queue<int> q; q.push(root);
+int main(void) {
+    int i, j;
 
-    int i, far_node = -1, distance = INT_MIN;
+    for (i = 0; i < MAXN; i++) used[i] = 1;
 
-    vis[root] = 0;
+    for (i = 2; i < sqrt(MAXN); i++) if (used[i]) {
+        int sum = 0;
 
-    for ( ; !q.empty(); ) {
-        int curr = q.front(); q.pop();
+        //buff.push_back(i);
 
-        for (i = 0; i < graph[curr].size(); i++) {
-            int next = graph[curr][i];
+        for (j = i + 1; j < MAXN; j++) if (used[j]) {
+            sum += 1;
 
-            if (vis[next] == -1) {
-                vis[next] = vis[curr] + 1;
-                q.push(next);
-
-                if (vis[next] > distance) {
-                    distance = vis[next];
-                    far_node = next;
-                }
+            if (sum % i == 0) {
+                used[j] = 0;
             }
         }
     }
 
-    return make_pair(far_node, distance);
-}
+    for (i = 2; i < MAXN; i++) if (used[i]) buff.push_back(i);
 
-int main(void) {
-    N = in();
-
-    int i;
-
-    for (i = 0; i < N - 1; i++) {
-        A = in(), B = in();
-
-        graph[A].push_back(B);
-        graph[B].push_back(A);
+    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+        printf("%d\n", buff[N-1]);
     }
-
-    pair<int, int> prev = bfs(1);
-
-    printf("%d\n", bfs(prev.first).second);
 
     return 0;
 }
