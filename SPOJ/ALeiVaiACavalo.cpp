@@ -92,6 +92,7 @@ int max_flow(int source, int sink) {
 }
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     while(scanf("%d%d%d", &N, &M, &K) == 3) {
         REP(i, MAXN) {
             graph[i].clear();

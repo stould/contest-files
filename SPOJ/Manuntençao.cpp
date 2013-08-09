@@ -1,54 +1,58 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
-#include <math.h>
+#include <set>
+#include <algorithm>
 #include <stdio.h>
-#include <string.h>
+#include <math.h>
+
+#define REP(i, n) for(i = 0; i < (n); i++)
 
 using namespace std;
 
-int f, to, i, j, k, n, m, graph[500][500], vis[500], t = 1;
+int a, b, i, n, m, times, teste, vis[410];
+vector<int> graph[410];
+set<int> ans;
+set<int>::iterator it;
 
-void dfs(int n, int s) {
-    vis[n] = true;
-    for(int tmp = 1; tmp <= n; tmp++) {
-        if(graph[n][tmp] && tmp != s) {
-            dfs(tmp, s);
-        }
+int dfs(int u){
+    int less = vis[u] = times++;
+    int filhos = 0;
+    for(int i = 0; i< graph[u].size(); i++){
+       if(vis[graph[u][i]]==0){
+          filhos++;
+          int m = dfs(graph[u][i]);
+          less = min(less,m);
+          if(vis[u] <= m && (u != 0 || filhos >= 2)){
+              ans.insert(u);
+          }
+       }else{
+          less = min(less, vis[graph[u][i]]);
+       }
     }
+    return less;
 }
-
 int main(void) {
-    freopen("i.in", "r", stdin);
-    while(cin >> n >> m && n > 0 && m > 0) {
-        memset(graph, 0, sizeof(graph));
-        for(i = 0; i < m; i++) {
-            cin >> f >> to;
-            graph[f][to] = graph[to][f] = 1;
+    teste = 1;
+    for( ; scanf("%d%d", &n, &m) == 2 && !(n + m) == 0; ) {
+        REP(i, n+1) { graph[i].clear(); vis[i] = 0; }
+        REP(i, m) {
+            scanf("%d%d", &a, &b); a -= 1; b -= 1;
+            graph[a].push_back(b);
+            graph[b].push_back(a);
         }
-        int count = 0;
-        printf("Teste %d\n", (t++));
-        for(i = 1; i <= n; i++) {
-            bool ok = true;
-            for(j = 1; j <= n; j++) if(i != j) {
-                memset(vis, 0, sizeof(vis));
-                dfs(j, i);
-                for(k = 1; k <= n; k++) {
-                    if(!vis[k] && k != i) {
-                        ok = false;
-                        break;
-                    }
-                }
+        times = 1;
+        ans.clear();
+        dfs(0);
+        printf("Teste %d\n", teste++);
+        if(ans.size() == 0) {
+            printf("nenhum\n");
+        } else {
+            for(it = ans.begin(); it != ans.end(); it++) {
+                printf("%d ", (*it) + 1);
             }
-            if(!ok) {
-                printf("%d ", i);
-                count += 1;
-            }
+            printf("\n");
         }
-        if(!count) {
-            printf("nenhum");
-        }
-        printf("\n\n");
+        printf("\n");
     }
     return 0;
 }

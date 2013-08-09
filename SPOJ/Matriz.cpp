@@ -4,14 +4,15 @@ using namespace std;
 
 typedef long long ll;
 
-int n, p, q, r, s, x, y, ni, nj;
+ll n, p, q, r, s, x, y, ni, nj, ans = 0;
 
 int main(void) {
-    cin >> n >> p >> q >> r >> s >> x >> y >> ni >> nj;
-    for(i = 1; i <= n; i++) {
-
+    for ( ; cin >> n >> p >> q >> r >> s >> x >> y >> ni >> nj;  ) {
+        ans = 0LL;
+        for(int z = 1; z <= n; z++) {
+            ans += (ll) ((p*ni + q*z)%x) * ((r*z + s*nj)%y);
+        }
+        cout << ans << endl;
     }
-    cout << ans << endl;
     return 0;
 }
-
