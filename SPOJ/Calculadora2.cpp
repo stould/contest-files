@@ -46,53 +46,24 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXS = 110;
+map<char, double> buff;
+char str[55];
 
-int T = 1;
-int N, M;
-
-char S1[MAXS], S2[MAXS];
-int dp[MAXS][MAXS];
-
-string track(int i, int j) {
-    if (i == 0 && j == 0) {
-        return "";
-    } else if (i == 0 && j > 0) {
-        return track(i, j - 1) + S2[j - 1];
-    } else if (i > 0 && j == 0) {
-        return track(i - 1, j) + S1[i - 1];
-    } else {
-        if (S1[i - 1] == S2[j - 1]) {
-            return track(i - 1, j - 1) + S1[i - 1];
-        } else {
-            if (dp[i][j - 1] > dp[i - 1][j]) {
-                return track(i, j - 1) + S2[j - 1];
-            } else {
-                return track(i - 1, j) + S1[i - 1];
-            }
-        }
-    }
-}
+int N;
 
 int main(void) {
-    int i, j;
+    for ( ; scanf("%s", str) == 1; ) {
+        N = strlen(str);
 
-    for ( ; scanf("%s%s", S1, S2) == 2 && S1[0] != '#'; ) {
-        N = strlen(S1), M = strlen(S2);
+        if (1 < N && str[1] == '=') {
+            string value = string(str);
 
-        memset(dp, 0, sizeof(dp));
+            buff[str[0]] = atof(value.substr(2, value.size() - 2).c_str());
 
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= M; j++) {
-                if (S1[i - 1] == S2[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
+            printf("%.2lf\n", buff[str[0]]);
+        } else {
+
         }
-
-        printf("Teste %d\n%s\n\n", T++, track(N, M).c_str());
     }
     return 0;
 }

@@ -46,53 +46,37 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXS = 110;
+const int MAXN = 26909;
 
-int T = 1;
-int N, M;
+int N;
+int used[MAXN];
 
-char S1[MAXS], S2[MAXS];
-int dp[MAXS][MAXS];
-
-string track(int i, int j) {
-    if (i == 0 && j == 0) {
-        return "";
-    } else if (i == 0 && j > 0) {
-        return track(i, j - 1) + S2[j - 1];
-    } else if (i > 0 && j == 0) {
-        return track(i - 1, j) + S1[i - 1];
-    } else {
-        if (S1[i - 1] == S2[j - 1]) {
-            return track(i - 1, j - 1) + S1[i - 1];
-        } else {
-            if (dp[i][j - 1] > dp[i - 1][j]) {
-                return track(i, j - 1) + S2[j - 1];
-            } else {
-                return track(i - 1, j) + S1[i - 1];
-            }
-        }
-    }
-}
+vector<int> buff;
 
 int main(void) {
     int i, j;
 
-    for ( ; scanf("%s%s", S1, S2) == 2 && S1[0] != '#'; ) {
-        N = strlen(S1), M = strlen(S2);
+    for (i = 0; i < MAXN; i++) used[i] = 1;
 
-        memset(dp, 0, sizeof(dp));
+    for (i = 2; i < sqrt(MAXN); i++) if (used[i]) {
+        int sum = 0;
 
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= M; j++) {
-                if (S1[i - 1] == S2[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                }
+        //buff.push_back(i);
+
+        for (j = i + 1; j < MAXN; j++) if (used[j]) {
+            sum += 1;
+
+            if (sum % i == 0) {
+                used[j] = 0;
             }
         }
-
-        printf("Teste %d\n%s\n\n", T++, track(N, M).c_str());
     }
+
+    for (i = 2; i < MAXN; i++) if (used[i]) buff.push_back(i);
+
+    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+        printf("%d\n", buff[N-1]);
+    }
+
     return 0;
 }

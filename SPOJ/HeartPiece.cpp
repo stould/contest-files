@@ -66,7 +66,7 @@ Int rec(int pos, int last, int repeated) {
 
     if(ans != -1LL) return ans;
 
-    ans = 0LL;
+    ans = rec(pos + 1, last, repeated);
 
     int now = s[pos] - 'a';
 
@@ -77,9 +77,10 @@ Int rec(int pos, int last, int repeated) {
             ans = (Int) (p(2, 9) * a[now]) + rec(pos + 1, now, repeated + 1);
         }
     }
+
     ans = max(ans, a[now] + rec(pos + 1, now, 1));
 
-    return ans = max(ans, rec(pos + 1, last, repeated));
+    return ans;
 }
 
 void clear (void) {
@@ -95,13 +96,13 @@ void clear (void) {
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
+    //freopen("i.in", "r", stdin);
     scanf("%d", &T);
 
     for ( ; T--; ) {
         scanf("%d%d%d%s", &a[0], &a[1], &a[2], s);
         N = strlen(s); clear();
-        printf("%d\n", rec(0, 5, 0));
+        printf("%lld\n", rec(0, 5, 0));
     }
     return 0;
 }

@@ -1,51 +1,102 @@
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <list>
 #include <queue>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stack>
+#include <memory>
+#include <iomanip>
+#include <numeric>
+#include <functional>
+#include <new>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <climits>
+#include <cctype>
+#include <ctime>
+
+#define REP(i, n) for(int (i) = 0; i < n; i++)
+#define FOR(i, a, n) for(int (i) = a; i < n; i++)
+#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
+#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
+#define sz(n) n.size()
+#define pb(n) push_back(n)
+#define all(n) n.begin(), n.end()
+
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-queue<int> q;
-int n, a, b, graph[10010][10010];
-int dist[10010];
-bool used[10010];
+typedef long long Int;
+typedef unsigned uint;
 
-int bfs(int x) {
-    int ans = 0;
-    q.push(x);
+const int MAXN = 10007;
+int A, B, N;
+int vis[MAXN];
 
-    for(int i = 1; i <= n; i++) { used[i] = false; dist[i] = 0; }
+vector<int> graph[MAXN];
 
-    while(!q.empty()) {
-        int tmp = q.front(); q.pop();
-        used[tmp] = true;
-        ans = max(ans, dist[tmp]);
-        for(int i = 1; i <= n; i++) {
-            if(!used[i] && graph[tmp][i] == 1) {
-                dist[i] = dist[tmp] + 1;
-                q.push(i);
+pair<int, int> bfs(int root) {
+    memset(vis, -1, sizeof(vis));
+
+    queue<int> q; q.push(root);
+
+    int i, far_node = -1, distance = INT_MIN;
+
+    vis[root] = 0;
+
+    for ( ; !q.empty(); ) {
+        int curr = q.front(); q.pop();
+
+        for (i = 0; i < graph[curr].size(); i++) {
+            int next = graph[curr][i];
+
+            if (vis[next] == -1) {
+                vis[next] = vis[curr] + 1;
+                q.push(next);
+
+                if (vis[next] > distance) {
+                    distance = vis[next];
+                    far_node = next;
+                }
             }
         }
     }
-    return ans;
+
+    return make_pair(far_node, distance);
 }
 
 int main(void) {
-    cin >> n;
-    for(int i = 1; i <= n; i++) {
-        for(int j = 1; j <= n; j++) {
-            graph[i][j] = -1;
-        }
+    N = in();
+
+    int i;
+
+    for (i = 0; i < N - 1; i++) {
+        A = in(), B = in();
+
+        graph[A].push_back(B);
+        graph[B].push_back(A);
     }
-    for(int i = 0; i < n - 1; i++) {
-        cin  >> a >> b;
-        graph[a][b] = graph[b][a] = 1;
-    }
-    int ans = 0;
-    for(int i = 1; i <= n; i++) {
-        ans = max(ans, bfs(i));
-    }
-    cout << ans << endl;
+
+    pair<int, int> prev = bfs(1);
+
+    printf("%d\n", bfs(prev.first).second);
+
     return 0;
 }
