@@ -5,7 +5,6 @@
 int i, j, p, n, c, matrix[1010][1010], flag[1010], ans;
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     while(scanf("%d%d%d", &p, &n, &c) == 3 && !(p == 0 && n == 0 && c == 0)) {
         ans = 0;
         memset(flag, 0, sizeof(flag));

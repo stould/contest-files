@@ -43,22 +43,24 @@ typedef long long ll;
 typedef long double ld;
 
 const int MAXN = 25000009;
-int N, v[MAXN];
+int N;
+
+set<int> s;
+set<int>::iterator it;
 
 int main(void) {
     int i;
 
-    for (i = 1; i < MAXN; i++) v[i] = 0;
-
-    for (i = 1; i * i < MAXN; i++) v[i] = 1;
+    for (i = 1; i * i < MAXN; i++) {
+        s.insert(i * i);
+    }
 
     while(scanf("%d", &N) == 1 && N != 0) {
         vector<int> ans;
-        for (i = 1; i <= N; i++) {
-            if(v[i] == 1) {
-                ans.push_back(i);
-            }
+        for (it = s.begin(); it != s.end() && (*it) <= N; it++) {
+            ans.push_back(*it);
         }
+
         for (i = 0; i < ans.size(); i++) {
             if(i == ans.size() - 1) {
                 printf("%d\n", ans[i]);

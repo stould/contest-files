@@ -4,10 +4,9 @@
 
 int i, j, k, c, n, q, p, amount;
 char state;
-int mem[10010];
+int mem[1010];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     for(; ~scanf("%d%d", &c, &n); ) {
         memset(mem, 0, sizeof(mem));
         amount = 0;
@@ -15,30 +14,30 @@ int main(void) {
             scanf(" %c", &state);
             if(state == 'C') {
                 scanf("%d%d", &p, &q);
-                for(j = 0; j <= c; j++) {
-                    if(mem[j] == 0) {
+                for(j = 0; j < c; j++) {
+                    if(mem[j] == 0 && j + q <= c) {
                         k = j;
-                        for(;k <= c && mem[k] == 0; k++) {
-                            if(k - j == q) {
-                                amount += 10;
-                                for(int tmp = j; tmp <= k; tmp++) {
-                                    mem[tmp] = p;
-                                }
-                                goto en;
-                            }
+                        for(;k < j + q; k++) {
+                            if(mem[k] != 0) break;
                         }
-                        j = k;
+                        if(k == j + q) {
+                            amount += 10;
+                            for(k = j; k < j + q; k++) {
+                                mem[k] = p;
+                            }
+                            break;
+                        }
                     }
                 }
             } else {
                 scanf("%d", &p);
-                for(j = 0; j <= c; j++) {
+                for(j = 0; j < c; j++) {
                     if(mem[j] == p) mem[j] = 0;
                 }
             }
-            en:;
         }
         printf("%d\n", amount);
     }
     return 0;
 }
+
