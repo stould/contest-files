@@ -40,6 +40,7 @@ typedef long double ld;
 int n, i, j, x[110], y[110], ans;
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     for( ; scanf("%d", &n) == 1 && n != 0; ) {
         REP(i, n) scanf("%d", &x[i]);
         REP(i, n) scanf("%d", &y[i]);

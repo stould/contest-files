@@ -65,6 +65,7 @@ void build (void) {
 }
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     int i, x;
 
     build ();

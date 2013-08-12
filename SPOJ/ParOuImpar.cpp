@@ -6,7 +6,7 @@ int n, i, outcome_a, outcome_b, t = 1;
 char name_a[11], name_b[11];
 
 int main(void) {
-  /*  freopen("i.in", "r", stdin); */
+    freopen("i.in", "r", stdin);
     while(scanf("%d", &n) && n > 0) {
         scanf("%s %s", name_a, name_b);
         int sum_a = 0, sum_b = 0;
