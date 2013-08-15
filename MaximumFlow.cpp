@@ -13,6 +13,12 @@ using namespace std;
 vector<int> graph[MAXN];
 int capacity[MAXN][MAXN];
 
+void add_edge(int u, int v, int c) {
+    graph[u].push_back(v);
+    graph[v].push_back(u);
+    capacity[u][v] = c;
+}
+
 int max_flow(int source, int sink) {
     int residual[MAXN][MAXN]; memset(residual, 0, sizeof(residual));
     int prev[MAXN], actual[MAXN];
