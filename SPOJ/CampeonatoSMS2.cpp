@@ -46,17 +46,16 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 300;
+const int MAXN = 285;
 const double EPS = 1e-7;
 
 int N;
 string buff, str;
 
-double dp[MAXN][7][7][7][7];
-double dist[15][15];
+double dp[MAXN][5][5][5][5];
 
 map<char, pair<int, int> > belong;
-map<char, int> types;
+int types[512];
 
 int decode(int a, int b) {
     if (a == 1 && b == 2) return 2;
@@ -75,10 +74,10 @@ int decode(int a, int b) {
 void build(void) {
     int i, j, k, l;
 
-    belong.clear(); types.clear();
+    belong.clear();
 
-    belong['a'] = belong['b'] = belong['c'] = make_pair(1, 1);
-    belong['d'] = belong['e'] = belong['f'] = make_pair(1, 2);
+    belong['a'] = belong['b'] = belong['c'] = make_pair(1, 2);
+    belong['d'] = belong['e'] = belong['f'] = make_pair(1, 3);
     belong['g'] = belong['h'] = belong['i'] = make_pair(2, 1);
     belong['j'] = belong['k'] = belong['l'] = make_pair(2, 2);
     belong['m'] = belong['n'] = belong['o'] = make_pair(2, 3);
@@ -100,17 +99,7 @@ void build(void) {
 void clear(void) {
     int i, j, k, l, m;
 
-    for (i = 0; i < MAXN; i++) {
-        for (j = 0; j < 7; j++) {
-            for (k = 0; k < 7; k++) {
-                for (l = 0; l < 7; l++) {
-                    for (m = 0; m < 7; m++) {
-                        dp[i][j][k][l][m] = -1.0;
-                    }
-                }
-            }
-        }
-    }
+    memset(dp, -100.0, sizeof(dp));
 }
 
 int same(char a, char b) {
@@ -122,23 +111,19 @@ double func(int index, int l_i, int l_j, int r_i, int r_j) {
 
     double& ans = dp[index][l_i][l_j][r_i][r_j];
 
-    if (ans != -1.0) return ans;
+    if (ans >= 0) return ans;
 
     pair<int, int> p = belong[str[index]];
 
-    if (p.first == l_i && p.second == l_j) return ans = func(index + 1, l_i, l_j, r_i, r_j);
-    if (p.first == r_i && p.second == r_j) return ans = func(index + 1, l_i, l_j, r_i, r_j);
+    ans = (double) hypot(l_i - p.first, l_j - p.second) + func(index + 1, p.first, p.second, r_i, r_j);
+    chmin(ans, (double) hypot(r_i - p.first, r_j - p.second) + func(index + 1, l_i, l_j, p.first, p.second));
 
-    double go_l = (double) hypot(l_i - p.first, l_j - p.second) + (double) func(index + 1, p.first, p.second, r_i, r_j);
-    double go_r = (double) hypot(r_i - p.first, r_j - p.second) + (double) func(index + 1, l_i, l_j, p.first, p.second);
-
-    return ans = min(go_l, go_r);
-
+    return ans;
 }
 
 int main(void) {
     freopen("i.in", "r", stdin);
-    //freopen("o.ot", "w", stdout);
+    /freopen("o.ot", "w", stdout);
     int i;
 
     build();
@@ -159,8 +144,9 @@ int main(void) {
             clicks += (double) types[buff[i]];
         }
 
-        printf("%.2lf\n", ((double) func(0, 2, 1, 2, 3) * 0.033333333) + ((double) clicks * 0.20));
+        double ans = func(0, 2, 1, 2, 3) / 30.0 + clicks * 0.20;
+
+        cout << setprecision(2) << fixed << ans << "\n";
     }
     return 0;
 }
-

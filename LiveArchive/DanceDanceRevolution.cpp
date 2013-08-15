@@ -46,7 +46,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 400;
+const int MAXN = 10010;
 
 int N;
 
@@ -65,7 +65,8 @@ vector<int> split (string str) {
     return ans;
 }
 
-int dp[MAXN][5][5];
+Int dp[MAXN][5][5];
+int V[MAXN];
 
 int move(int f, int t) {
     if (f == 0) return 2;
@@ -77,31 +78,34 @@ int move(int f, int t) {
     return 3;
 }
 
-int func(vector<int>& V, int index, int left, int right) {
-    if (index == N) return 0;
+Int func(int index, int left, int right) {
+    if (index == N) return 0LL;
 
-    int& ans = dp[index][left][right];
+    Int& ans = dp[index][left][right];
 
     if (ans != -1) return ans;
 
-    ans = move(left, V[index]) + func(V, index + 1, V[index], right);
 
-    ans = min(ans, move(right, V[index]) + func(V, index + 1, left, V[index]));
+    ans = 100101010010010LL;
+
+    chmin(ans, move(left, V[index]) + func(index + 1, V[index], right));
+
+    chmin(ans, move(right, V[index]) + func(index + 1, left, V[index]));
 
     return ans;
 }
 
 int main(void) {
-    for ( ; ; ) {
-        vector<int> V = split(string(gets(str)));
+    int a;
 
-        N = V.size() - 1;
+    while( scanf( "%d", &a ), a ) {
+        V[0] = a;
+        N = 0;
+        while ( scanf( "%d", &V[++N]), V[N] );
 
-        if (N == 0) break;
+        memset(dp, -1LL, sizeof(dp));
 
-        memset(dp, -1, sizeof(dp));
-
-        printf("%d\n", func(V, 0, 0, 0));
+        printf("%lld\n", func(0, 0, 0));
     }
     return 0;
 }

@@ -46,16 +46,16 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 170;
+const int MAXN = 300;
 
 int N;
 string buff, str;
 
-double dp[MAXN][15][15];
-double dist[15][15];
+double dp[MAXN][12][12];
+double dist[12][12];
 
-map<char, int> belong;
-map<char, int> types;
+int belong[512];
+int types[512];
 
 int decode(int a, int b) {
     if (a == 1 && b == 2) return 2;
@@ -72,8 +72,39 @@ int decode(int a, int b) {
 }
 
 void build(void) {
-    int i, j, k, l;
+}
 
+void clear(void) {
+    int i, j, k;
+    memset(dp, -100.0, sizeof(dp));
+}
+
+int same(char a, char b) {
+    return belong[a] == belong[b];
+}
+
+double move_cost (int a, char b) {
+    return dist[a][belong[b]];
+}
+
+double func(int index, int l, int r) {
+    if (index >= str.size()) return 0.0;
+
+    double& ans = dp[index][l][r];
+
+    if (ans >= 0) return ans;
+
+    double l_cost = move_cost(l, str[index]);
+    double r_cost = move_cost(r, str[index]);
+
+    ans = l_cost + func(index + 1, belong[str[index]], r);
+
+    ans = min(ans, r_cost + func(index + 1, l, belong[str[index]]));
+
+    return ans;
+}
+
+int main(void) {
     belong['a'] = belong['b'] = belong['c'] = 2;
     belong['d'] = belong['e'] = belong['f'] = 3;
     belong['g'] = belong['h'] = belong['i'] = 4;
@@ -92,6 +123,8 @@ void build(void) {
     types['c'] = types['f'] = types['i'] = types['l'] = types['o'] = types['r'] = types['v'] = types['y'] = 3;
     types['s'] = types['z'] = 4;
 
+    int i, j, k, l;
+
     for (i = 1; i <= 4; i++) {
         for (j = 1; j <= 3; j++) {
             for (k = 1; k <= 4; k++) {
@@ -100,58 +133,12 @@ void build(void) {
 
                     if (id_a == -1 || id_b == -1) continue;
 
-                    //printf("%d %d - %.2lf\n", decode(i, j), decode(k, l), hypot(i - k, j - l));
-
                     dist[id_a][id_b] = (double) hypot(i - k, j - l);
                 }
             }
         }
     }
-}
 
-void clear(void) {
-    int i, j, k;
-
-    for (i = 0; i < MAXN; i++) {
-        for (j = 0; j < 15; j++) {
-            for (k = 0; k < 15; k++) {
-                dp[i][j][k] = -1.0;
-            }
-        }
-    }
-}
-
-int same(char a, char b) {
-    return belong[a] == belong[b];
-}
-
-double move_cost (int a, char b) {
-    return dist[a][belong[b]];
-}
-
-double func(int index, int l, int r) {
-    if (index >= str.size()) return 0.0;
-
-    double& ans = dp[index][l][r];
-
-    if (ans != -1.0) return ans;
-
-    double l_cost = move_cost(l, str[index]);
-    double r_cost = move_cost(r, str[index]);
-
-    ans = l_cost + func(index + 1, belong[str[index]], r);
-
-    ans = min(ans, r_cost + func(index + 1, l, belong[str[index]]));
-
-    return ans;
-}
-
-int main(void) {
-    freopen("i.in", "r", stdin);
-    //freopen("o.ot", "w", stdout);
-    int i;
-
-    build();
 
     for ( ; getline(cin, buff); ) {
         clear();
@@ -169,7 +156,11 @@ int main(void) {
             clicks += (double) types[buff[i]];
         }
 
-        printf("%.2lf\n", (func(0, 4, 6) / 30.0) + clicks * 0.20);
+        N = str.size();
+
+        double ans = func(0, 4, 6) / 30.0 + clicks * 0.20;
+
+        printf("%.2lf\n", ans);
     }
     return 0;
 }
