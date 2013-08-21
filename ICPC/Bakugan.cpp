@@ -10,8 +10,6 @@
 using namespace std;
 
 int main() {
-    freopen("in.in", "r", stdin);
-    freopen("ot.out", "w", stdout);
     int r, mpoints, lpoints, temp, ct = 1;
     stringstream ss;
     string buff;
