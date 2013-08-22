@@ -1,58 +1,41 @@
 #include <stdio.h>
+#include <algorithm>
 
-int main(){
-   int width, height, slotVazios, x1, x2, y1, y2, xMenor, xMaior, yMenor, yMaior, subpartes, i,j, k, board[550][550];
-   scanf( "%i%i%i", &width, &height, &subpartes );
-   while( height != 0 ){
-      slotVazios = width * height;
-      for( i = 0; i < width; i++) {
-         for( j = 0; j < height; j++) {
-            board[i][j] = 0;
-        }
-      }
-      for(i = 0; i < subpartes; i++) {
-         scanf( "%i%i%i%i", &x1, &y1, &x2, &y2);
-         if( x1 <= x2 ){
-            xMenor = x1;
-            xMaior = x2;
-         }
-         else{
-            xMenor = x2;
-            xMaior = x1;
-         }
-         if( y1 <= y2 ){
-            yMenor = y1;
-            yMaior = y2;
-         }
-         else{
-            yMenor = y2;
-            yMaior = y1;
-         }
-         for(j = xMenor; j<= xMaior; j++  ){
-            for( k = yMenor; k <= yMaior; k++ ){
-               if( board[j-1][k-1] == 0 ){
-                  board[j-1][k-1] = 1;
-                  slotVazios--;
-               }
+using namespace std;
+
+int N, M, P;
+int slot, x1, x2, y1, y2;
+int subpartes, i,j, k, board[550][550];
+
+int main(void) {
+    for ( ; scanf("%d%d%d", &N, &M, &P) == 3; ) {
+        slot = N * M;
+        for (i = 0; i < N; i++) {
+            for(j = 0; j < M; j++) {
+                board[i][j] = 0;
             }
-         }
-      }
+        }
 
-      switch( slotVazios ){
-         case 0:
-            printf( "There is no empty spots.\n" );
-            break;
-         case 1:
-            printf( "There is one empty spot.\n" );
-            break;
-         default:
-            printf( "There are %i empty spots.\n", slotVazios );
-            break;
-      }
+        for (i = 0; i < P; i++) {
+            int d = scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
 
-      scanf( "%i%i%i", &width, &height, &subpartes );
-   }
+            for (j = min(x1, x2); j <= max(x1, x2); j++) {
+                for (k = min(y1, y2); k <= max(y1, y2); k++) {
+                    if (board[j-1][k-1] == 0) {
+                        board[j-1][k-1] = 1;
+                        slot--;
+                    }
+                }
+            }
+        }
 
-
-   return 0;
+        if (slot == 0) {
+            printf("There is no empty spots.\n");
+        } else if (slot == 1) {
+            printf("There is one empty spot.\n");
+        } else {
+            printf("There are %d empty spots.\n", slot);
+        }
+    }
+    return 0;
 }
