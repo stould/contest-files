@@ -39,13 +39,16 @@ typedef long long Int;
 typedef unsigned uint;
 
 const int MAXN = 110;
-const int INF = 10010010;
+const int INF = 1001000010;
 
 int T, N, M, a, b, c;
-int dp[MAXN][MAXN];
+
+int dist[MAXN][MAXN];
+int path[MAXN][MAXN];
 
 int main(void) {
     freopen("i.in", "r", stdin);
+    //freopen("o.out", "w", stdout);
 
     int i, j, k;
 
@@ -54,37 +57,45 @@ int main(void) {
     for ( ; T--; ) {
         N = in(), M = in();
 
-        for (i = 0; i < MAXN; i++) {
-            for (j = 0; j < MAXN; j++) {
-                dp[i][j] = INF;
+        for (i = 1; i <= N; i++) {
+            for (j = 1; j <= N; j++) {
+                dist[i][j] = INF;
+                path[i][j] = 0;
             }
         }
 
         for(i = 0; i < M; i++) {
             a = in(), b = in(), c = in();
-            dp[a][b] = dp[b][a] = c;
+            dist[a][b] = c;
+            if (a == 1 || b == 1) {
+                dist[b][a] = c;
+            }
+            path[a][b] = path[b][a] = 2;
         }
 
         for (k = 1; k <= N; k++) {
             for (i = 1; i <= N; i++) {
                 for (j = 1; j <= N; j++) {
-                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k][j]);
+                    if (j != 1 || (j == 1 && (path[i][k] + path[k][j] - 1) % 2 == 1)) {
+                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
+                            path[i][j] = path[i][k] + path[k][j] - 1;
+                        }
+                    }
                 }
             }
         }
 
-        int x = INT_MAX;
-
-        for (i = 1; i <= N; i++) chmin(x, dp[i][i]);
-
-        if (x == INT_MAX) {
-            puts("impossivel");
-        } else {
-            printf("%d\n", x);
+        for (i = 2; i <= N; i++) {
+            printf("%d %d %d\n", i, dist[1][i], path[1][i]);
         }
 
-
-
+        if (dist[1][1] == INF) {
+            puts("impossivel");
+        } else {
+            printf("%d - %d\n", dist[1][1], path[1][1]);
+        }
     }
+
     return 0;
 }

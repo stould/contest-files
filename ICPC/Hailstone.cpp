@@ -7,8 +7,6 @@
 using namespace std;
 
 int main() {
-    freopen("in.in", "r", stdin);
-    freopen("cout.out", "w", stdout);
     int n;
     cin >> n;
     while(n != 0) {

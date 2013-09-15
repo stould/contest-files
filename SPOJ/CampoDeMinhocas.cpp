@@ -1,40 +1,98 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <list>
+#include <queue>
+#include <stack>
+#include <memory>
+#include <iomanip>
+#include <numeric>
+#include <functional>
+#include <new>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <climits>
+#include <cctype>
+#include <ctime>
 
-int i, j, k, n, m, maze[1010][1010], dp[1010][1010];
+#define REP(i, n) for(int (i) = 0; i < n; i++)
+#define FOR(i, a, n) for(int (i) = a; i < n; i++)
+#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
+#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
+#define sz(n) n.size()
+#define pb(n) push_back(n)
+#define all(n) n.begin(), n.end()
 
-int max(int a, int b) { return a > b ? a : b; }
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
+using namespace std;
+
+typedef long long Int;
+typedef unsigned uint;
+
+const int MAXN = 1007;
+
+int N, M, T = 1;
+int sp[MAXN][MAXN];
+int dp[MAXN][MAXN][5];
+
+int was[MAXN][MAXN][5];
+
+int func(int i, int j, int kind) {
+    if (i == N - 1 && j == M - 1) {
+        return sp[i][j];
+    }
+    if (was[i][j][kind] == 1) {
+        return dp[i][j][kind];
+    }
+
+    int& ans = dp[i][j][kind] = -(INT_MAX/2);
+
+    was[i][j][kind] = 1;
+
+    if (i + 1 < N) {
+        chmax(ans, sp[i][j] + func(i + 1, j, 0));
+    }
+    if (j + 1 < M && kind != 2) {
+        chmax(ans, sp[i][j] + func(i, j + 1, 1));
+    }
+    if (j - 1 >= 0 && kind != 1) {
+        chmax(ans, sp[i][j] + func(i, j - 1, 2));
+    }
+
+    return ans;
+}
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    while(scanf("%d%d", &n, &m) == 2 && !(n == 0 && m == 0)) {
-        memset(dp, 0, sizeof(dp)); memset(maze, 0, sizeof(maze));
-        for(i = 0; i < n; i++) {
-            for(j = 0; j < m; j++) {
-                scanf("%d", &maze[i][j]);
-            }
-        }
-        dp[0][0] = maze[0][0];
-        for (i = 0; i < n - 1; i++) {
-            for (j = 0; j < m; j++) {
-                if (i == 0 && j != 0) {
-                    continue;
-                }
-                int leftsum = 0;
-                for (k = j - 1; k >= 0; k--) {
-                    leftsum += maze[i][k];
-                    dp[i + 1][k] = max(dp[i + 1][k], dp[i][j] + leftsum + maze[i + 1][k]);
-                }
-                int rightsum = 0;
-                for (k = j + 1; k < m; k++) {
-                    rightsum += maze[i][k];
-                    dp[i + 1][k] = max(dp[i + 1][k], dp[i][j] + rightsum + maze[i + 1][k]);
+    int i, j, k;
+
+    for ( ; scanf("%d%d", &N, &M) == 2 && N + M != 0; ) {
+        for (i = 0; i < N; i++) {
+            for (j = 0; j < M; j++) {
+                scanf("%d", &sp[i][j]);
+                for (k = 0; k < 5; k++) {
+                    dp[i][j][k] = was[i][j][k] = 0;
                 }
             }
         }
-        printf("%d\n", dp[n-1][m-1]);
+
+        printf("Teste %d\n%d\n\n", T++, func(0, 0, 0));
     }
     return 0;
 }
