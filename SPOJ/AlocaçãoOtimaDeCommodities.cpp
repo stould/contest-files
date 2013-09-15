@@ -42,12 +42,44 @@ T lcm(T a, T b) {
     return (a * b / __gcd(a, b));
 }
 
+int readInt(void) {
+	bool minus = false;
+	int result = 0;
+	char ch;
+
+	ch = getchar();
+
+	while (1) {
+		if (ch == '-') break;
+		if (ch >= '0' && ch <= '9') break;
+		ch = getchar();
+	}
+	if (ch == '-') {
+	    minus = true;
+    } else {
+        result = ch-'0';
+    }
+
+	while (1) {
+		ch = getchar();
+		if (ch < '0' || ch > '9') break;
+		result = result * 10 + (ch - '0');
+	}
+	if (minus)
+		return -result;
+	else
+		return result;
+}
+
 int main(void) {
-    scanf("%d", &T);
+    T = readInt();
     for( ; T--; ) {
-        scanf("%d %d %d", &I, &F, &N);
+        I = readInt();
+        F = readInt();
+        N = readInt();
         vector<int> v(N);
-        REP(i, N) scanf("%d", &v[i]);
+
+        REP(i, N) v[i] = readInt();
 
         ll ans = 0LL;
 

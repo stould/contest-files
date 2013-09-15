@@ -76,7 +76,13 @@ void build(void) {
 
 void clear(void) {
     int i, j, k;
-    memset(dp, -100.0, sizeof(dp));
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < 12; j++) {
+            for (k = 0; k < 12; k++) {
+                dp[i][j][k] = -100.0;
+            }
+        }
+    }
 }
 
 int same(char a, char b) {
@@ -105,6 +111,7 @@ double func(int index, int l, int r) {
 }
 
 int main(void) {
+    ios_base::sync_with_stdio(false);
     belong['a'] = belong['b'] = belong['c'] = 2;
     belong['d'] = belong['e'] = belong['f'] = 3;
     belong['g'] = belong['h'] = belong['i'] = 4;
@@ -141,8 +148,6 @@ int main(void) {
 
 
     for ( ; getline(cin, buff); ) {
-        clear();
-
         str = string(1, buff[0]);
 
         double clicks = types[buff[0]];
@@ -157,10 +162,11 @@ int main(void) {
         }
 
         N = str.size();
+        clear();
 
         double ans = func(0, 4, 6) / 30.0 + clicks * 0.20;
 
-        printf("%.2lf\n", ans);
+        cout << setprecision(2) << fixed << ans << "\n";
     }
     return 0;
 }

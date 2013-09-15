@@ -45,46 +45,30 @@ using namespace std;
 
 typedef long long Int;
 typedef unsigned uint;
-typedef unsigned long long uInt;
 
-const uInt MOD = 1000000009;
-const int MAXN = 10007;
-
-int T;
-int N, N_N;
-
-char str[MAXN];
+const int MAXN = 1507;
+int N;
+int x[MAXN];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    T = in();
-
-    int i, j, k;
-
-    for ( ; T--; ) {
-        N = in();
-
-        map<uInt, int> mp;
-        int ans_cnt = 0, ans_len;
-
+    int i;
+    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
         for (i = 0; i < N; i++) {
-            scanf("%s", str); N_N = strlen(str);
-
-            for (j = 0; j < N_N; j++) {
-                uInt hash = 0LL;
-                for (k = j; k < N_N; k++) {
-                    hash = ((hash * 31) ^ (str[k] - 'A')) % MOD;
-                    mp[hash] += 1;
-
-                    if (mp[hash] > ans_cnt) {
-                        ans_cnt = mp[hash], ans_len = k - j + 1;
-                    }
-                }
-            }
+            x[i] = in();
         }
 
-        printf("%d\n", ans_len);
+        sort (x, x + N);
 
+        int ok = 1;
+
+        for (i = 1; i < N; i++) {
+            if (x[i] - x[i - 1] > 200) ok = 0;
+        }
+
+        if (((1422 - x[N-1]) << 1) > 200) ok = 0;
+
+        if (ok) puts("POSSIBLE");
+        else puts("IMPOSSIBLE");
     }
     return 0;
 }

@@ -149,40 +149,74 @@ void split(vector<string>& v, const string& s) {
     }
 }
 //**********************************************
-KMP - Pesquisa em String
-int[] preprocess(String s) {
-	int[] b = new int[s.length()+1];
-	int i = 0, j = -1;
-	b[i] = j;
-	while(i < s.length()) {
-		 while(j >= 0 && s.charAt(i) != s.charAt(j)) {
-			 j = b[j];
-		 }
-		 i += 1;
-		 j += 1;
-		 if(i >= s.length()) break;
-		 b[i] = j;
-	}
-	return b;
-}
-int KMP(String haysack, String needle) {
-	int check = 0;
-	int[] b = preprocess(haysack);
-	int i = 0, j = 0;
-	while(i < haysack.length()) {
-		while(j >= 0 && haysack.charAt(i) != needle.charAt(j))
-			j = b[j];
-		i += 1;
-		j += 1;
-		if(j == needle.length()) {
-			check += 1;
-			//i - needle.length()
-			j = b[j];
-		}
-	}
-	return check;
+KMP
+vector<int> KMP(string S, string K) {
+    vector<int> T(K.size() + 1, -1);
+    vector<int> matches;
+
+    if(K.size() == 0) {
+        matches.push_back(0);
+        return matches;
+    }
+    for(int i = 1; i <= K.size(); i++) {
+        int pos = T[i - 1];
+        while(pos != -1 && K[pos] != K[i - 1]) pos = T[pos];
+        T[i] = pos + 1;
+    }
+
+    int sp = 0;
+    int kp = 0;
+    while(sp < S.size()) {
+        while(kp != -1 && (kp == K.size() || K[kp] != S[sp])) kp = T[kp];
+        kp++;
+        sp++;
+        if(kp == K.size()) matches.push_back(sp - K.size());
+    }
+
+    return matches;
 }
 //**********************************************
+Suffix Array
+#define max 100010
+
+int delta, len, SA[max], iSA[max], val[max], tval[max];
+char s[max];
+bool cmp(const int& a, const int& b) {
+    return val[a+delta] < val[b+delta];
+}
+
+void build_SA() {
+    int i, j;
+    for (i=0; i<len; i++) val[i] = s[i];
+    for (i=0; i<len; i++) SA[i] = i;
+
+    delta = 0;
+    sort(SA, SA+len, cmp);
+
+    for(delta = 1; ; delta *= 2) {
+        bool found = false;
+        for(i = 0; i < len; i++) {
+            for(j = i + 1; j < len; j++) if(val[SA[i]] != val[SA[j]]) break;
+            if (j > i+1) {
+                found = true;
+                sort(SA+i, SA+j, cmp);
+            }
+            i = j - 1;
+        }
+
+        if(!found) break;
+        tval[SA[0]] = 0;
+        for(i = 1; i < len; i++) {
+            tval[SA[i]] = tval[SA[i-1]];
+            if(val[SA[i]] == val[SA[i-1]] && val[SA[i]+delta] == val[SA[i-1]+delta]);
+            else tval[SA[i]]++;
+        }
+        memcpy(val, tval, len * sizeof(int));
+    }
+}
+
+build_SA();
+for (int i = 0; i < len; i++) printf("%d\n", SA[i]);
 /* ******************************* GRAPH ************************* */
 //Pesquisa em profundidade simples em Grafo - [DFS]:
 void dfs(int x) {
@@ -1084,6 +1118,64 @@ vector<point> convex_hull(vector<point> &P) {
     H.resize(k);
     return H;
 }
+//***************************************
+//Biblioteca de fracoes
+struct fraction {
+    int num, denom;
+    fraction(int num, int denom): num(num), denom(denom){
+    }
+    fraction() { num = 0; denom = 0; }
+    void reduce(fraction& f) {
+        int l = gcd(f.num, f.denom);
+        f.num = f.num/l;
+        f.denom = f.denom/l;
+    }
+    fraction operator+(const fraction& f) {
+        fraction ans;
+        int l = lcm(denom, f.denom);
+        ans.num = ((l / denom) * num) + ((l / f.denom) * f.num);
+        ans.denom = l;
+        reduce(ans);
+        return ans;
+    }
+    fraction operator-(const fraction& f) {
+        fraction ans;
+        ans.num = num - f.num;
+        ans.denom = denom - f.denom;
+        reduce(ans);
+        return ans;
+    }
+    fraction operator*(const fraction& f) {
+        fraction ans;
+        ans.num = num * f.num;
+        ans.denom = denom * f.denom;
+        reduce(ans);
+        return ans;
+    }
+    fraction operator/(const fraction& f) {
+        fraction ans;
+        ans.num = num * f.denom;
+        ans.denom = denom * f.num;
+        reduce(ans);
+        return ans;
+    }
+    bool operator!=(const fraction& f) {
+        return num != f.num || denom != f.denom;
+    }
+    bool operator==(const fraction& f) {
+        return num == f.num && denom == f.denom;
+    }
+    friend ostream &operator<<(ostream &out, fraction f) {
+        out << f.num << "/" << f.denom << "\n";
+        return out;
+    }
+    friend istream &operator>>(istream &in, fraction f) {
+        in >> f.num >> f.denom;
+        return in;
+    }
+};
+
+
 //***************************************
 //Polygon Area
 int area = 0;
