@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -7,15 +6,12 @@
 #include <map>
 #include <list>
 #include <queue>
-#include <deque>
 #include <stack>
 #include <memory>
 #include <iomanip>
 #include <numeric>
 #include <functional>
 #include <new>
-#include <utility>
-#include <valarray>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -41,40 +37,44 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 100010;
-int N, L, now, num, minimo;
+int N;
+
+string str, buf;
 
 int main(void) {
-    //ios::sync_with_stdio(false);
-    freopen("i.in", "r", stdin);
-    freopen("o.ot", "w", stdout);
+    cin >> N;
 
-    while(cin >> N >> L && (N+L != 0)) {
-        deque<int> mario;
-        minimo = 1;
+    int i, test;
 
-        FOR(i, 0, L) {
-            cin >> now;
-            if(i == 0) {
-                mario.push_back(now);
-            }
-            while(!mario.empty() && (now - mario.front() >= N)) {
-                mario.pop_front();
-            }
-            if(i != 0) {
-                mario.push_back(now);
-            }
+    getline(cin, str);
 
-            if(mario.size() > minimo) {
-                minimo = (int) mario.size();
+
+    for (test = 1; test <= N; test++) {
+        getline(cin, str);
+        getline(cin, buf);
+
+        printf("%d ", test);
+
+        for (i = 0; i < (int) str.size(); i++) {
+            if (str[i] != ' ') {
+                printf("%c", buf[str[i] - 'A']);
+            } else {
+                printf(" ");
             }
         }
-        cout << N - minimo << endl;
+
+        printf("\n");
     }
+
     return 0;
 }
+

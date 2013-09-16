@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -7,15 +6,12 @@
 #include <map>
 #include <list>
 #include <queue>
-#include <deque>
 #include <stack>
 #include <memory>
 #include <iomanip>
 #include <numeric>
 #include <functional>
 #include <new>
-#include <utility>
-#include <valarray>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -41,40 +37,23 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 100010;
-int N, L, now, num, minimo;
+int N;
+
+string ans[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 int main(void) {
-    //ios::sync_with_stdio(false);
-    freopen("i.in", "r", stdin);
-    freopen("o.ot", "w", stdout);
+    cin >> N;
 
-    while(cin >> N >> L && (N+L != 0)) {
-        deque<int> mario;
-        minimo = 1;
+    cout << ans[N - 1] << "\n";
 
-        FOR(i, 0, L) {
-            cin >> now;
-            if(i == 0) {
-                mario.push_back(now);
-            }
-            while(!mario.empty() && (now - mario.front() >= N)) {
-                mario.pop_front();
-            }
-            if(i != 0) {
-                mario.push_back(now);
-            }
-
-            if(mario.size() > minimo) {
-                minimo = (int) mario.size();
-            }
-        }
-        cout << N - minimo << endl;
-    }
     return 0;
 }

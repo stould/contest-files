@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -7,15 +6,12 @@
 #include <map>
 #include <list>
 #include <queue>
-#include <deque>
 #include <stack>
 #include <memory>
 #include <iomanip>
 #include <numeric>
 #include <functional>
 #include <new>
-#include <utility>
-#include <valarray>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -41,40 +37,45 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 100010;
-int N, L, now, num, minimo;
+double A, B, C, D;
 
 int main(void) {
-    //ios::sync_with_stdio(false);
-    freopen("i.in", "r", stdin);
-    freopen("o.ot", "w", stdout);
+    cin >> A >> B >> C >> D;
 
-    while(cin >> N >> L && (N+L != 0)) {
-        deque<int> mario;
-        minimo = 1;
+    double media = (A * 2.0 + B * 3.0 + C * 4.0 + D) / 10.0;
 
-        FOR(i, 0, L) {
-            cin >> now;
-            if(i == 0) {
-                mario.push_back(now);
-            }
-            while(!mario.empty() && (now - mario.front() >= N)) {
-                mario.pop_front();
-            }
-            if(i != 0) {
-                mario.push_back(now);
-            }
+    printf("Media: %.1lf\n", media);
 
-            if(mario.size() > minimo) {
-                minimo = (int) mario.size();
-            }
+    if (media >= 7.0) {
+        puts("Aluno aprovado.");
+    } else if (media < 5.0) {
+        puts("Aluno reprovado.");
+    } else {
+        puts("Aluno em exame.");
+
+        double add; cin >> add;
+
+        double media_exame = (media + add) / 2.0;
+
+        printf("Nota do exame: %.1lf\n", add);
+
+        if (media_exame >= 5.0) {
+            puts("Aluno aprovado.");
+        } else {
+            puts("Aluno reprovado.");
         }
-        cout << N - minimo << endl;
+
+        printf("Media final: %.1lf\n", media_exame);
     }
+
     return 0;
 }
