@@ -39,45 +39,18 @@ template<typename T> T lcm(T a, T b) {
 
 template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
 template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 35;
-
-int N;
-Int dp[MAXN][2*MAXN]; //Number of possibilities with i integer pills and j splitted
-
-Int rec(int i, int s) {
-    if (i == 0 && s == 0) return 0;
-    
-    if (dp[i][s] != -1) return dp[i][s];
-
-    int& ret = dp[i][s] = 0;
-
-    if (i - 1 >= 0) {
-        ret += 1 + rec(i - 1, s + 1);
-    }
-    if (s - 1 >= 0) {
-        ret += 1 + rec(i, s - 1);
-    }
-
-    return ret;
-}
+int A, B, C;
 
 int main(void) {
-    int i, j;
+    A = in(), B = in(), C = in();
 
-    for (i = 0; i < MAXN; i++) {
-        for (j = 0; j < 2 * MAXN; j++) {
-            dp[i][j] = -1;
-        }
-    }
-
-    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
-        
-    }
+    cout << setprecision(1) << fixed << "MEDIA = " << (A * 2.0 + B * 3.0 + C * 5.0) / 10.0 << "\n";
     return 0;
 }
