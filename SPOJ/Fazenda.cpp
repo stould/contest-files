@@ -42,15 +42,21 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 
-const int MAXN = 1007;
-int N, X, Y, L, C, matrix[MAXN][MAXN], vis[MAXN][MAXN];
+const int MAXN = 1707;
+
+int X[60], Y[60], L[60], C[60];
+
+int N, matrix[MAXN][MAXN], vis[MAXN][MAXN];
+
 int dx[4] = {0, 0, -1, 1};
 int dy[4] = {1, -1, 0, 0};
 
 int main(void) {
     freopen("i.in", "r", stdin);
+    int i, j, k, x;
+
     for( ; scanf("%d", &N) && N != 0; ) {
-        int area = 0, perimeter = 0;
+        int area = 0;
 
         for (i = 0; i < MAXN; i++) {
             for (j = 0; j < MAXN; j++) {
@@ -58,23 +64,38 @@ int main(void) {
             }
         }
 
-        REP(i, N) {
-            scanf("%d%d%d%d", &X, &Y, &L, &C);
-            for (i = X; i < X + L; i++) {
-                for (j = Y; j < Y + C; j++) {
+        set<pair<int, int> > per;
 
+        for (x = 0; x < N; x++) {
+            scanf("%d%d%d%d", &X[x], &Y[x], &L[x], &C[x]);
+            X[x] += 1; Y[x] += 1;
+            for (i = MAXN - X[x] - 1; i > MAXN - X[x] - L[x] - 1; i--) {
+                for (j = MAXN - Y[x] - 1; j > MAXN - Y[x] - C[x] - 1; j--) {
+                    if (!matrix[i][j]) {
+                        matrix[i][j] += 1;
+                        area += 1;
+                    }
+
+
+
+                    if (per.count(make_pair(i, j))) {
+                        per.erase(make_pair(i, j));
+                    }
+
+                    for (x = 0; x < 4; x++) {
+                        int ni = i + dx[x];
+                        int nj = j + dy[x];
+
+                        if (matrix[ni][nj] == 0) {
+                            per.insert(make_pair(ni, nj));
+                        }
+                    }
                 }
             }
         }
 
-        for(int i = 1000 - 10; i < 1000; i++) {
-            for(int j = 1000 - 10; j < 1000; j++) {
-                printf("%d ", matrix[i][j]);
-            }
-            printf("\n");
-        }
+        printf("%d %d\n", area, (int) per.size());
 
-        printf("%d %d\n", area, perimeter);
     }
     return 0;
 }

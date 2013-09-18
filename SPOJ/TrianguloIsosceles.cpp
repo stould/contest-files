@@ -43,9 +43,19 @@ typedef long long ll;
 typedef long double ld;
 
 const int MAXN = 1010;
+const double EPS = 10e-7;
+
 int N, ans;
 double x[MAXN], y[MAXN];
 pair<double, double> vp[MAXN];
+
+bool eq(double a, double b) {
+    return fabs(a - b) < EPS;
+}
+
+bool func(double a, double b, double c) {
+    return eq(a, b) && !eq(a, c);
+}
 
 int main(void) {
     freopen("i.in", "r", stdin);
@@ -72,11 +82,7 @@ int main(void) {
 
                     if (A + B < C) break;
 
-                    if (A == B && B != C && A != C) {
-                        ans += 1;
-                    } else if (B == C && A != B && A != C) {
-                        ans += 1;
-                    } else if (A == C && B != A && B != C) {
+                    if (func(A, B, C) || func(A, C, B) || func(B, C, A) || func(B, A, C) || func(C, A, B)) {
                         ans += 1;
                     }
                 }
@@ -84,5 +90,6 @@ int main(void) {
         }
         printf("%d\n", ans);
     }
+
     return 0;
 }
