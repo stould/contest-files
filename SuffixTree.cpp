@@ -55,33 +55,43 @@ struct Node {
         this->used = 0;
     }
 
-    void add(string str, int pos, int len) {
-        if (pos == len) return;
+    void add(string str) {
+        int i;
 
-        int curr = str[pos] - 'A';
+        string base;
 
-        Node *next = child[curr];
+        for (i = (int) str.size() - 1; i >= 0; i--) {
+            base += str[i];
 
-        if (null == NULL) next = new Node();
+            bfs_add(base + "$");
+        }
+    }
 
+    void bfs_add(string str) {
+        int i;
 
+        for (i = )
     }
 };
 
 struct SuffixTree {
     int words;
 
-    Node root;
+    SuffixTree tree[30];
 
     void addSuffix(string str) {
-        string base;
-
         int i;
+
+        string base;
 
         for (i = (int) str.size() - 1; i >= 0; i--) {
             base += str[i];
 
-            root.add(base, 0, (int) str.size());
+            SuffixTree next;
+
+            for (j = 0; j < (int) base.size(); j++) {
+                next = ba
+            }
         }
     }
 };

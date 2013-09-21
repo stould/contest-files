@@ -37,19 +37,21 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
-const int MAXN = 1e5 + 10;
+const int MAXN = 10007;
 
-int i, n, t;
+int N, T;
 vector<int> graph[MAXN];
 
 int main(void) {
-    while(scanf("%d%d", &n, &t) == 2 && !(n == 0 && t == 0)) {
-        REP(i, n) graph[i].clear();
-        REP(i, n) {
-            scanf("%d", &tmp);
-            graph[tmp].push_back(i);
+    int i, x;
+
+    for ( ; scanf("%d%d", &N, &T) == 2 && N + T != 0; ) {
+        for (i = 0; i < N; i++) raph[i].clear();
+
+        for (i = 0; i < N; i++) {
+            scanf("%d", &x);
+            graph[x].push_back(i);
         }
     }
     return 0;
 }
-

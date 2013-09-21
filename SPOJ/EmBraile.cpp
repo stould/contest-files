@@ -65,13 +65,16 @@ void build (void) {
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    int i, x;
+    int i, x, ok = 0;
 
     build ();
 
     for ( ; scanf("%d", &D) == 1; ) {
         scanf(" %c", &opt);
+
+        if (ok) printf("\n");
+
+        ok = 1;
 
         if (opt == 'S') {
             scanf("%s", buff);
@@ -82,7 +85,8 @@ int main(void) {
                     if (i != D - 1) {
                         printf("%s ",  i_s[buff[i]-'0'].substr(id, 2).c_str());
                     } else {
-                        printf("%s\n", i_s[buff[i]-'0'].substr(id, 2).c_str());
+                        printf("%s", i_s[buff[i]-'0'].substr(id, 2).c_str());
+                        if (x != 2) printf("\n");
                     }
                 }
             }
@@ -98,9 +102,8 @@ int main(void) {
             for (i = 0; i < D; i++) {
                 printf("%d", s_i[s[i]]);
             }
-
-            printf("\n");
         }
     }
+
     return 0;
 }

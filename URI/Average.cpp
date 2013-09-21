@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <utility>
 #include <functional>
+#include <iomanip>
 #include <valarray>
 #include <cmath>
 #include <ctime>
@@ -37,12 +38,15 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
-double a, b;
+double A, B;
 
 int main(void) {
-    scanf("%lf%lf", &a, &b);
-    printf("MEDIA = %.5lf\n", (min(a, b) + (fabs(a - b) / 2.0)));
+    scanf("%lf%lf", &A, &B);
+
+    A *= 3.5;
+    B *= 7.5;
+
+    cout << setprecision(5) << fixed << "MEDIA = " << (A + B) / (11.0) << "\n";
+
     return 0;
 }
-
-

@@ -50,7 +50,9 @@ const int MAXN = 100010;
 int N, L, now, num, minimo;
 
 int main(void) {
-    ios::sync_with_stdio(false);
+    //ios::sync_with_stdio(false);
+    freopen("i.in", "r", stdin);
+    freopen("o.ot", "w", stdout);
 
     while(cin >> N >> L && (N+L != 0)) {
         deque<int> mario;
