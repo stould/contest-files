@@ -48,7 +48,6 @@ typedef unsigned uint;
 
 const int MAXN = 100007;
 
-
 int readInt () {
 	bool minus = false;
 	int result = 0;
@@ -78,64 +77,30 @@ int readInt () {
 		return result;
 }
 
-
 int N;
-int c[MAXN], cnt[MAXN];
 
-struct triplet {
-    int a, b, c;
-
-    triplet(void) {}
-
-    triplet(int a, int b, int c):
-        a(a), b(b), c(c)
-    {}
-};
+int sum[MAXN];
 
 int main(void) {
-    N = in();
+    int i, j, k;
 
-    int i;
+    for ( ; scanf("%d", &N) == 1; ) {
+        set<int> s;
 
-    memset(cnt, 0, sizeof(cnt));
+        for (i = 1; i <= N; i++) {
+            int x = readInt();
 
-    for (i = 0; i < N; i++) {
-        c[i] = in();
-
-        cnt[c[i]] += 1;
-    }
-
-    vector<triplet> vt;
-
-    for ( ; cnt[1] > 0 && cnt[2] > 0 && cnt[4] > 0; )  {
-        vt.push_back(triplet(1, 2, 4));
-        cnt[1] -= 1;
-        cnt[2] -= 1;
-        cnt[4] -= 1;
-    }
-
-    for ( ; cnt[1] > 0 && cnt[2] > 0 && cnt[6] > 0; )  {
-        vt.push_back(triplet(1, 2, 6));
-        cnt[1] -= 1;
-        cnt[2] -= 1;
-        cnt[6] -= 1;
-    }
-
-    for ( ; cnt[1] > 0 && cnt[3] > 0 && cnt[6] > 0; )  {
-        vt.push_back(triplet(1, 3, 6));
-        cnt[1] -= 1;
-        cnt[3] -= 1;
-        cnt[6] -= 1;
-    }
-
-    if (3 * (int) vt.size() == N) {
-        for (i = 0; i < (int) vt.size(); i++) {
-            printf("%d %d %d\n", vt[i].a, vt[i].b, vt[i].c);
+            sum[i] = sum[i - 1] + x; s.insert(sum[i]);
         }
-    } else {
-        puts("-1");
-    }
 
+        int ans = 0, med = sum[N] / 3;
+
+        for (i = 1; i <= N; i++) {
+            if (s.count(sum[i] - med) && s.count(sum[i] - med - med)) ans += 1;
+        }
+
+        printf("%d\n", ans);
+    }
 
     return 0;
 }
