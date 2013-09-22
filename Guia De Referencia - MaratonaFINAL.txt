@@ -2006,6 +2006,20 @@ bool sieve(int n) {
 	return prime;
 }
 //*******************************************************
+//Problema de Josephus (ultimo a ser removido do circulo, removendo de D em D)
+int N, D;
+
+int func(void) {
+    int r = 0, i = 2;
+
+    while (i <= N) {
+        r = (r + D) % i;
+        i += 1;
+    }
+
+    return r + 1;
+}
+//*******************************************************
 //Little Fermat Primarity test - (Testar se um numero é primo de maneira eficiente
 BigInteger getRandomFermatBase(BigInteger n) {
 	while(true) {
@@ -2142,17 +2156,17 @@ int main() {
 }
 //*******************************************************
 //Euler Phi Function (Get coprime numbers) - Faster
- int fi(int n) 
-     { 
-       int result = n; 
-       for(int i=2;i*i <= n;i++) 
-       { 
-         if (n % i == 0) result -= result / i; 
-         while (n % i == 0) n /= i; 
-       } 
-       if (n > 1) result -= result / n; 
-       return result; 
-     } 
+ int fi(int n)
+     {
+       int result = n;
+       for(int i=2;i*i <= n;i++)
+       {
+         if (n % i == 0) result -= result / i;
+         while (n % i == 0) n /= i;
+       }
+       if (n > 1) result -= result / n;
+       return result;
+     }
 
 //*******************************************************
 //Fast method to get factorial of N MOD P, in O(N log(P))
