@@ -56,16 +56,19 @@ int toInt(string s) {
     return ans;
 }
 
-bool comp(string a, string b) {
-    return toInt(a) < toInt(b);
-}
+struct cmp {
+    bool operator()(string a, string b) {
+        return toInt(a) > toInt(b);
+    }
+};
 
-set<int> pal;
+
+set<string> pal;
 
 void build(string s) {
     if (s.size() > 9) return;
 
-    pal.insert(toInt(s));
+    pal.insert(s);
 
     char c;
 
@@ -78,6 +81,7 @@ string s;
 
 int main(void) {
     freopen("i.in", "r", stdin);
+    freopen("o.out", "w", stdout);
     build("");
 
     char c;
@@ -86,14 +90,20 @@ int main(void) {
         build(string(1, c));
     }
 
+    cout << "string buf[" << pal.size() << "] = {";
+
+    for (set<string>::reverse_iterator it = pal.rbegin(); it != pal.rend(); it++) {
+        cout << *it << ", ";
+    }
+    cout << "};";
+
     for ( ; cin >> s && s != "0"; ) {
-        set<int>::iterator it = upper_bound(pal.begin(), pal.end(), toInt(s));
+    //    set<int>::iterator it = lower_bound(pal.begin(), pal.end(), toInt(s));
 
-        cout << s << " " << *it << "\n";
+      //  cout << *it << " " << s << "\n";
 
-        printf("%d\n", *it - toInt(s));
+        //printf("%d\n", abs(toInt(*it) - toInt(s)));
     }
 
     return 0;
 }
-
