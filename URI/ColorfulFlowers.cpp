@@ -48,16 +48,27 @@ typedef unsigned uint;
 
 const double PI = 3.1415926535897;
 
-int A, B, C;
+double A, B, C;
 
 int main(void) {
-    for ( ; scanf("%d%d%d", &A, &B, &C) == 3; ) {
+    //freopen("i.in", "r", stdin);
+    for ( ; scanf("%lf%lf%lf", &A, &B, &C) == 3; ) {
         double S = 0.5 * (A + B + C);
 
         double K = sqrt(S * (S - A) * (S - B) * (S - C));
-        double R = 2.0 * K / 2.0 * S;
 
-        printf("%.4lf %.4lf %.4lf\n", 0.0, 0.0, PI * R * R);
+        double ra = (2.0 * K) / (double) (C - A + B);
+        double rb = (2.0 * K) / (double) (A - B + C);
+        double rc = (2.0 * K) / (double) (B - C + A);
+
+        double inCircle = PI * ((2.0 * K) / (2.0 * S)) * ((2.0 * K) / (2.0 * S));
+        double triangle = K - inCircle;
+
+        double outerR = (A * B * C) / (4.0 * K);
+
+        double outer = PI * outerR * outerR - triangle - inCircle;
+
+        cout << fixed << setprecision(4) << outer << " " << triangle << " " << inCircle << "\n";
     }
     return 0;
 }

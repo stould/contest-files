@@ -1,0 +1,3 @@
+find ../URI/ -iname "*.o" -exec rm {} \;
+find ../URI/ -iname "*.exe" -exec rm {} \;
+find ../contest-files -type f -exec chmod -x {} \;
