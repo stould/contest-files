@@ -21,14 +21,6 @@
 #include <cctype>
 #include <ctime>
 
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
-
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
     return gcd(b, a % b);
@@ -96,4 +88,3 @@ int main(void) {
 
     return 0;
 }
-
