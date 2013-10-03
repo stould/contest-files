@@ -83,7 +83,7 @@ int main(void) {
                 int id = x == 0 ? 0 : x == 1 ? 2 : 4;
                 for (i = 0; i < D; i++) {
                     if (i != D - 1) {
-                        printf("%s ",  i_s[buff[i]-'0'].substr(id, 2).c_str());
+                        printf("%s ", i_s[buff[i]-'0'].substr(id, 2).c_str());
                     } else {
                         printf("%s", i_s[buff[i]-'0'].substr(id, 2).c_str());
                         if (x != 2) printf("\n");
