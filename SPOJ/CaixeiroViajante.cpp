@@ -39,68 +39,95 @@ template<typename T> T lcm(T a, T b) {
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
 typedef long double ld;
 
-int in(void) { int x; scanf("%d", &x); return x; }
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 
-const int MAXN = 107;
-int C, S, E, T, graph[MAXN][MAXN];
-set<int> last;
-
-struct state {
-    int index, sum, elapsed;
-
-    state() {
-        index = sum = elapsed = 0;
-    }
-    state(int _index, int _sum) {
-        index = _index;
-        sum = _sum;
-        elapsed = 0;
-    }
-};
-
-int bfs(void) {
-    queue<state> q; q.push(state(S, 0));
-
-    int i, ans = -1;
-
-    for ( ; !q.empty(); ) {
-        state now = q.front(); q.pop();
-
-        if (now.elapsed > T) continue;
-
-        if (now.elapsed == T && last.count(now.index)) {
-            ans = max(ans, now.sum); continue;
-        }
-
-        for (i = 0; i < C; i++) if (i != now.index) {
-            state next;
-            next.index = i;
-            next.sum = now.sum + graph[now.index][i];
-            next.elapsed = now.elapsed + 1;
-            q.push(next);
-        }
-    }
-    return ans;
+int in(void) {
+    int x;
+    scanf("%d", &x);
+    return x;
 }
 
+const int MAXN = 107;
+const int MAXT = 1007;
+int C, S, E, T;
+
+const int INF = 1010010LL;
+
+int matrix[MAXN][MAXT]; //Max from S to N in time T
+
+int graph[MAXN][MAXN], end[MAXN];
+
+int readInt () {
+	bool minus = false;
+	int result = 0;
+	char ch;
+
+	ch = getchar();
+
+	while (1) {
+		if (ch == '-') break;
+		if (ch >= '0' && ch <= '9') break;
+		ch = getchar();
+	}
+	if (ch == '-') {
+	    minus = true;
+    } else {
+        result = ch-'0';
+    }
+
+	while (1) {
+		ch = getchar();
+		if (ch < '0' || ch > '9') break;
+		result = result * 10 + (ch - '0');
+	}
+	if (minus)
+		return -result;
+	else
+		return result;
+}
+
+
 int main(void) {
-    int i, j;
-    for ( ; scanf("%d%d%d%d", &C, &S, &E, &T) == 4 && (C + S + E + T != 0); ) {
+    int i, j, k;
+    for ( ; ; ) {
+        C = readInt();
+        S = readInt();
+        E = readInt();
+        T = readInt();
+
+        if (C + S + E + T == 0) break;
+
         S -= 1;
-        memset(graph, 0, sizeof(graph));
+
         for (i = 0; i < C; i++) {
             for (j = 0; j < C; j++) {
-                graph[i][j] = in();
+                graph[i][j] = readInt();
             }
         }
-        last.clear();
-        for (i = 0; i < E; i++) {
-            last.insert(in()-1);
+
+        for (i = 0; i < E; i++) end[i] = readInt() - 1;
+
+        for (i = 0; i < C; i++) matrix[i][1] = graph[S][i];
+
+        int ans = -INF;
+
+        for (k = 2; k <= T; k++) {
+            for (i = 0; i < C; i++) matrix[i][k] = 0;
+
+            for (i = 0; i < C; i++) {
+                for (j = 0; j < C; j++) {
+                    chmax(matrix[j][k], matrix[i][k - 1] + graph[i][j]);
+                }
+            }
         }
-        printf("%d\n", bfs());
+
+        for (i = 0; i < E; i++) chmax(ans, matrix[end[i]][T]);
+
+        printf("%d\n", ans);
     }
     return 0;
 }
