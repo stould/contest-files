@@ -77,6 +77,7 @@ void build (int a[], int v, int tl, int tr) {
 }
 
 data query (int v, int tl, int tr, int l, int r) {
+    printf("%d %d - %d %d\n", tl, tr, l, r);
 	if (tl >= l && tr <= r)
 		return t[v];
 	int tm = (tl + tr) / 2;
@@ -107,6 +108,7 @@ void update(int v, int tl, int tr, int pos, int value) {
 }
 
 int main(void) {
+    //freopen("i.in", "r", stdin);
     scanf("%d", &x);
     REP(i, x) {
         scanf("%d", &a[i+1]);
