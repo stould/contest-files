@@ -41,7 +41,7 @@ typedef long double ld;
 #define INF 1000001000
 
 int n, a[MAXN];
-int b, c, i, m, tmp, x;
+int b, c, d, i, m, tmp, x;
 
 struct data {
 	int sum, pref, suff, ans;
@@ -77,6 +77,7 @@ void build (int a[], int v, int tl, int tr) {
 }
 
 data query (int v, int tl, int tr, int l, int r) {
+    printf("%d %d - %d %d\n", tl, tr, l, r);
 	if (tl >= l && tr <= r)
 		return t[v];
 	int tm = (tl + tr) / 2;
@@ -89,8 +90,25 @@ data query (int v, int tl, int tr, int l, int r) {
 		query (v*2+1, tm+1, tr, tm+1, r)
 	);
 }
-int main(void) {
 
+void update(int v, int tl, int tr, int pos, int value) {
+    if (tl > tr) {
+        return;
+    } else if (tl == tr) {
+        t[v] = make_data(value);
+    } else {
+        int m = (tl + tr) / 2;
+        if (pos <= m) {
+            update(2 * v, tl, m, pos, value);
+        } else {
+            update(2 * v + 1, m + 1, tr, pos, value);
+        }
+        t[v] = combine(t[2*v], t[2*v+1]);
+    }
+}
+
+int main(void) {
+    //freopen("i.in", "r", stdin);
     scanf("%d", &x);
     REP(i, x) {
         scanf("%d", &a[i+1]);
@@ -98,8 +116,13 @@ int main(void) {
     build(a, 1, 1, x+1);
     scanf("%d", &m);
     REP(i, m) {
-        scanf("%d%d", &b, &c);
-        printf("%d\n", query(1, 1, x+1, b, c).ans);
+        scanf("%d%d%d", &b, &c, &d);
+        if (b == 1) {
+            printf("%d\n", query(1, 1, x+1, c, d).ans);
+        } else {
+            update(1, 1, x+1, c, d);
+        }
     }
     return 0;
 }
+
