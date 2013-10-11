@@ -44,8 +44,11 @@ typedef long double ld;
 const int MAXN = 300010;
 int T, M, Q, id, sal, ta;
 vector<int> graph[MAXN];
+
 int parent[MAXN] = {-1};
-map<int, int> i_id, id_i;
+
+int i_id[MAXN];
+int id_i[MAXN];
 
 int dp[MAXN];
 
@@ -69,27 +72,51 @@ struct employee {
     }
 };
 
-vector<employee> ve;
+employee ve[MAXN];
+
+inline void fastRead_int(int &x) {
+    register int c = getchar_unlocked();
+
+    x = 0;
+
+    int neg = 0;
+
+    for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
+
+    if (c=='-') {
+        neg = 1;
+        c = getchar_unlocked();
+    }
+
+    for ( ; c>47 && c<58 ; c = getchar_unlocked()) {
+        x = (x<<1) + (x<<3) + c - 48;
+    }
+
+    if (neg) {
+        x = -x;
+    }
+}
 
 int main(void) {
-    scanf("%d", &T);
+    fastRead_int(T);
     for( ; T-- ; ) {
-        scanf("%d%d", &M, &Q);
-        ve.clear();
-        i_id.clear();
-        i_id.clear();
+        fastRead_int(M);
+        fastRead_int(Q);
+
         REP(i, M) {
             graph[i].clear();
             parent[i] = -1;
         }
         REP(i, M) {
-            scanf("%d%d%d", &id, &sal, &ta);
+            fastRead_int(id);
+            fastRead_int(sal);
+            fastRead_int(ta);
             i_id[i] = id;
             id_i[id] = i;
-            ve.push_back(employee(i, sal, ta));
+            ve[i] = employee(i, sal, ta);
         }
 
-        sort(ve.begin(), ve.end());
+        sort(ve, ve + M);
 
         int root = ve[0].id;
         for(int i = 1; i < M; i++) {
@@ -103,7 +130,7 @@ int main(void) {
         }
         dfs(root);
         REP(i, Q) {
-            scanf("%d", &id);
+            fastRead_int(id);
             id = id_i[id];
             int boss = parent[id], go = dp[id]-1;
             boss = i_id[boss];
