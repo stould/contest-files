@@ -1,9 +1,0 @@
-l, d, v, g, r = map(int, input().split(''))
-
-spent = 0.0
-
-if d / v < g:
-    print(".6f" % (l / v))
-else:
-    print(".6f" % (l / v) + r + ((l - d) / v))
-
