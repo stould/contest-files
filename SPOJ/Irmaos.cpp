@@ -96,7 +96,8 @@ int main(void) {
 
         for (i = 0; i < R; i++) {
             for (j = 0; j < C; j++) {
-                printf("%d ", field[i][j]);
+                printf("%d", field[i][j]);
+                if (j != C - 1) printf(" ");
             }
             printf("\n");
         }
