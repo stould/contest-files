@@ -79,48 +79,23 @@ int main(void) {
 
         int done = 0;
 
-        for ( ; h - l >= 1; ) {
+        for ( ; l <= h; ) {
             m = (Int) (l + (h - l) / 2LL);
 
             Int X = func(m), Y = func(llabs(total_w-m)), s = llabs(X-Y);
 
             //printf("%lld %lld %lld %lld\n", X, Y, s, B);
 
-            if (s == B) {
-                printf("%lld\n", min(X, Y));
-                done = 1;
-                break;
-            } else if (s > B) {
+            if (s > B) {
                 l = m + 1LL;
-            } else {
+            } else if (s <= B) {
                 h = m - 1LL;
             }
         }
 
-        if (!done) {
-            int x;
-            for (x = 0; x <= 100 && !done; x++) {
-                Int X = func(m), Y = func(llabs(total_w-m)), s = llabs(X-Y);
+        Int X = func(l), Y = func(llabs(total_w-l)), s = llabs(X-Y);
 
-                if (s == B) {
-                    printf("%lld\n", min(X, Y));
-                    done = 1;
-                    break;
-                }
-                m += 1;
-            }
-            m -= 100LL;
-            for (x = 0; x <= 100 && !done; x++) {
-                Int X = func(m), Y = func(llabs(total_w-m)), s = llabs(X-Y);
-
-                if (s == B) {
-                    printf("%lld\n", min(X, Y));
-                    done = 1;
-                    break;
-                }
-                m -= 1LL;
-            }
-        }
+        printf("%d\n", min(X, Y));
     }
     return 0;
 }
