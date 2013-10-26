@@ -51,29 +51,11 @@ const int INF = INT_MAX / 3;
 
 int N, L, R, QL, QR;
 
-int dp[MAXN / 2][MAXN / 2][5];
-
 int x[MAXN];
 
-int func(int a, int b, int last) {
-    if (a > b) {
-        return 0;
-    }
-
-    int& ans = dp[a][b][last];
-
-    if (ans != -1) return ans;
-
-    int get_left = x[a] * L + func(a + 1, b, 1) + (last == 1 ? QL : 0);
-    int get_righ = x[b] * R + func(a, b - 1, 2) + (last == 2 ? QR : 0);
-
-    ans = min(get_left, get_righ);
-
-    return ans;
-}
+int l[MAXN], r[MAXN];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     N = in();
     L = in();
     R = in();
@@ -83,15 +65,49 @@ int main(void) {
 
     int i;
 
-    for (i = 0; i < N; i++) {
+    x[0] = x[N + 1] = 0;
+
+    for (i = 1; i <= N; i++) {
         x[i] = in();
     }
+    for (i = 1; i <= N; i++) {
+        if (i == 1) {
+            l[i] = x[i] * L;
+        } else {
+            l[i] = l[i - 1] + x[i] * L;
+        }
+    }
 
-    memset(dp, -1, sizeof(dp));
+    for (i = N; i >= 1; i--) {
+        if (i == N) {
+            r[i] = x[i] * R;
+        } else {
+            r[i] = r[i + 1] + x[i] * R;
+        }
+    }
 
-    int ans = func(0, N - 1, 0);
+    Int ans = 1010101010101010LL;
 
-    printf("%d\n", ans);
+ //   chmin(ans, l[N - 1] + (N - 1) * QL);
+ //   chmin(ans, r[0] + (N - 1) * QR);
+
+    for (i = 0; i <= N; i++) {
+        Int curr = l[i] + r[i + 1];
+        if (i > N - i) {
+            curr += (2 * i - N - 1) * QL;
+        }
+        if (i < N - i) {
+            curr += (N - 2 * i - 1) * QR;
+        }
+        chmin(ans, curr);
+    }
+
+    if (N == 1) {
+        chmin(ans, (Int) x[1] * R);
+        chmin(ans, (Int) x[1] * L);
+    }
+
+    cout << ans << "\n";
 
     return 0;
 }
