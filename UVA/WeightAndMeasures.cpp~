@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <list>
+#include <queue>
+#include <stack>
+#include <memory>
+#include <iomanip>
+#include <numeric>
+#include <functional>
+#include <new>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <climits>
+#include <cctype>
+#include <ctime>
+
+#define REP(i, n) for(int (i) = 0; i < n; i++)
+#define FOR(i, a, n) for(int (i) = a; i < n; i++)
+#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
+#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
+#define sz(n) n.size()
+#define pb(n) push_back(n)
+#define all(n) n.begin(), n.end()
+
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
+using namespace std;
+
+typedef long long Int;
+typedef unsigned uint;
+
+const int MAXN = 5620;
+
+pair<int, int> p[MAXN];
+int N;
+
+int dp[MAXN][2]; //lowest weight 0 - cnt - 1
+
+bool cmp(pair<int, int> a, pair<int, int> b) {
+    if (a.second != b.second) {
+        return a.second < b.second;
+    } else {
+        return a.first < b.first;
+    }
+}
+
+int main(void) {
+    N = 0;
+
+    int a, b, i, j;
+
+    for ( ; scanf("%d%d", &a, &b) == 2; ) {
+        p[N++] = make_pair(a, b);
+    }
+
+    sort(p, p + N, cmp);
+
+    for (i = 0; i < N; i++) {
+        dp[i][0] = p[i].first;
+        dp[i][1] = 1;
+    }
+
+    int ans = 0;
+
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < i; j++) {
+            if (p[i].second - p[i].first > dp[j][0] && dp[j][1] + 1 > dp[i][1]) {
+                dp[i][0] = dp[j][0] + p[i].first;
+                dp[i][1] = dp[j][1] + 1;
+
+                chmax(ans, dp[i][1]);
+            }
+        }
+    }
+
+    printf("%d\n", ans);
+
+    return 0;
+}
