@@ -36,6 +36,7 @@ vector<int> merge(vector<int>& b, vector<int>& c) {
 
 	while(!b.empty() && !c.empty()) {
 		if(*b.begin() < *c.begin()) {
+
 			a.push_back(*b.begin());
 			b.erase(b.begin());
 		} else if(*b.begin() > *c.begin()) {
@@ -226,7 +227,7 @@ void dfs(int x) {
     }
 }
 //**********************************************
-//Pesquisa em largura simples em Grafo - [BFS] -> Utilizando 'dist' para guardar o menor caminho e 'x' -> 'i', j· que as arestas tem pesos iguais:
+//Pesquisa em largura simples em Grafo - [BFS] -> Utilizando 'dist' para guardar o menor caminho e 'x' -> 'i', j√° que as arestas tem pesos iguais:
 //N = Numero maximo de Vertices no grafo
 void bfs(int x) {
 	int dist[N], vis[N]; memset(dist, 0, sizeof(dist)); memset(vis, 0, sizeof(vis));
@@ -248,7 +249,7 @@ void bfs(int x) {
 	}
 }
 //**********************************************
-//OrdenaÁ„o topologica simples: [OTS]
+//Ordena√ß√£o topologica simples: [OTS]
 void dfs(int x) {
     used[x] = 1;
     for(int b = 0; b < g[x].size(); b++) {
@@ -257,7 +258,7 @@ void dfs(int x) {
     order.push_back(x);
 }
 
-//OrdenaÁ„o topologica com checagem de ciclos: [OTCC]
+//Ordena√ß√£o topologica com checagem de ciclos: [OTCC]
 //Se a variavel has se tornar verdade, o grafo contem um ciclo.
 void dfs(int x) {
     vis[x] = 1;
@@ -358,7 +359,7 @@ void solve() {
 }
 
 //********************************************
-//Determinando se um grafo È bipartido ou n„o:
+//Determinando se um grafo √© bipartido ou n√£o:
 //Sendo 'gr' a matrix de adjacencia representando o Grafo.
 bool dfs(int node, int c) {
     if(color[node] != 0) {
@@ -380,11 +381,11 @@ bool dfs(int node, int c) {
 //Fazendo a pesquisa
 // Caso o Grafo seja '1' base
 dfs(1, 1);
-//Sen„o
+//Sen√£o
 dfs(0, 1);
 
 //******************************************
-MultiplicaÁ„o de Matrizes
+Multiplica√ß√£o de Matrizes
 vector<vector<int> > multiply(vector<vector<int> > a, vector<vector<int> > b) {
 	vector<vector<int> > res(c, vector<int>(c));
 	for(int i = 0; i < c; i++) {
@@ -421,7 +422,7 @@ struct edge {
 		return cost < e.cost;
     }
 };
-//Sendo 'M' o numero de arestas, 'u' uma implementaÁ„o do conjunto disjunto 'UnionFind' e 'ans' o menor custo
+//Sendo 'M' o numero de arestas, 'u' uma implementa√ß√£o do conjunto disjunto 'UnionFind' e 'ans' o menor custo
 vector<edge> edges; //Populado com as arestas
 int ans = 0;
 for(i = 0; i < m; i++) {
@@ -569,7 +570,7 @@ int dijsktra(int source, int destiny) {
     }
 	return dist[destiny];
 }
-//ReconstruÁ„o do Caminho
+//Reconstru√ß√£o do Caminho
 vector<int> path;
 int start = destiny;
 
@@ -616,7 +617,7 @@ void bellmanford(vector<Edge> edges, int source) {
     }
 }
 //*******************************************************
-//Contando Pontes em um Grafo n„o Direcionado
+//Contando Pontes em um Grafo n√£o Direcionado
 int a, b, n, m, cont, ct, vis[1010], nivel[1010], menor[1010], pai[1010];
 vector<int> graph[1010];
 void dfs(int x) {
@@ -640,7 +641,7 @@ void dfs(int x) {
 }
 ct = numero final de pontes
 //*******************************************************
-//Achando Vertices de ArticulaÁ„o um Grafo
+//Achando Vertices de Articula√ß√£o um Grafo
 vector<int> graph[410];
 set<int> ans;
 set<int>::iterator it;
@@ -667,7 +668,7 @@ times = 1;
 ans.clear();
 dfs(0);
 //*******************************************************
-Fluxo-M·ximo - Edmonds-Karp O(N*M^2)
+Fluxo-M√°ximo - Edmonds-Karp O(N*M^2)
 
 int max_flow(int source, int sink) {
     int residual[MAXN][MAXN]; memset(residual, 0, sizeof(residual));
@@ -708,101 +709,6 @@ int max_flow(int source, int sink) {
         }
     }
 }
-//********************************************
-//Dinic with back edges corrected
-
-struct edge{
-        int x,y;
-        int c;
-        int f;
-        edge *next,*back;
-        edge(){}
-        edge(int x,int y,int c,edge* next):x(x),y(y),c(c),f(0),next(next),back(0){}
-        void* operator new(size_t, void *p){
-                return p;
-        }
-}*E[MAXN * MAXM + 10];
-int source,sink;
-
-int Q[MAXN * MAXM + 10];
-int D[MAXN * MAXM + 10];
-
-void BFS(){
-        memset(D,-1,sizeof(D));
-        int head=0,tail=0;
-        Q[tail++]=source;
-        D[source]=0;
-        for(;;){
-                int i=Q[head++];
-                for(edge* e=E[i];e;e=e->next){
-                        if(e->c==0)continue;
-                        int j=e->y;
-                        if(D[j]==-1){
-                                D[j]=D[i]+1;
-                                Q[tail++]=j;
-                                if(j==sink)return;
-                        }
-                }
-                if(head==tail)break;
-        }
-}
-edge* cur[MAXN * MAXM + 10];
-edge* path[MAXN * MAXM + 10];
-int max_flow(){
-        int res=0;
-        int path_n;
-        for(;;){
-                BFS();
-                if(D[sink]==-1)break;
-                memcpy(cur,E,sizeof(E));
-                path_n=0;
-                int i=source;
-                for(;;){
-                        if(i==sink){
-                                int mink=0;
-                                int delta=INT_MAX;
-                                for(int k=0;k<path_n;++k){
-                                        if(path[k]->c < delta){
-                                                delta = path[k]->c;
-                                                mink=k;
-                                        }
-                                }
-                                for(int k=0;k<path_n;++k){
-                                        path[k]->c -= delta;
-                                        path[k]->back->c += delta;
-                                }
-                                path_n=mink;
-                                i=path[path_n]->x;
-                                res+=delta;
-                        }
-                        edge* e;
-                        for(e=cur[i];e;e=e->next){
-                                if(e->c==0)continue;
-                                if(D[i]+1==D[e->y])break;
-                        }
-                        cur[i]=e;
-                        if(e){
-                                path[path_n++]=e;
-                                i=e->y;
-                        }else{
-                                D[i]=-1;
-                                if(path_n==0)break;
-                                path_n--;
-                                i=path[path_n]->x;
-                        }
-                }
-        }
-        return res;
-}
-int sum;
-edge *pool=new edge[MAXN * MAXM + 10],*data;
-inline void add_edge(int x,int y,int w){
-        E[x]=new((void*)data++) edge(x,y,w,E[x]);
-        E[y]=new((void*)data++) edge(y,x,0,E[y]);
-        E[x]->back = E[y];
-        E[y]->back = E[x];
-}
-//********************************************
 //Montagem do Grafo
 memset(capacity, 0, sizeof(capacity));
 int n, m, a, b, c;
@@ -895,7 +801,7 @@ int main() {
 }
 //*******************************************************
 //*******************************************************
-//BipartiÁ„o Maxima em um grafo
+//Biparti√ß√£o Maxima em um grafo
 int n, k;
 vector<vector<int> > g;
 vector<int> mt;
@@ -920,7 +826,7 @@ for (int v=0; v<n; ++v) {
 }
 
 for (int i=0; i<k; ++i)
-	//Imprime as bipartiÁıes
+	//Imprime as biparti√ß√µes
 	if (mt[i] != -1)
 		printf ("%d %d\n", mt[i]+1, i+1);
 
@@ -1301,7 +1207,7 @@ if(det == 0){
 	double x = (B2*C1 - B1*C2)/det
    double y = (A1*C2 - A2*C1)/det
 }
-/* ************************************ ProgramaÁ„o Dinamica: ***************************** */
+/* ************************************ Programa√ß√£o Dinamica: ***************************** */
 //*******************************************************
 //Binomial Coefficient
 bin [0][0] = 1;
@@ -2023,7 +1929,7 @@ ll func(ll n) {
     return (ll) floor(pow(phi, n) * inverseSqrt5 + 0.5);
 }
 //*******************************************************
-//ExponenciaÁ„o r·pida O(log(n))
+//Exponencia√ß√£o r√°pida O(log(n))
 int binpow (int a, int n) {
 	int res = 1;
 	while (n) {
@@ -2051,7 +1957,7 @@ int ct(int n) {
     return counter;
 }
 //*******************************************************
-//Checando se um numero È primo ou n„o
+//Checando se um numero √© primo ou n√£o
 bool isPrime(long long n) {
     if(n <= 1) return false;
     if(n == 2) return true;
@@ -2115,7 +2021,7 @@ int func(void) {
     return r + 1;
 }
 //*******************************************************
-//Little Fermat Primarity test - (Testar se um numero È primo de maneira eficiente
+//Little Fermat Primarity test - (Testar se um numero √© primo de maneira eficiente
 BigInteger getRandomFermatBase(BigInteger n) {
 	while(true) {
             final BigInteger a = new BigInteger (n.bitLength(), rand);
