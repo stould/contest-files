@@ -47,6 +47,5 @@ typedef long long Int;
 typedef unsigned uint;
 
 int main(void) {
-
     return 0;
 }

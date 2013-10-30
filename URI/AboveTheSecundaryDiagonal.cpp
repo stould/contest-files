@@ -46,35 +46,31 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000007;
-
-int N, s[MAXN];
-char str[MAXN];
+double M[12][12];
+char T;
 
 int main(void) {
-    scanf("%d%s", &N, str);
+    cin >> T;
 
-    int i;
+    int i, j;
 
-    s[0] = 0;
+    double s = 0.0;
 
-    for (i = 0; i < N; i++) {
-	s[i] = (str[i] == 'B');
+    for (i = 0; i < 12; i++) {
+        for (j = 0; j < 12; j++) {
+            cin >> M[i][j];
 
-	if (i > 0) {
-	    s[i] += s[i - 1];
-	}
+            if (j <= 10 - i) {
+                s += M[i][j];
+            }
+        }
     }
 
-    int ans = s[N - 1];
-
-    for (i = 0; i < N; i++) {
-	int curr = (i + 1) - s[i] + (s[N - 1] - (i > 0 ? s[i - 1] : 0));
-
-	chmin(ans, curr);
+    if (T == 'M') {
+        s /= 66.0;
     }
-    
-    printf("%d\n", ans);
+
+    cout << fixed << setprecision(1) << s << "\n";
 
     return 0;
 }

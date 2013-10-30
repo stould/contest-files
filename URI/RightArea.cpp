@@ -46,13 +46,35 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 2000007;
-
-int tree[MAXN];
-
-int N;
+double M[12][12];
+char T;
 
 int main(void) {
- 
+    cin >> T;
+
+    int i, j;
+
+    double s = 0.0;
+
+    for (i = 0; i < 12; i++) {
+        for (j = 0; j < 12; j++) {
+            cin >> M[i][11 - j];
+        }
+    }
+
+    for (i = 0; i < 12; i++) {
+        for (j = 0; j < 12; j++) {
+            if (j < i && j < 11 - i) {
+                s += M[i][j];
+            }
+        }
+    }
+
+    if (T == 'M') {
+        s /= 66.0;
+    }
+
+    cout << fixed << setprecision(1) << s << "\n";
+
     return 0;
 }

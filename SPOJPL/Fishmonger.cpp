@@ -47,24 +47,70 @@ typedef long long Int;
 typedef unsigned uint;
 
 const int MAXN = 1010;
+const Int INF = 0x3f3f3f3f;
 
 int N, T;
 
-int t[MAXN][MAXN];
-int c[MAXN][MAXN];
+Int t[MAXN][MAXN];
+Int c[MAXN][MAXN];
+
+pair<Int, Int> dp[MAXN][MAXN];
+
+pair<Int, Int> func(int id, int len) {
+    if (id == N - 1) {
+        return make_pair(0LL, 0LL);
+    }
+    if (len > T) {
+        return make_pair(INF, INF);
+    }
+
+    pair<Int, Int>& ans = dp[id][len];
+
+    if (dp[id][len].first != -1) {
+        return dp[id][len];
+    }
+
+    ans = make_pair(INF, INF);
+
+    int i;
+
+    for (i = 0; i < N; i++) if (i != id && len + t[id][i] <= T) {
+        pair<Int, Int> aux = func(i, len + t[id][i]);
+
+        aux.first += c[id][i];
+        aux.second += t[id][i];
+
+        if (aux.first < ans.first) {
+            ans = aux;
+        }
+    }
+
+    return dp[id][len] = ans;
+}
 
 int main(void) {
-    for ( ; scanf("%d%d", &N, &T) == 2; ) {
+    int i, j;
+    for ( ; scanf("%d%d", &N, &T) == 2 && N + T != 0; ) {
         for (i = 0; i < N; i++) {
             for (j = 0; j < N; j++) {
-                t[i][j] = in();
+                scanf("%lld", &t[i][j]);
             }
         }
         for (i = 0; i < N; i++) {
             for (j = 0; j < N; j++) {
-                c[i][j] = in();
+                scanf("%lld", &c[i][j]);
             }
         }
+
+        for (i = 0; i <= N; i++) {
+            for (j = 0; j <= T; j++) {
+                dp[i][j].first = -1;
+            }
+        }
+
+        pair<Int, Int> ans = func(0, 0);
+
+        printf("%lld %lld\n", ans.first, ans.second);
     }
     return 0;
 }
