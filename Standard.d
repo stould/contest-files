@@ -16,5 +16,5 @@ void chmin(T)(ref T t, T f) { if (t > f) t = f; }
 void chmax(T)(ref T t, T f) { if (t < f) t = f; }
 
 void main () {
-	
+     	
 }

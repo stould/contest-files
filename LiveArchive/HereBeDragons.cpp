@@ -46,35 +46,20 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000007;
-
-int N, s[MAXN];
-char str[MAXN];
+int T;
+string str;
 
 int main(void) {
-    scanf("%d%s", &N, str);
+    T = in();
+    for ( ; T--; ) {
+        cin >> str;
 
-    int i;
-
-    s[0] = 0;
-
-    for (i = 0; i < N; i++) {
-	s[i] = (str[i] == 'B');
-
-	if (i > 0) {
-	    s[i] += s[i - 1];
-	}
+        if (str.find("D") == string::npos) {
+            puts("Possible");
+        } else {
+            puts("You shall not pass!");
+        }
     }
-
-    int ans = s[N - 1];
-
-    for (i = 0; i < N; i++) {
-	int curr = (i + 1) - s[i] + (s[N - 1] - (i > 0 ? s[i - 1] : 0));
-
-	chmin(ans, curr);
-    }
-    
-    printf("%d\n", ans);
 
     return 0;
 }
