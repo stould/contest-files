@@ -17,7 +17,25 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+int T;
+
+unsigned long long int F[70];
+
 int main(void) {
+    F[0] = 0;
+    F[1] = 1;
+
+    int i;
+
+    for (i = 2; i <= 60; i++) F[i] = F[i - 1] + F[i - 2];
+
+    T = in();
+
+    for ( ; T--; ) {
+        int x = in();
+
+        printf("Fib(%d) = %llu\n", x, F[x]);
+    }
 
     return 0;
 }
