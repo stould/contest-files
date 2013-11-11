@@ -41,11 +41,12 @@ typedef long long Int;
 typedef unsigned uint;
 
 const int MAXN = 5007;
+const int INF = 10101010;
 
 int N, L;
 string A, B;
 int id;
-int vis[MAXN], prev[MAXN];
+int vis[MAXN][MAXN], bef[MAXN], spd[MAXN][MAXN], see[MAXN];
 
 map<string, int> si;
 map<int, string> is;
@@ -57,12 +58,18 @@ void clear(void) {
     si.clear();
     is.clear();
 
-    int i;
+    int i, j;
 
     for (i = 0; i < MAXN; i++) {
         graph[i].clear();
-        vis[i] = 0;
-        prev[i] = -1;
+        bef[i] = -1;
+        see[i] = INF;
+        for (j = 0; j < MAXN; j++) {
+            vis[i][j] = INF;
+            spd[i][j] = INF;
+
+            if (i == 0) spd[i][j] = 0;
+        }
     }
 }
 
@@ -74,8 +81,19 @@ void mnt(string s) {
     }
 }
 
+struct MyLess {
+    bool operator()(pair<int, int> a, pair<int, int> b) {
+        if (vis[a.first] != vis[b.first]) {
+            return vis[a.first] > vis[b.first];
+        } else {
+            return spd[a.first] < spd[b.first];
+        }
+    }
+};
+
 void bfs(void) {
-    queue<pair<int, int> > q; q.push(make_pair(si[A], 0)); vis[si[A]] = 1;
+    queue<pair<int, int> > q; q.push(make_pair(si[A], 0)); vis[0][si[A]] = 0;
+    see[1] = 0;
 
     int i;
 
@@ -83,18 +101,18 @@ void bfs(void) {
         pair<int, int> sp = q.front(); q.pop();
 
         int now = sp.first;
-        int spd = sp.second;
+        int last = sp.second;
 
-        cout << now << " " << spd << "\n";
+        if (now == si[B]) break;
 
-        for (i = 0; i < (int) graph[now].size(); i++) {
+        for (i = (int) graph[now].size() - 1; i >= 0; i--) {
             int next = graph[now][i].first;
-            int next_speed = graph[now][i].second;
-
-            if (!vis[next] && spd <= next_speed) {
-                vis[next] = 1;
-                prev[next] = now;
-                q.push(make_pair(next, next_speed));
+            if (spd[last][now] <= spd[now][next] && vis[last][now] + 1 < vis[now][next]) {
+                //cout << now << " " << next << " - " << spd[last][now] << " " << spd[now][next] << " - " << vis[now][next] << "\n";
+                vis[now][next] = vis[last][now] + 1;
+                bef[next] = now;
+                see[next] = see[now] + 1;
+                q.push(make_pair(next, now));
             }
         }
     }
@@ -102,12 +120,12 @@ void bfs(void) {
     vector<string> ans;
     int curr = si[B];
 
-    if (curr == -1) {
+    if (!vis[si[B]]) {
         cout << "No valid route.";
     } else {
         for ( ; curr != -1; ) {
             ans.push_back(is[curr]);
-            curr = prev[curr];
+            curr = bef[curr];
         }
 
         reverse (ans.begin(), ans.end());
@@ -147,6 +165,9 @@ int main(void) {
 
             graph[id_A].push_back(make_pair(id_B, L));
             graph[id_B].push_back(make_pair(id_A, L));
+
+            spd[id_A][id_B] = min(spd[id_A][id_B], L);
+            spd[id_B][id_A] = min(spd[id_B][id_A], L);
         }
 
         for (i = 1; i <= id; i++) {
