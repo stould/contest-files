@@ -46,6 +46,22 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+double x[100];
+
 int main(void) {
+    int i;
+
+    for (i = 0; i < 100; i++) cin >> x[i];
+
+    for (i = 0; i < 100; i++) {
+        if (x[i] <= 10.0) {
+            printf("A[%d] = ", i);
+            if (x[i] == floor(x[i]) && x[i] == ceil(x[i])) {
+                printf("%.0lf\n", x[i]);
+            } else {
+                printf("%.1lf\n", x[i]);
+            }
+        }
+    }
     return 0;
 }

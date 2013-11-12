@@ -21,18 +21,6 @@
 #include <cctype>
 #include <ctime>
 
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-
-template<typename T> T gcd(T a, T b) {
-    if(!b) return a;
-    return gcd(b, a % b);
-}
-template<typename T> T lcm(T a, T b) {
-    return a * b / gcd(a, b);
-}
-
-template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
-template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
@@ -40,19 +28,24 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 5007;
+const int MAXN = 510;
 const int INF = 10101010;
 
 int N, L;
 string A, B;
+bool found;
+
 int id;
-int vis[MAXN][MAXN], bef[MAXN], spd[MAXN][MAXN], see[MAXN];
+int vis[MAXN];
+
+int pos, best_pos;
 
 map<string, int> si;
 map<int, string> is;
 
-vector<pair<int, int> > graph[MAXN];
+vector<int> curr, best;
 
+vector<pair<int, int> > graph[MAXN];
 
 void clear(void) {
     si.clear();
@@ -62,94 +55,52 @@ void clear(void) {
 
     for (i = 0; i < MAXN; i++) {
         graph[i].clear();
-        bef[i] = -1;
-        see[i] = INF;
-        for (j = 0; j < MAXN; j++) {
-            vis[i][j] = INF;
-            spd[i][j] = INF;
 
-            if (i == 0) spd[i][j] = 0;
-        }
+        vis[i] = 0;
     }
 }
 
 void mnt(string s) {
     if (si[s] == 0) {
         si[s] = id;
+
         is[id] = s;
         id += 1;
     }
 }
 
-struct MyLess {
-    bool operator()(pair<int, int> a, pair<int, int> b) {
-        if (vis[a.first] != vis[b.first]) {
-            return vis[a.first] > vis[b.first];
-        } else {
-            return spd[a.first] < spd[b.first];
-        }
-    }
-};
-
-void bfs(void) {
-    queue<pair<int, int> > q; q.push(make_pair(si[A], 0)); vis[0][si[A]] = 0;
-    see[1] = 0;
-
-    int i;
-
-    for ( ; !q.empty(); ) {
-        pair<int, int> sp = q.front(); q.pop();
-
-        int now = sp.first;
-        int last = sp.second;
-
-        if (now == si[B]) break;
-
-        for (i = (int) graph[now].size() - 1; i >= 0; i--) {
-            int next = graph[now][i].first;
-            if (spd[last][now] <= spd[now][next] && vis[last][now] + 1 < vis[now][next]) {
-                //cout << now << " " << next << " - " << spd[last][now] << " " << spd[now][next] << " - " << vis[now][next] << "\n";
-                vis[now][next] = vis[last][now] + 1;
-                bef[next] = now;
-                see[next] = see[now] + 1;
-                q.push(make_pair(next, now));
-            }
-        }
-    }
-
-    vector<string> ans;
-    int curr = si[B];
-
-    if (!vis[si[B]]) {
-        cout << "No valid route.";
+void dfs(int x, int speed) {
+    if (x == si[B]) {
+        best = curr;
+        best_pos = pos;
+        found = true;
     } else {
-        for ( ; curr != -1; ) {
-            ans.push_back(is[curr]);
-            curr = bef[curr];
-        }
+        int i;
 
-        reverse (ans.begin(), ans.end());
+        for (i = 0; i < (int) graph[x].size(); i++) {
+            int u = graph[x][i].first;
 
-        for (i = 0; i < (int) ans.size(); i++) {
-            cout << ans[i];
+            if (!vis[u] && graph[x][i].second >= speed && pos + 1 < best_pos) {
+                curr[pos++] = u;
+                vis[u] = true;
 
-            if (i != (int) ans.size() - 1) {
-                cout << " ";
+                dfs(u, graph[x][i].second);
+
+                vis[u] = false;
+                pos--;
             }
         }
     }
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
+    //freopen("i.in", "r", stdin);
     int i;
 
     int ok = 0;
 
     for ( ; cin >> N; ) {
         clear();
-
-        if (ok) cout << "\n\n";
 
         ok = 1;
 
@@ -165,9 +116,6 @@ int main(void) {
 
             graph[id_A].push_back(make_pair(id_B, L));
             graph[id_B].push_back(make_pair(id_A, L));
-
-            spd[id_A][id_B] = min(spd[id_A][id_B], L);
-            spd[id_B][id_A] = min(spd[id_B][id_A], L);
         }
 
         for (i = 1; i <= id; i++) {
@@ -176,11 +124,33 @@ int main(void) {
 
         cin >> A >> B;
 
+        mnt(A);
+        mnt(B);
+
         if (A == B) {
             cout << A;
         } else {
-            bfs();
+            found = false;
+            best.resize(510);
+            curr.resize(510);
+
+            curr[0] = si[A];
+            pos = 1;
+            best_pos = 100100;
+            vis[si[A]] = 1;
+
+            dfs(si[A], -1);
+
+            if (!found) {
+                cout << "No valid route.";
+            } else {
+                for (i = 0; i < (int) best_pos; i++) {
+                    cout << is[best[i]] << " ";
+                }
+            }
         }
+        cout << "\n\n";
     }
     return 0;
 }
+

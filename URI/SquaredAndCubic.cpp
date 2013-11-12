@@ -46,6 +46,16 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+int N;
+
 int main(void) {
+    N = in();
+
+    int i;
+
+    for (i = 1; i <= N; i++) {
+        printf("%d %d %d\n", i, i * i, i * i * i);
+    }
+
     return 0;
 }

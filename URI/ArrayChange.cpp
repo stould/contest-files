@@ -46,6 +46,18 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+int N[20];
+
 int main(void) {
+    int i;
+
+    for (i = 0; i < 20; i++) {
+        N[i] = in();
+    }
+
+    for (i = 0; i < 20; i++) {
+        printf("N[%d] = %d\n", i, N[20 - i - 1]);
+    }
+
     return 0;
 }

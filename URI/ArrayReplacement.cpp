@@ -46,6 +46,15 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+int x[10];
+
 int main(void) {
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        x[i] = in();
+
+        printf("X[%d] = %d\n", i, x[i] <= 0 ? 1 : x[i]);
+    }
     return 0;
 }

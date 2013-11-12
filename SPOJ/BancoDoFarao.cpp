@@ -47,33 +47,80 @@ typedef unsigned uint;
 
 const int MAXN = 100007;
 
+int T, N, A, B, Q;
+
 struct data {
-    ll sum, pref, suff, ans;
+    ll sum, pref, suff, ans, cnt, pref_cnt, suff_cnt;
     int l, r;
 };
 
-data t[3*MAXN];
+data t[4*MAXN];
 
 data combine (data l, data r) {
 	data res;
+
 	res.sum = l.sum + r.sum;
-	res.pref = max (l.pref, l.sum + r.pref);
-	res.suff = max (r.suff, r.sum + l.suff);
-	res.ans = max (max (l.ans, r.ans), l.suff + r.pref);
+
+	//res.pref = max (l.pref, l.sum + r.pref);
+	//res.suff = max (r.suff, r.sum + l.suff);
+
+	res.pref = l.pref;
+    res.pref_cnt = l.suff_cnt;
+
+	if (res.pref < l.sum + r.pref || (res.pref == l.sum + r.pref && res.pref_cnt > l.cnt + r.pref_cnt)) {
+        res.pref = l.sum + r.pref;
+        res.pref_cnt = l.cnt + r.pref_cnt;
+	}
+
+	res.suff = r.suff;
+	res.suff_cnt = r.suff_cnt;
+
+	if (res.suff < r.sum + l.suff || (res.suff == r.sum + l.suff && res.suff_cnt > r.cnt + l.suff_cnt)) {
+        res.suff = r.sum + l.suff;
+        res.suff_cnt = r.cnt + l.suff_cnt;
+	}
+
+	res.ans = l.suff + r.pref; //max (max (l.ans, r.ans), l.suff + r.pref);
+    res.cnt = l.suff_cnt + r.pref_cnt;
+
+	if (res.ans < l.ans || (res.ans == l.ans && res.cnt > l.cnt)) {
+        res.ans = l.ans;
+        res.cnt = l.cnt;
+	}
+	if (res.ans < r.ans || (res.ans == r.ans && res.cnt > r.cnt)) {
+	    res.ans = r.ans;
+        res.cnt = r.cnt;
+	}
 
 	return res;
 }
 
-data make_data (int val) {
+data make_data (int val, int pos) {
 	data res;
+
 	res.sum = val;
+	res.cnt = 1;
+
+	if (pos == 0) {
+        res.pref_cnt = 0;
+	} else {
+        res.pref_cnt = 1;
+	}
+
+	if (pos == N - 1) {
+        res.suff_cnt = 0;
+	} else {
+        res.suff_cnt = 1;
+	}
+
 	res.pref = res.suff = res.ans = max(-1000000, val);
+
 	return res;
 }
 
 void build (int a[], int v, int tl, int tr) {
 	if (tl == tr) {
-        t[v] = make_data(a[tl]);
+        t[v] = make_data(a[tl], tl);
 	} else {
 		int tm = (tl + tr) / 2;
 		build (a, v*2, tl, tm);
@@ -101,11 +148,11 @@ data query (int v, int tl, int tr, int l, int r) {
 	);
 }
 
-int T, N, A, B, Q;
 int a[MAXN];
 
 int main(void) {
     freopen("i.in", "r", stdin);
+    freopen("o.ot", "w", stdout);
     scanf("%d", &T);
 
     int i;
@@ -117,7 +164,7 @@ int main(void) {
             scanf("%d", &a[i]);
         }
 
-        build(a, 1, 0, N);
+        build(a, 1, 0, N - 1);
 
         scanf("%d", &Q);
 
@@ -126,7 +173,9 @@ int main(void) {
 
             if (A > B) swap(A, B); A--; B--;
 
-            printf("%d\n", query(1, 0, N, A, B).ans);
+            data ans = query(1, 0, N - 1, A, B);
+
+            printf("%lld %lld\n", ans.ans, ans.cnt);
         }
     }
 

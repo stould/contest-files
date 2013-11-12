@@ -1,0 +1,40 @@
+import std.stdio, std.string, std.conv;
+import std.algorithm, std.array, std.bigint, std.math, std.range;
+import core.thread;
+
+//	Input
+string[] tokens;
+int tokenId = 0;
+string readToken() { for (; tokenId == tokens.length; ) tokens = readln.split, tokenId = 0; return tokens[tokenId++]; }
+
+int readInt() { return to!int(readToken); }
+long readLong() { return to!long(readToken); }
+real readReal() { return to!real(readToken); }
+
+//	chmin/chmax
+void chmin(T)(ref T t, T f) { if (t > f) t = f; }
+void chmax(T)(ref T t, T f) { if (t < f) t = f; }
+
+int N;
+string A, B, C;
+
+void main () {
+  N = readInt();
+
+  A = readToken();
+  B = readToken();
+  C = readToken();
+  
+  int i;
+
+  for (i = 0; i < N; i++) {
+    if (A[i] == B[i] || A[i] == C[i]) {
+      write(A[i]);
+    } else if (B[i] == C[i] || B[i] == A[i]) {
+      write(B[i]);
+    } else {
+      write(C[i]);
+    }
+  }
+  writeln();
+}

@@ -9,6 +9,7 @@ D F 99
 B G 95
 G F 95
 A F
+
 6
 A B 30
 B C 30
@@ -17,3 +18,45 @@ C D 50
 D E 50
 C E 30
 A E
+5
+Natal Assu 50
+Mossoro PaudosFerros 80
+Assu Mossoro 40
+Marcelino PaudosFerros 100
+Assu PaudosFerros 65
+Natal Mossoro
+
+2
+Limoeiro MoradaNova 140
+Limoeiro Jaguaribe 130
+Jaguaribe MoradaNova
+
+4
+Mossoro Paris 233
+Mossoro NewYork 412
+NewYork Tokio 501
+Tokio Paris 420
+Mossoro Tokio
+
+5
+a b 20
+a c 10
+a b 5
+b d 10
+c d 10
+a d
+
+2
+A B 5
+B C 1
+A C
+
+3
+A B 3
+B B 2
+B A 4
+A C
+
+1
+A B 0
+A B
