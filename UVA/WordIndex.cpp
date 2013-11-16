@@ -9,6 +9,7 @@
 #include <stack>
 #include <memory>
 #include <iomanip>
+#include <numeric>
 #include <functional>
 #include <new>
 #include <algorithm>
@@ -36,55 +37,41 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 40040;
+string str;
 
-int x[MAXN];
-int dp[MAXN];
-int in[MAXN];
+map<string, int> mp;
 
-int T, P;
+int pos = 1;
+
+void generate(string s, char last, int len) {
+    if (int(s.size()) == len) {
+        mp[s] = pos++;
+        return;
+    }
+
+    for (char c = last + 1; c <= 'z'; c++) {
+        generate(s + c, c, len);
+    }
+}
 
 int main(void) {
-    scanf("%d", &T);
+    int i;
 
-    for( ; T--; ) {
-        scanf("%d", &P);
+    for (i = 1; i <= 5; i++) {
+        generate("", 'a' - 1, i);
+    }
 
-        REP(i, P) {
-            scanf("%d", &x[i]);
-            dp[i] = in[i] = 1;
-        }
-
-        int ans = 1;
-        int top = 0;
-
-        dp[0] = INT_MIN;
-
-        REP(i, P) {
-            if (x[i] > dp[top]) {
-                dp[++top] = x[i];
-            } else {
-                int low = 0, high = top;
-                while (low <= high) {
-                    int mid = (low + high) >> 1;
-                    if (x[i] > dp[mid]) {
-                        low = mid + 1;
-                    } else {
-                        high = mid - 1;
-                    }
-                }
-                dp[low] = x[i];
-            }
-            in[i] = top;
-            ans = max(ans, top);
-        }
-
-        printf("%d\n", ans);
+    for ( ; cin >> str; ) {
+        printf("%d\n", mp[str]);
     }
     return 0;
 }

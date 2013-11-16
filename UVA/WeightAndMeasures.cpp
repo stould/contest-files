@@ -47,7 +47,10 @@ typedef long long Int;
 typedef unsigned uint;
 
 const int MAXN = 5620;
+<<<<<<< HEAD
+=======
 const int INF = 101010100;
+>>>>>>> dc258f9c8754eae1e031e652d947ce55d0968424
 
 pair<int, int> p[MAXN];
 int N;
@@ -63,9 +66,15 @@ bool cmp(pair<int, int> a, pair<int, int> b) {
 }
 
 int main(void) {
+<<<<<<< HEAD
+    N = 0;
+
+    int a, b, i, j;
+=======
     N = 1;
 
     int a, b, i, j, k;
+>>>>>>> dc258f9c8754eae1e031e652d947ce55d0968424
 
     for ( ; scanf("%d%d", &a, &b) == 2; ) {
         p[N++] = make_pair(a, b);
@@ -74,6 +83,22 @@ int main(void) {
     sort(p, p + N, cmp);
 
     for (i = 0; i < N; i++) {
+<<<<<<< HEAD
+        dp[i][0] = p[i].first;
+        dp[i][1] = 1;
+    }
+
+    int ans = 0;
+
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < i; j++) {
+            if (p[i].second - p[i].first > dp[j][0] && dp[j][1] + 1 > dp[i][1]) {
+                dp[i][0] = dp[j][0] + p[i].first;
+                dp[i][1] = dp[j][1] + 1;
+
+                chmax(ans, dp[i][1]);
+            }
+=======
         dp[i][0] = INF;
     }
 
@@ -98,6 +123,7 @@ int main(void) {
 	    for (k = 0; k <= i; k++) {
 		dp[k][0] = dp[k][1];
 	    }
+>>>>>>> dc258f9c8754eae1e031e652d947ce55d0968424
         }
     }
 

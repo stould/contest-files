@@ -1,102 +1,124 @@
-#include <iostream>
-#include <string>
-#include <sstream>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cassert>
+#include <cmath>
 #include <vector>
 #include <set>
 #include <map>
 #include <list>
+#include <deque>
 #include <queue>
 #include <stack>
-#include <memory>
-#include <iomanip>
 #include <functional>
-#include <new>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <climits>
-#include <cctype>
+#include <sstream>
+#include <iostream>
 #include <ctime>
-
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
-
+#include <algorithm>
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+#define DEBUG(x...) printf(x)
+#define all(v) (v).begin(), (v).end()
+#define rall(v) (v).rbegin(), (v).rend()
+#define _foreach(it, b, e) for(__typeof__(b) it = (b); it != (e); ++it)
+#define foreach(x...) _foreach(x)
 
-const int MAXN = (int) (10e5) + 10;
-int A, B, N, K, a[MAXN];
-ll t[MAXN*4];
-char C;
+typedef long long int Int;
 
-void build (int a[], int v, int tl, int tr) {
-	if (tl == tr)
-		t[v] = (ll) a[tl];
-	else {
-		int tm = (tl + tr) / 2;
-		build (a, v*2, tl, tm);
-		build (a, v*2+1, tm+1, tr);
-		t[v] = (ll) t[v*2] * t[v*2+1];
+const int inf = 0x3f3f3f3f;
+const Int hugeinf = 0x3f3f3f3f3f3f3f3fll;
+const double eps = 1e-9;
+
+const int MAXN = 100007;
+
+int N, K;
+int x[MAXN];
+
+int tree[4 * MAXN];
+
+int func(int a) {
+	if (a < 0) return -1;
+	else if (a > 0) return 1;
+	else return 0;
+}
+
+void build(int node, int l, int r) {
+	if (l > r) return;
+
+	if (l == r) {
+		tree[node] = func(x[l]);
+	} else {
+		int m = (l + r) >> 1;
+
+		build(2 * node, l, m);
+		build(2 * node + 1, m + 1, r);
+
+		tree[node] = tree[2 * node] * tree[2 * node + 1];
 	}
 }
 
-ll sum (int v, int tl, int tr, int l, int r) {
-	if (l > r)
-		return 1;
-	if (l == tl && r == tr)
-		return t[v];
-	int tm = (tl + tr) / 2;
-	return (ll) sum (v*2, tl, tm, l, min(r,tm))
-		* (ll) sum (v*2+1, tm+1, tr, max(l,tm+1), r);
+void update(int node, int l, int r, int pos, int value) {
+	if (l > r) return;
+
+	if (l == r) {
+		tree[node] = func(value);
+	} else {
+		int m = (l + r) >> 1;
+
+		if (pos <= m) {
+			update(2 * node, l, m, pos, value);
+		} else {
+			update(2 * node + 1, m + 1, r, pos, value);
+		}
+
+		tree[node] = tree[2 * node] * tree[2 * node + 1];
+	}
 }
 
-void update (int v, int tl, int tr, int pos, int new_val) {
-	if (tl == tr)
-		t[v] = new_val;
-	else {
-		int tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update (v*2, tl, tm, pos, new_val);
-		else
-			update (v*2+1, tm+1, tr, pos, new_val);
-		t[v] = (ll) t[v*2] * t[v*2+1];
+int query(int node, int l, int r, int bound_l, int bound_r) {
+	if(bound_l > bound_r) return 1;
+
+	if (bound_l <= l && bound_r >= r) {
+		return tree[node];
+	} else {
+		int m = (l + r) >> 1;
+
+		int a = query(2 * node, l, m, bound_l, min(m, bound_r));
+		int b = query(2 * node + 1, m + 1, r, max(m + 1, bound_l), bound_r);
+
+		return a * b;
 	}
 }
 
 int main(void) {
-    //freopen("i.in", "r", stdin);
-    while(2 == scanf("%d%d", &N, &K)) {
-        REP(i, N) {
-            scanf("%d", &a[i+1]);
-            if(a[i+1] < 0) {
-                a[i+1] = -1;
-            } else if(a[i+1] > 0) {
-                a[i+1] = 1;
-            }
-        }
-        build(a, 1, 1, N);
-        REP(i, K) {
-            scanf(" %c%d%d", &C, &A, &B);
-            if(C != 'P' && B < 0) B = -1;
-            else if(C != 'P' && B > 0) B = 1;
-            if(C == 'P') {
-                ll outcome = sum(1, 1, N, A, B);
-                printf("%c", outcome == 0LL ? '0' : outcome < 0LL ? '-' : '+');
-            } else {
-                update(1, 1, N, A, B);
-            }
-        }
-        printf("\n");
-    }
-    return 0;
-}
+	int i, a, b;
+	char kind;
+	for ( ; scanf("%d%d", &N, &K) == 2; ) {
+		for (i = 0; i < N; i++) {
+			scanf("%d", &x[i]);
+		}
 
+		build(1, 0, N - 1);
+
+		for ( ; K--; ) {
+			cin >> kind >> a >> b;
+
+			if (kind == 'C') {
+				update(1, 0, N - 1, a - 1, b);
+			} else {
+				int curr = query(1, 0, N - 1, a - 1, b - 1);
+
+				if (curr < 0) {
+					printf("-");
+				} else if (curr == 0) {
+					printf("0");
+				} else {
+					printf("+");
+				}
+			}
+		}
+		printf("\n");
+	}
+
+	return 0;
+}

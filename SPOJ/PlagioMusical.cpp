@@ -52,7 +52,7 @@ string inttostr(int x) {
 
 const int MAXN = 100007;
 int N, M, a[MAXN], b[MAXN];
-char buff[3];
+string buff;
 string a_str;
 map<string, int> idx;
 
@@ -95,18 +95,19 @@ int KMP(string S, string K) {
 
 int main(void) {
     int i, level;
+    ios_base::sync_with_stdio(false);
     build();
-    while(2 == scanf("%d%d", &N, &M) && N + M != 0) {
+    while (cin >> N >> M && N + M != 0) {
         a_str = "";
         for (i = 0; i < N; i++) {
-            scanf("%s", buff);
+            cin >> buff;
             a[i] = idx[buff];
             a_str += inttostr(a[i]);
         }
 
 
         for (i = 0; i < M; i++) {
-            scanf("%s", buff);
+            cin >> buff;
             b[i] = idx[buff];
         }
 
