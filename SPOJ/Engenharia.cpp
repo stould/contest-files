@@ -78,7 +78,6 @@ bool bfs() {
 
 int dfs (int v, int flow) {
 	if (!flow)  return 0;
-	printf("%d, ", v);
 	if (v == t)  return flow;
 	for (int & to=ptr[v]; to<MAXN; ++to) {
 		if (d[to] != d[v] + 1)  continue;
@@ -98,7 +97,6 @@ int dinic() {
 		if (!bfs())  break;
 		memset (ptr, 0, MAXN * sizeof ptr[0]);
 		while (int pushed = dfs (s, INF)) {
-		    printf("\n");
 			flow += pushed;
 		}
 	}
@@ -106,7 +104,7 @@ int dinic() {
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
+    //freopen("i.in", "r", stdin);
     //freopen("o.ot", "w", stdout);
     scanf("%d", &X);
 
@@ -138,7 +136,7 @@ int main(void) {
 
         int f = dinic();
 
-        printf("Instancia %d\n", T++);
+        printf("Instance %d\n", T++);
 
         if (f == N) {
             printf("pair programming\n");
