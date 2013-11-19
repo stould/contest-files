@@ -49,11 +49,12 @@ int dx[8] = {0, 0,  1, -1, 1, -1,  1, -1};
 int dy[8] = {1, -1, 0,  0, 1, -1, -1,  1};
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     scanf("%d", &T);
     for(int x = 0; x < T; x++) {
         scanf("%d%d", &N, &M);
         REP(i, N) {
-            scanf("%s", c[i]);
+            scanf("%s ", c[i]);
         }
         bool ok = true;
         REP(i, N) REP(j, M) {
@@ -71,7 +72,7 @@ int main(void) {
         }
         if(ok) printf("Well done Clark!");
         else printf("Please sweep the mine again!");
-        printf("\n");
+        if (x != T - 1) printf("\n");
     }
     return 0;
 }
