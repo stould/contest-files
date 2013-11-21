@@ -1,17 +1,42 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
-#include <string.h>
-#include <stdio.h>
+#include <bits/stdc++.h>
 
-#define MAXN 7
-#define INF 100000000;
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
+typedef long long Int;
+typedef unsigned uint;
+
+int T;
+int N, M;
+
+map<string, int> mp;
+
+void build(void) {
+    mp["XS"] = 1;
+    mp["S"] = 2;
+    mp["M"] = 3;
+    mp["L"] = 4;
+    mp["XL"] = 5;
+    mp["XXL"] = 6;
+}
+
+const int MAXN = 100;
+const int INF = 1010101;
+
 vector<int> graph[MAXN];
 int capacity[MAXN][MAXN];
+int residual[MAXN][MAXN];
 
 void add_edge(int u, int v, int c) {
     graph[u].push_back(v);
@@ -21,7 +46,7 @@ void add_edge(int u, int v, int c) {
 }
 
 int max_flow(int source, int sink) {
-    int residual[MAXN][MAXN]; memset(residual, 0, sizeof(residual));
+    //memset(residual, 0, sizeof(residual));
     int prev[MAXN], actual[MAXN];
     while(1) {
         memset(prev,  -1, sizeof(prev));
@@ -65,17 +90,46 @@ int max_flow(int source, int sink) {
     return -1;
 }
 
+string A, B;
+
+
 int main(void) {
-    memset(capacity, 0, sizeof(capacity));
-    graph[0].push_back(1); capacity[0][1] = 3;
-    graph[1].push_back(2); capacity[1][2] = 3;
-    graph[2].push_back(3); capacity[2][3] = 2;
-    graph[0].push_back(4); capacity[0][4] = 1;
-    graph[4].push_back(5); capacity[4][5] = 4;
-    graph[5].push_back(6); capacity[5][6] = 2;
-    graph[6].push_back(3); capacity[6][3] = 3;
-    graph[0].push_back(1); capacity[0][1] = 3;
-    graph[4].push_back(2); capacity[4][2] = 5;
-    printf("%d\n", max_flow(0, 3));
+    T = in();
+
+    build();
+
+    int i;
+    int j;
+
+    for ( ; T--; ) {
+        N = in();
+        M = in();
+
+        for (i = 0; i < MAXN; i++) {
+            graph[i].clear();
+            for (j = 0; j < MAXN; j++) {
+                capacity[i][j] = residual[i][j] = 0;
+            }
+        }
+
+        for (i = 1; i <= M; i++) {
+            add_edge(0, i, 1);
+
+            cin >> A >> B;
+
+            add_edge(i, M + mp[A], 1);
+            add_edge(i, M + mp[B], 1);
+        }
+
+        for (i = 1; i <= 6; i++) {
+            add_edge(M + i, M + 7, N / 6);
+        }
+
+        int flow = max_flow(0, M + 7);
+
+        puts(flow == M ? "YES" : "NO");
+    }
+
     return 0;
 }
+
