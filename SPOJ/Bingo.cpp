@@ -55,15 +55,22 @@ int main(void) {
     for ( ; scanf("%d%d", &N, &B) == 2 && (N + B != 0); ) {
         for (i = 0; i < B; i++) scanf("%d", &v[i]);
 
-        set<int> pos; pos.insert(0);
+        int M[300]; memset(M, 0, sizeof(M));
+        M[0] = 1;
+
+        int cp = 1;
 
         for (i = 0; i < B; i++) {
             for (j = 0; j < B; j++) {
-                pos.insert(abs(v[i]-v[j]));
+                int curr = abs(v[i] - v[j]);
+                if (!M[curr]) {
+                    cp += 1;
+                    M[curr] = 1;
+                }
             }
         }
 
-        if (pos.size() == N + 1) {
+        if (cp == N + 1) {
             puts("Y");
         } else {
             puts("N");

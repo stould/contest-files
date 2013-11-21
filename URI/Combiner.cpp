@@ -37,19 +37,21 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
-int i, n, an, bn;
+int N, an, bn;
 string a, b;
 
 int main(void) {
-    ios::sync_with_stdio(false);
-    cin >> n;
-    while(cin >> a >> b) {
+    //ios::sync_with_stdio(false);
+    cin >> N;
+    for ( ; N > 0; ) {
+        cin >> a >> b;
         an = bn = 0;
         while(an < a.size() || bn < b.size()) {
             if(an < a.size()) putchar(a[an++]);
             if(bn < b.size()) putchar(b[bn++]);
         }
         cout << "\n";
+        N--;
     }
     return 0;
 }
