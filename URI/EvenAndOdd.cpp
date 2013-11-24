@@ -17,6 +17,36 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+const int MAXN = 100005;
+
+int N;
+int P[MAXN], I[MAXN];
+
 int main(void) {
+    N = in();
+
+    int i;
+    int pi = 0, ii = 0;
+
+    for (i = 0; i < N; i++) {
+        int x = in();
+        if (x % 2 == 0) {
+            P[pi++] = x;
+        } else {
+            I[ii++] = x;
+        }
+    }
+
+    sort(P, P + pi);
+    sort(I, I + ii);
+    reverse(I, I + ii);
+
+    for (i = 0; i < pi; i++) {
+        printf("%d\n", P[i]);
+    }
+    for (i = 0; i < ii; i++) {
+        printf("%d\n", I[i]);
+    }
+
     return 0;
 }

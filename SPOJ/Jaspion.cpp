@@ -50,6 +50,7 @@ vector<string> split(string& s) {
 }
 
 int main(void) {
+    //freopen("i.in", "r", stdin);
     scanf("%d", &t);
     for(x = 0; x < t; x++) {
         map<string, string> mp;
@@ -80,7 +81,7 @@ int main(void) {
                 }
             }
         }
-        if(x != t - 1) cout << "\n";
+        cout << "\n";
     }
     return 0;
 }
