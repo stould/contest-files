@@ -57,13 +57,13 @@ pair<int, int> bfs(int x) {
     }
 
     for (i = 0; i < 2500; i++) {
-        if (vis[i] != -INF) {
+        if (vis[i] != -INF && i != x) {
             memo[vis[i]] += 1;
         }
     }
     for (i = 1; i < 2500; i++) {
-        if (vis[i] != -INF && memo[vis[i]] > best) {
-            best = memo[vis[i]];
+        if (memo[i] > best) {
+            best = memo[i];
             cnt = i;
         }
     }
@@ -72,7 +72,6 @@ pair<int, int> bfs(int x) {
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     E = in();
 
     int i, j;

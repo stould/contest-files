@@ -17,32 +17,43 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int N, T;
+int T;
+
 string S;
+
+bool ok(int id) {
+    int i;
+
+    string b = S.substr(0, id);
+
+    for (i = id; i < (int) S.size(); i += id) {
+        string cs = S.substr(i, id);
+        if (cs != b) return false;
+    }
+
+    return true;
+}
 
 int main(void) {
     T = in();
 
     int i;
+    int x;
 
-    for ( ; T--; ) {
-        cin >> S;
+    getline(cin, S);
 
-        N = (int) S.size();
+    for (x = 1; x <= T; x++) {
+        getline(cin, S);
+        getline(cin, S);
 
-        vector<int> T(N + 1, -1);
-
-        for(i = 1; i <= N; i++) {
-            int pos = T[i - 1];
-            while(pos != -1 && S[pos] != S[i - 1]) pos = T[pos];
-            T[i] = pos + 1;
+        for (i = 1; i <= (int) S.size(); i++) {
+            if (ok(i)) {
+                printf("%d\n", i);
+                break;
+            }
         }
-
-        for (i = 0; i <= N; i++) {
-            printf("%d ", T[i]);
-        }
+        if (x != T) puts("");
     }
 
     return 0;
 }
-
