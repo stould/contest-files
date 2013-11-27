@@ -17,6 +17,27 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+int N, K;
+
+int tb[110][110];
+
 int main(void) {
+	N = in();
+	K = in();
+
+	int i;
+	int j;
+
+	for (i = 0; i < N; i++) {
+		for (j = 0; j < N; j++) {
+			if (i == j) {
+				printf("%d ", K - (N - 1));
+			} else {
+				printf("%d ", 1);
+			}
+		}
+		printf("\n");
+	}
+
     return 0;
 }
