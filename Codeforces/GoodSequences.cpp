@@ -74,8 +74,11 @@ int main(void) {
 
         int best = 0;
 
+        printf("%d\n", A[i]);
+
         for (j = 0; j < (int) factor.size(); j++) {
             chmax(best, dp[factor[j]]); 
+            printf("fac = %d\n", factor[j]);
         }
 
         for (j = 0; j < (int) factor.size(); j++) {

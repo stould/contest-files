@@ -32,7 +32,6 @@ char ans[600];
 char let[105];
 
 int cnt;
-
 void dfs(int pos, int depth) {
     if (cnt >= 100) {
         return;

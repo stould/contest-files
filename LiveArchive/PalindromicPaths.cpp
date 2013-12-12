@@ -21,47 +21,47 @@ int T;
 int N;
 
 char str[60][60];
-string ans;
 
-int vis[60];
+string dp[60][60];
+bool mark[60][60];
 
-bool func(string s) {
-    int i;
-
-    for (i = 0; i < (int) s.size(); i++) {
-        if (s[i] != s[(int) s.size() - i - 1]) return false;
-    }
-
-    return true;
-}
-
-void dfs(int x, string curr) {
-    cout << curr << "\n";
-    if (x == N - 1) {
-        if (func(curr)) {
-            if (curr.size() > ans.size() || (curr.size() == ans.size() && curr < ans)) {
-                ans = curr;
-            }
-        }
+string func(int a, int b) {
+    if (a == b || a > b) {
+        return "";        
     } else {
-        int i;
+        string& ans = dp[a][b];
 
-        vis[x] = 1;
+        if (!mark[a][b]) {
+            mark[a][b] = true;
+            
+            int i;
+            int j;
 
-        for (i = x + 1; i < N; i++) if (x != i) {
-            if (!vis[i]) {
-                vis[i] = 1;
+            ans = "";
 
-                dfs(i, curr + str[x][i]);
+            for (i = a + 1; i < N; i++) {
+                for (j = b - 1; j >= a; j--) {        
+                    if (str[a][i] == str[b][j]) {                        
+                        string curr = "";
+                        if (i != b) {
+                            curr = str[a][i] + func(i, j) + str[b][j];
+                        } else {                        
+                            curr = str[a][i] + func(i, j);
+                        }
 
-                vis[i] = 0;
+                        if (curr.size() > ans.size() || (curr.size() == ans.size() && curr < ans)) {  
+                            ans = curr;
+                        }
+                    }
+                }
             }
         }
+
+        return ans;
     }
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     T = in();
 
     int i;
@@ -73,18 +73,12 @@ int main(void) {
             scanf("%s", str[i]);
         }
 
-        memset(vis, 0, sizeof(vis));
+        memset(mark, false, sizeof(mark));
 
-        ans = "";
-        dfs(0, "");
+        string ans = func(0, N - 1);
 
-        if (ans == "") {
-            puts("");
-        } else {
-            puts(ans.c_str());
-        }
+        puts(ans.c_str());
     }
 
     return 0;
 }
-
