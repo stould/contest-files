@@ -17,47 +17,36 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1010;
-
 int T;
-int N;
-int S[MAXN];
+int N, M;
 
 int main(void) {
 	T = in();
 
 	int i;
-	int x;
 
-	for (x = 1; x <= T; x++) {
+	for ( ; T--; ) {
+		M = in();
 		N = in();
 
+		int mid = M / 2;
+
+		int A = 0;
+		int B = 0;
+
 		for (i = 0; i < N; i++) {
-			S[i] = in();
+			int curr = in();
+
+			if (curr <= mid) {
+				chmax(A, curr);
+				chmax(B, M - curr);
+			} else {
+				chmax(A, M - curr);
+				chmax(B, curr);
+			}
 		}
 
-		printf("Case %d: ", x);
-
-		if (N == 1) {
-			printf("%d\n", S[0]);
-		} else {
-			sort(S, S + N);
-
-			vector<int> sp;
-			swap(S[0], S[1]);
-
-			int ans = 0;
-
-			for (i = 0; i < N / 2; i++) {
-				sp.push_back(S[i]);
-				sp.push_back(S[N - i - 1]);				
-			}			
-			for (i = 1; i < N; i++) {
-				//printf("%d ", sp[i]);
-				ans += abs(sp[i] - sp[i - 1]);
-			}						
-			printf("%d\n", ans);
-		}
+		printf("%d %d\n", A, B);
 	}
     return 0;
 }

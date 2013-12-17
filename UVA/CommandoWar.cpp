@@ -19,45 +19,39 @@ typedef unsigned uint;
 
 const int MAXN = 1010;
 
-int T;
 int N;
-int S[MAXN];
+
+pair<int, int> p[MAXN];
+
+bool cmp(const pair<int, int> a, const pair<int, int> b) {
+	if (a.second != b.second) {
+		return a.second > b.second;
+	} else {
+		return a.first < b.first;
+	}
+}
 
 int main(void) {
-	T = in();
-
+	int test = 1;
 	int i;
-	int x;
 
-	for (x = 1; x <= T; x++) {
-		N = in();
+	for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+		for (i = 0; i < N; i++) {
+			scanf("%d%d", &p[i].first, &p[i].second);
+		}
+		sort(p, p + N, cmp);
+
+		int ans = 0;
+		int l = 0;
 
 		for (i = 0; i < N; i++) {
-			S[i] = in();
+			l += p[i].first;		
+
+			ans = max(ans, l + p[i].second);
 		}
 
-		printf("Case %d: ", x);
-
-		if (N == 1) {
-			printf("%d\n", S[0]);
-		} else {
-			sort(S, S + N);
-
-			vector<int> sp;
-			swap(S[0], S[1]);
-
-			int ans = 0;
-
-			for (i = 0; i < N / 2; i++) {
-				sp.push_back(S[i]);
-				sp.push_back(S[N - i - 1]);				
-			}			
-			for (i = 1; i < N; i++) {
-				//printf("%d ", sp[i]);
-				ans += abs(sp[i] - sp[i - 1]);
-			}						
-			printf("%d\n", ans);
-		}
+		printf("Case %d: %d\n", test++, ans);
 	}
+
     return 0;
 }
