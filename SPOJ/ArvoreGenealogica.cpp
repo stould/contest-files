@@ -37,16 +37,60 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
-int N, M;
+int N, base = 1, vis[1010], dist[1010];
+string P, F;
+vector<int> order, graph[1010];
+map<string, int> msi;
+map<int, string> mis;
+map<int, int> parent;
 
-int main(void) {
-    scanf("%d%d", &N, &M);
-    if(!(N % (M + 1)) == 0) {
-        puts("Paula");
-    } else {
-        puts("Carlos");
+pair<int, int> bfs(int x) {
+    queue<int> q; q.push(x); vis[x] = 1;
+    memset(vis, 0, sizeof(vis));
+    memset(dist, 0, sizeof(dist));
+    int m = 0, index = 0;
+    while(!q.empty()) {
+        int u = q.front(); q.pop();
+
+        REP(i, graph[u].size()) {
+            int v = graph[u][i];
+            if(!vis[v]) {
+                dist[v] = dist[u] + 1;
+                vis[v] = vis[u] = 1;
+                q.push(v);
+                if(dist[v] > m) {
+                    m = dist[v];
+                    index = v;
+                }
+            }
+        }
     }
-    return 0;
+    return make_pair(m, index);
 }
 
-
+int main(void) {
+    scanf("%d", &N);
+    REP(i, N) {
+        cin >> P >> F;
+        if(msi[P] == 0) {
+            msi[P] = base;
+            mis[base] = P;
+            base += 1;
+        }
+        if(msi[F] == 0) {
+            msi[F] = base;
+            mis[base] = F;
+            base += 1;
+        }
+        graph[msi[P]].push_back(msi[F]);
+        graph[msi[F]].push_back(msi[P]);
+    }
+    int ansA = bfs(1).second;
+    pair<int, int> chk = bfs(ansA);
+    int ansB = chk.second;
+    P = mis[ansA];
+    F = mis[ansB];
+    if(P > F) swap(P, F);
+    cout << P << " " << F << " " << chk.first << "\n";
+    return 0;
+}

@@ -26,7 +26,11 @@ string dp[60][60];
 bool mark[60][60];
 
 string func(int a, int b) {
-    if (a == b || a > b) {
+    if (a > b) {
+        return "$";
+    } else if (a + 1 == b) {
+        return string(1, str[a][b]);
+    } else if (a == b) {
         return "";        
     } else {
         string& ans = dp[a][b];
@@ -39,15 +43,18 @@ string func(int a, int b) {
 
             ans = "";
 
-            for (i = a + 1; i < N; i++) {
-                for (j = b - 1; j >= a; j--) {        
-                    if (str[a][i] == str[b][j]) {                        
-                        string curr = "";
-                        if (i != b) {
-                            curr = str[a][i] + func(i, j) + str[b][j];
-                        } else {                        
-                            curr = str[a][i] + func(i, j);
+            for (i = a; i <= b; i++) {
+                for (j = b; j >= a; j--) {        
+                    if (str[a][i] == str[b][j] && str[a][i] != '*') {
+                        string curr = "";                       
+                      
+                        if (i == b) {
+                            curr = string(1, str[a][b]);
+                        } else {
+                            curr = str[a][i] + func(i, j) + str[b][j];                                                    
                         }
+                    
+                        if (curr.find("$") != string::npos) continue;
 
                         if (curr.size() > ans.size() || (curr.size() == ans.size() && curr < ans)) {  
                             ans = curr;
@@ -75,6 +82,7 @@ int main(void) {
 
         memset(mark, false, sizeof(mark));
 
+        
         string ans = func(0, N - 1);
 
         puts(ans.c_str());
