@@ -1,32 +1,4 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <set>
-#include <map>
-#include <list>
-#include <queue>
-#include <stack>
-#include <memory>
-#include <iomanip>
-#include <functional>
-#include <new>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <climits>
-#include <cctype>
-#include <ctime>
-
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
+#include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -36,34 +8,83 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-const int MAXN = 10000;
-int a, b, N, M, K, m[MAXN][MAXN];
+const int MAXN = 100005;
 
-int main(void) {
-    freopen("i.in", "r", stdin);
-    memset(m, -63, sizeof(m));
+int N, M, K;
+vector<int> graph[MAXN];
 
-    scanf("%d%d%d", &N, &M, &K);
+int vis[MAXN];
+bool done;
+int start, end;
 
-    REP(i, M) {
-        scanf("%d%d", &a, &b);
-        m[a][b] = m[b][a] = 1;
+vector<int> ans;
+
+void dfs(int x, int curr) {
+    if (done) return;
+
+    vis[x] = curr;
+    int i;
+
+    ans.push_back(x);
+
+    for (i = 0; i < (int) graph[x].size(); i++) {
+        int u = graph[x][i];
+        
+        if (vis[u] == 0) {                        
+            dfs(u, curr + 1);
+        } 
     }
 
-    FOR(i, 1, N+1) FOR(j, 1, N+1) FOR(k, 1, N+1) {
-        m[i][j] = max(m[i][j], m[i][k] + m[k][j]);
-    }
-    FOR(i, 1, N+1) {
-        printf("%d\n", m[i][i]);
-        if(m[i][i] + 1 >= K + 1) {
-        //    printf("%d\n", i);
-        }
-    }
-    return 0;
+    done = true;
 }
 
+int main(void) {
+    N = in();
+    M = in();
+    K = in();
+
+    int i;
+
+    for (i = 0; i < M; i++) {
+        int A, B;
+
+        A = in();
+        B = in();
+
+        graph[A].push_back(B);
+        graph[B].push_back(A);
+    }
+
+    for (i = 0; i <= N; i++) {
+        vis[i] = 0;
+    }
+
+    done = false;
+    dfs(1, 1);
+
+    start = ans[(int) ans.size() - 1];
+
+    for (i = 0; i < (int) ans.size(); i++) {
+        if (find(graph[start].begin(), graph[start].end(), ans[i]) != graph[start].end()) {
+            end = i;
+            break;
+        }
+    }
+    
+    printf("%d\n", (int) ans.size() - end);
+
+    for (i = end; i < (int) ans.size(); i++) {
+        printf("%d ", ans[i]);
+    }
+
+    return 0;
+}

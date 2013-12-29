@@ -9,6 +9,7 @@ int n, a[MAXN];
 
 void downheap(int v) {
     int w = 2*v+1;
+
     while(w < n) {
         if(w + 1 < n) {
             if (a[w+1]>a[w]) w++;
