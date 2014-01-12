@@ -1,0 +1,34 @@
+Dutch Pie Tunnels
+
+Everybody already knows the Kingdom of Dutch Pies, ruled by Queen Little Pie, decided to finally produce Dutch Pies, the kingdong is going to starts it's own assembly line of Pies. The delicious Dutch Pies are made of mass, filling and cover. To an uniform assembly line, the kingdom decided to start with the mass, going though the filling and then, the cover. From one line to other, the Pies pass though the real pipes, which transport the cakes without changing their flavour. Each tunnel connects one section with a different one, with an cost and a limit of Pies to transport for each tortistic cicle. Given A as the number of mass machines, B as the number of filling machines and C the number of conver machines, determine the mininum cost to make K Pies in 1 tortistic cicle or -1 if it's impossible.
+
+Input:
+
+Input starts with an integer T, denoting the numeber of tests cases, followed by 6 integers A, B, C, N, M, and K, being A the number of mass machines, B the number of filling machines, C the number of cover machines and K the number of desired Pies. The next N lines consist of 4 integer X, Y, F, C, denoting an tunnel from the X-th machine of mass to the Y-th machine of filling able to transport F Pies with a cost of C real coins, the next M lines are also formed by integer X, Y, F and C, but now representing a tunnel from the X-th filling machine to the Y-th machine of cover with a F capacity and C cost.
+
+1 <= A, B, C <= 200
+1 <= N, M <= 300
+1 <= C, F <= 10000
+1 <= K <= 1000
+
+Output:
+
+The minimum cost to make K Pies in 1 tortistic cicle, or -1 if it's impossible.
+
+Example:
+Input:
+1
+5 6 3 6 4 10
+3 3 5 8
+1 2 5 9
+2 5 3 2
+1 4 5 7
+4 6 7 2
+5 4 7 1
+2 2 9 2
+3 3 7 3
+3 3 3 4
+6 1 8 2
+
+Output:
+61
