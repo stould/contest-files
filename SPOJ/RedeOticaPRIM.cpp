@@ -40,7 +40,7 @@ int main(void) {
             }
             for (j = 1; j <= n; j++)
                 if (g[v][j] < min_e[j]) {
-                    min_e[j] = g[v][j];
+                     min_e[j] = g[v][j];
                     sel_e[j] = v;
                 }
         }
