@@ -21,39 +21,46 @@ void add_edge(Graph&G, int u, int v, Flow c, Cost l) {
 
 pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
     int n=G.size();
-    Flow flow=0;
-    Cost cost=0;
-    for (;;) {
+    Flow flow = 0;
+    Cost cost = 0;
+    for ( ; ;) {
         priority_queue<Edge> Q;
         vector<int> prev(n, -1), prev_num(n, -1);
         vector<Cost> length(n, INF);
         Q.push((Edge){-1,s,0,0,0});
         prev[s]=s;
-        for (;!Q.empty();) {
-            Edge e=Q.top(); Q.pop();
-            int v=e.dst;
-            for (int i=0; i<(int)G[v].size(); i++) {
-                if (G[v][i].cap>0 && length[G[v][i].dst]>e.cst+G[v][i].cst) {
-                    prev[G[v][i].dst]=v;
+        for ( ; !Q.empty(); ) {
+            Edge e = Q.top(); Q.pop();
+            int v = e.dst;
+            for (int i = 0; i < (int) G[v].size(); i++) {
+                if (G[v][i].cap > 0 && length[G[v][i].dst] > e.cst + G[v][i].cst) {
+                    prev[G[v][i].dst] = v;
                     Q.push((Edge){v, G[v][i].dst, e.cst+G[v][i].cst,0,0});
                     prev_num[G[v][i].dst]=i;
                     length[G[v][i].dst]=e.cst+G[v][i].cst;
                 }
             }
         }
+
         if (prev[t]<0) return make_pair(flow, cost);
 
         Flow mi=INF;
         Cost cst=0;
-        for (int v=t; v!=s; v=prev[v]) {
-            mi=min(mi, G[prev[v]][prev_num[v]].cap);
-            cst+=G[prev[v]][prev_num[v]].cst;
+
+        for (int v = t; v != s; v = prev[v]) {
+            mi = min(mi, G[prev[v]][prev_num[v]].cap);
+            cst += G[prev[v]][prev_num[v]].cst;
         }
 
-	if (cst>K) return make_pair(flow, cost);
+		if (cst > K) {
+			return make_pair(flow, cost);
+		}
 
-	if (cst != 0) mi = min(mi, K/cst);
-	K -= cst*mi;
+		if (cst != 0) {
+			mi = min(mi, K/cst);
+		}
+
+		K -= cst*mi;
         cost+=cst*mi;
 
         for (int v=t; v!=s; v=prev[v]) {

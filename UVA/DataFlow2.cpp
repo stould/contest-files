@@ -22,118 +22,83 @@ const Int INF = 1001000010010LL;
 
 int N, M;
 
-Int cap[MAXN][MAXN];
-Int res[MAXN][MAXN];
-Int cst[MAXN][MAXN];
-
-vector<int> graph[MAXN];
-
 int A[5050];
 int B[5050];
 
 Int D, K;
 Int C[5050];
 
-Int dist[MAXN];
-Int end_flow[MAXN];
-int ancs[MAXN];
+typedef Int Flow;
+typedef Int Cost;
 
-void add_edge(int f, int t, Int cost, Int flow) {
-    cap[f][t] = flow;
-    cst[f][t] = cost;
-
-    graph[f].push_back(t);
-}
-
-struct MyLess {
-    bool operator()(int a, int b) {
-        return dist[a] > dist[b];
-    }
+struct Edge {
+    int src, dst;
+    Cost cst;
+    Flow cap;
+    int rev;
 };
-
-bool augment_path(int s, int t) {
-    priority_queue<int, vector<int>, MyLess> q;
-
-    fill(dist, dist + N + 1, INF);
-    fill(ancs, ancs + N + 1, -1);
-
-    q.push(s);
-    dist[s] = 0;
-
-    int i;
-
-    for ( ; !q.empty(); ) {
-        int now = q.top();
-        q.pop();
-
-        for (i = 0; i < (int) graph[now].size(); i++) {
-            int next = graph[now][i];
-
-            if (dist[now] + cst[now][next] < dist[next] && cap[now][next] - res[now][next] > 0) {
-                dist[next] = dist[now] + cst[now][next];
-                ancs[next] = now;
-                q.push(next);
-            }
-        }
-    }
-
-    Int curr_flow = INF;
-    int v = t, u = ancs[t];
-
-    for ( ; u != -1; ) {
-        if (res[v][u]) {
-            chmin(curr_flow, res[v][u]);
-        } else {
-            chmin(curr_flow, cap[u][v] - res[u][v]);
-        }
-        v = u;
-        u = ancs[u];
-    }
-
-    end_flow[t] = curr_flow;
-
-    return dist[t] != INF;
+bool operator<(const Edge a, const Edge b) {
+    return a.cst>b.cst;
 }
 
+typedef vector<Edge> Edges;
+typedef vector<Edges> Graph;
 
-pair<Int, Int> flow(int s, int t) {
-    pair<Int, Int> ans = make_pair(0LL, 0LL);
+void add_edge(Graph&G, int u, int v, Flow c, Cost l) {
+    G[u].push_back((Edge){ u, v, l, c, int(G[v].size()) });
+    G[v].push_back((Edge){ v, u, -l, 0, int(G[u].size()-1) });
+}
 
-    for ( ; augment_path(s, t); ) {
-        int v = t, u = ancs[t];
-
-        Int iter_flow = end_flow[t];
-        ans.first += iter_flow;
-
-        for ( ; v != -1; ) {
-            if (res[v][u]) {
-                res[v][u] -= iter_flow;
-                ans.second -= iter_flow * cst[v][u];
-            } else {
-                res[u][v] += iter_flow;
-                ans.second += iter_flow * cst[u][v];
+pair<Flow, Cost> flow(Graph&G, int s, int t) {
+    int n = G.size();
+    Flow flow = 0;
+    Cost cost = 0;
+    for ( ; ;) {
+        priority_queue<Edge> Q;
+        vector<int> prev(n, -1), prev_num(n, -1);
+        vector<Cost> length(n, INF);
+        Q.push((Edge){-1,s,0,0,0});
+        prev[s] = s;
+        for ( ; !Q.empty(); ) {
+            Edge e = Q.top(); Q.pop();
+            int v = e.dst;
+            for (int i = 0; i < (int) G[v].size(); i++) {
+                if (G[v][i].cap > 0 && length[G[v][i].dst] > e.cst + G[v][i].cst) {
+                    prev[G[v][i].dst] = v;
+                    Q.push((Edge){v, G[v][i].dst, e.cst+G[v][i].cst,0,0});
+                    prev_num[G[v][i].dst] = i;
+                    length[G[v][i].dst] = e.cst+G[v][i].cst;
+                }
             }
-
-            v = u;
-            u = ancs[u];
         }
-    }
 
-    return ans;
+        if (prev[t]<0) return make_pair(flow, cost);
+
+        Flow mi=INF;
+        Cost cst=0;
+
+        for (int v = t; v != s; v = prev[v]) {
+            mi = min(mi, G[prev[v]][prev_num[v]].cap);
+            cst += G[prev[v]][prev_num[v]].cst;
+        }
+
+        cost += cst * mi;
+
+        for (int v = t; v != s; v = prev[v]) {
+            Edge& e = G[prev[v]][prev_num[v]];
+            e.cap -= mi;
+            G[e.dst][e.rev].cap += mi;
+        }
+        flow += mi;
+    }
 }
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     int i;
     int j;
 
     for ( ; scanf("%d%d", &N, &M) == 2 && N + M != 0; ) {
-        for (i = 0; i < MAXN; i++) {
-            graph[i].clear();
-            for (j = 0; j < MAXN; j++) {
-                cap[i][j] = res[i][j] = cst[i][j] = 0LL;
-            }
-        }
+		Graph g(N + 1);
 
         for (i = 0; i < M; i++) {
             cin >> A[i] >> B[i] >> C[i];
@@ -142,13 +107,13 @@ int main(void) {
         cin >> D >> K;
 
         for (i = 0; i < M; i++) {
-            add_edge(A[i], B[i], C[i], K);
-            add_edge(B[i], A[i], C[i], K);
+            add_edge(g, A[i], B[i], K, C[i]);
+            add_edge(g, B[i], A[i], K, C[i]);
         }
 
-        add_edge(0, 1, 0, D);
+        add_edge(g, 0, 1, D, 0);
 
-        pair<Int, Int> fl = flow(0, N);
+        pair<Int, Int> fl = flow(g, 0, N);
 
         if (fl.first == D) {
             printf("%lld\n", fl.second);
