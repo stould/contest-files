@@ -134,7 +134,7 @@ int main(void) {
 		}
 
         dfs(0, -2);
-		parent[0] = -1;
+x		parent[0] = -1;
 
 		init();
 
