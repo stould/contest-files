@@ -96,6 +96,43 @@ pair<int, int> query(int node, int l, int r, int bound_l, int bound_r) {
 	}
 }
 
+void updateL(int node, int l, int r, int pos, int value) {
+	if (l > r) {
+		return;
+	} else if (l == r) {
+		chmin(tree[node].first, value);
+	} else {
+		int m = (l + r) / 2;
+
+		if (pos <= m) {
+			updateL(2 * node, l, m, pos, value);
+		} else {
+			updateL(2 * node + 1, m + 1, r, pos, value);
+		}
+
+		tree[node].first = min(tree[2 * node].first, tree[2 * node + 1].first);
+	}
+}
+
+void updateR(int node, int l, int r, int pos, int value) {
+	if (l > r) {
+		return;
+	} else if (l == r) {
+		chmax(tree[node].second, value);
+	} else {
+		int m = (l + r) / 2;
+
+		if (pos <= m) {
+			updateL(2 * node, l, m, pos, value);
+		} else {
+			updateL(2 * node + 1, m + 1, r, pos, value);
+		}
+
+		tree[node].second = max(tree[2 * node].second, tree[2 * node + 1].second);
+	}
+}
+
+
 int main(void) {
 	T = in();
 
@@ -107,22 +144,30 @@ int main(void) {
 			radius[i] = in();
 
 			L[i] = funcL(i);
-
 			for ( ; L[L[i]] < L[i]; ) {
 				L[i] = L[L[i]];
 			}
 		}
-		for (int i = 0; i < N; i++) {
+		for (int i = N - 1; i >= 0; i--) {
 			R[i] = funcR(i);
-   		}
-		for (int i = 0; i < N; i++) {
 			for ( ; R[R[i]] > R[i]; ) {
 				R[i] = R[R[i]];
 			}
-			printf("%d %d\n", L[i], R[i]);
-		}
+   		}
 
 		build(1, 0, N - 1);
+		
+		for (int i = 0; i < N; i++) {
+			pair<int, int> curr = query(1, 0, N - 1, L[i], i);
+
+			updateL(1, 0, N - 1, i, curr.first);
+		}
+
+		for (int i = N - 1; i >= 0; i--) {
+			pair<int, int> curr = query(1, 0, N - 1, i, R[i]);
+
+			updateR(1, 0, N - 1, i, curr.second);
+		}
 
 		for (int i = 0; i < N; i++) {
 			pair<int, int> a = query(1, 0, N - 1, i, R[i]);
