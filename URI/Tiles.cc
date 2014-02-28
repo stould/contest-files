@@ -1,4 +1,4 @@
-h#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -17,6 +17,12 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+Int N, A, B;
+
 int main(void) {
+	for ( ; cin >> N >> A >> B && (N + A + B != 0); ) {
+		Int ans = N / A + N / B - N / lcm(A, B);
+		cout << ans << "\n";
+	}
     return 0;
 }
