@@ -1,0 +1,14 @@
+for (int i = 0; i < N; i++) {
+	for (int j = 0; j < N; j++) {
+		for (int k = i + 1; k < N; k++) {
+			for (int l = j + 1; l < N; l++) {
+				//varre o retangulo
+				for (int a = i; a < k; a++) {
+					for (int b = j; b < l; b++) {
+
+					}
+				}
+			}
+		}
+	}
+}
