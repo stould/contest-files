@@ -19,42 +19,44 @@ typedef unsigned uint;
 
 string S;
 int N;
-
 string str[50005];
 
-vector<pair<int, int> > vp;
-
+vector<pair<pair<int, int>, string> > vp;
 map<int, vector<char> > mcv;
-char v[30];
+char buff[105];
+char v[26];
 
+int conv(char c) {
+	if (c >= '0' && c <= '9') {
+		return c - '0';
+	} else {
+		return (c - 'a') + 10;
+	}
+}
 
 struct Trie {
-    Trie *child[30];
-    int prefixes;
+    Trie *child[42];
     int words;
 
     Trie() {
         int i;
-        prefixes = words = 0;
-        for(i = 0; i < 30; i++) {
+        words = 0;
+        for (i = 0; i < 42; i++) {
             child[i] = NULL;
         }
     }
 
     void addWord(string s, int pos = 0) {
-        int letter_pos = s[pos] - 'a';
-
-        Trie *t = child[letter_pos];
-
-        if(child[letter_pos] == NULL) {
-            t = child[letter_pos] = new Trie();
-            t->prefixes = 1;
-        } else {
-            t->prefixes = t->prefixes + 1;
-        }
-		if (pos + 1 == s.size()) {
-			words++;
+		if (pos == s.size()) {
+			words += 1;
 		} else {
+			int letter_pos = s[pos] - 'a';
+			
+			Trie *t = child[letter_pos];
+			
+			if(child[letter_pos] == NULL) {
+				t = child[letter_pos] = new Trie();
+			}
 			t->addWord(s, pos + 1);
 		}
     }
@@ -62,7 +64,7 @@ struct Trie {
 	void find(int start, int id, int sz, string buff) {
 		if (id + sz > S.size()) return;
 		if (words > 0) {
-			vp.push_back(make_pair(make_pair(buff + eid, id + sz));
+			vp.push_back(make_pair(make_pair(id, id + sz), buff));
 		} 
 
 		for (int i = 0; i < (int) mcv[start].size(); i++) {
@@ -70,7 +72,7 @@ struct Trie {
 			
 			Trie *next_pointer = child[next_letter];
 
-			if (v[next_letter] == (int) start && next_pointer != NULL && id + sz + 1 < S.size()) {
+			if (v[next_letter] == (int) start && next_pointer != NULL && id + sz + 1 <= S.size()) {
 				next_pointer->find(S[id + sz + 1] - '0', id, sz + 1, buff + (char) (next_letter + 'a'));
 			}
 		}
@@ -100,24 +102,35 @@ void build(void) {
 	v[24] = 9;	v[25] = 0;
 }
 
-pair<int, string> func(int id, int last) {
-	if (vp[id].second == S.size()) {
+struct mm {
+	int v;
+	string s;
+
+	mm(){}
+
+	mm(int v, string s): v(v), s(s) {}
+};
+
+pair<int, string> dp[101];
+
+pair<int, string> func(int id, int pos) {	
+	if (id > vp.size() || pos > S.size()) {
+		return make_pair(10100100, "");
+	} else if (pos == S.size()) {
 		return make_pair(0, "");
 	} else {
-		pair<int, string>& ans = dp[id][last];
+		pair<int, string>& ans = dp[pos];
 
 		if (ans.first == -1) {
-			ans.first = 10101010;;
-			ans.second = "";
+			ans = func(id + 1, pos);			
 
-			for (int i = id + 1; i < (int) vp.size(); i++) {
-				if (vp[i].first == vp[id].second + 1) {
-					pair<int, int> curr = func(i, id);
-
+			for (int i = id; i < (int) vp.size(); i++) {
+				if (vp[i].first.first == pos || (vp[i].first.first == 0 && pos == 0)) {
+					pair<int, string> curr = func(i + 1, vp[i].first.second);
 					curr.first += 1;
-					curr.second += " " + vp[i].second;
+					curr.second = vp[i].second + " " + curr.second;
 
-					if (first , ans.first) {
+					if (curr.first < ans.first) {
 						ans = curr;
 					}
 				}
@@ -128,26 +141,37 @@ pair<int, string> func(int id, int last) {
 	}
 }
 
-int main(void) {
+int main(void) {	
 	build();
 
-	for ( ; cin >> S && S != "-1"; ) {
-		cin >> N;
+	for ( ; scanf("%s", buff) == 1; ) {
+		S = string(buff);
+		if (S == "-1") break;
+
+		N = in();
 
 		Trie T;
 
 		for (int i = 0; i < N; i++) {
-			cin >> str[i];
+			scanf("%s", buff);
+			str[i] = string(buff);
 			T.addWord(str[i]);
 		}
+
 		vp.clear();
 
 		for (int i = 0; i < (int) S.size(); i++) {
 			T.find(S[i] - '0', i, 0, "");
 		}
-
-		for (int i = 0; i < (int) vp.size(); i++) {
-			cout << vp[i].first << " " << vp[i].second << "\n";
+		for (int i = 0; i <= 100; i++) {
+			dp[i] = make_pair(-1, "");			
+		}
+		pair<int, string> ans = func(0, 0);
+		if (ans.first > 100) {
+			printf("No solution.\n");
+			continue;
+		} else {			
+			printf("%s\n", ans.second.substr(0, ans.second.size() - 1).c_str());;
 		}
 	}
     return 0;

@@ -130,9 +130,6 @@ struct FenwickTree {
 
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-        //freopen("o.ot", "w", stdout);
-
     int i;
 
     power[0] = 1LL;

@@ -130,14 +130,14 @@ int main(void) {
 						}
 						rr = k;
                     }
+
 					pair<int, pair<int, int> > cp = make_pair(j, make_pair(cu, cd));
 					pair<int, pair<int, int> > rp = make_pair(i, make_pair(rl, rr));
 
 					if (mr[rp] == 0) mr[rp] = ir++;
 					if (mc[cp] == 0) mc[cp] = rc++;
 
-					add_edge(mr[rp], N * N + mc[cp], 1);
-
+					add_edge(
 					tor.insert(mr[rp]);
 					toc.insert(mc[cp]);
                 }

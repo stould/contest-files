@@ -38,12 +38,38 @@ typedef long long ll;
 typedef long double ld;
 
 
-int n, f, t[1010];
+int N, F;
+int T[60];
+
+int dp1[16005], dp2[16005];
+
+void func1(void) {
+	memset(dp1, 63, sizeof(dp1));
+
+	dp1[0] = 0;
+
+	for (int i = 1; i <= F; i++) {
+		for (int j = 0; j < N; j++) {
+			if (i - T[j] >= 0) {
+				dp1[i] = min(dp1[i], dp1[i - T[j]] + 1);
+			}
+		}
+	}
+}
 
 int main(void) {
-    while(scanf("%d%d", &n, &f) == 2 && !(n == 0 && f == 0)) {
+    for ( ; scanf("%d%d", &N, &F) == 2 && N + F != 0; ) {
+		for (int i = 0; i < N; i++) {
+			scanf("%d", &T[i]);			
+		}
+		func1();
 
+		for (int i = 0; i <= F; i++) {
+			printf("%d %d\n", i, dp1[i]);
+		}
+		puts("");
     }
+
     return 0;
 }
 
