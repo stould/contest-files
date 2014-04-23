@@ -37,12 +37,63 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
+const int MAXN = 1010010;
 
-int n, f, t[1010];
+int N, F;
+vector<int> A, B;
+int dp1[MAXN], dp2[MAXN];
+
+int P[50];
+char pos[50];
+
+void func1(void) {
+	memset(dp1, 0, sizeof(dp1));
+
+	for (int i = 1; i <= -F; i++) {
+		for (int j = 0; j < (int) A.size(); j++) {
+			if (i - A[j] >= 0) {
+				dp1[i] = min(dp1[i], dp1[i - A[j]] + 1);
+			}
+		}
+	}
+}
+
+void func2(void) {
+	memset(dp2, 0, sizeof(dp2));
+
+	for (int i = 1; i <= F; i++) {
+		for (int j = 0; j < (int) B.size(); j++) {
+			if (i - B[j] >= 0) {
+				dp2[i] = min(dp2[i], dp2[i - B[j]] + 1);
+			}
+		}
+	}
+}
 
 int main(void) {
-    while(scanf("%d%d", &n, &f) == 2 && !(n == 0 && f == 0)) {
+    for ( ; scanf("%d%d", &N, &F) == 2 && N + F != 0; ) {
+		A.clear();
+		B.clear();
 
+		int p;
+
+		for (int i = 0; i < N; i++) {
+			scanf("%d", &p);
+
+			P[i] = P;			
+
+			if (p < 0) {
+				A.push_back(-p);
+			} else {
+				B.push_back(p);
+			}
+		}
+
+		sort(A.begin(), A.end());
+		sort(B.begin(), B.end());
+
+		func1();
+		func2();
     }
     return 0;
 }

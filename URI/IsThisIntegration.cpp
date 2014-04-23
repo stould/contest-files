@@ -46,11 +46,19 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+const double PI = 2.0 * acos(0.0);
 double N;
 
 int main(void) {
     for ( ; scanf("%lf", &N) == 1; ) {
+		double S = sin(PI / 12.0), C = cos(PI / 12.0);
+		double co = 2.0*N*S;
+		double ca = N * C;
+		double center = co*co + 4.0 * (PI*N*N/12.0 - co*ca/2.0);
+	  
+		double petal = 2.0 * ((N*N - (2.0 * (N*N - PI*N*N / 4.0))) - center);
 
+		printf("%.3lf %.3lf %.3lf\n", center, petal, N*N - center - petal);
     }
     return 0;
 }
