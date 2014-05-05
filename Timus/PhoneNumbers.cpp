@@ -21,18 +21,10 @@ string S;
 int N;
 string str[50005];
 
-vector<pair<pair<int, int>, string> > vp;
+vector<pair<int, string> > vp[105];
 map<int, vector<char> > mcv;
 char buff[105];
 char v[26];
-
-int conv(char c) {
-	if (c >= '0' && c <= '9') {
-		return c - '0';
-	} else {
-		return (c - 'a') + 10;
-	}
-}
 
 struct Trie {
     Trie *child[42];
@@ -60,11 +52,11 @@ struct Trie {
 			t->addWord(s, pos + 1);
 		}
     }
-	///////
+
 	void find(int start, int id, int sz, string buff) {
 		if (id + sz > S.size()) return;
 		if (words > 0) {
-			vp.push_back(make_pair(make_pair(id, id + sz), buff));
+			vp[id].push_back(make_pair(id + sz, buff));
 		} 
 
 		for (int i = 0; i < (int) mcv[start].size(); i++) {
@@ -102,41 +94,29 @@ void build(void) {
 	v[24] = 9;	v[25] = 0;
 }
 
-struct mm {
-	int v;
-	string s;
-
-	mm(){}
-
-	mm(int v, string s): v(v), s(s) {}
-};
-
 pair<int, string> dp[101];
 
-pair<int, string> func(int id, int pos) {	
-	if (id > vp.size() || pos > S.size()) {
-		return make_pair(10100100, "");
-	} else if (pos == S.size()) {
+pair<int, string> func(int pos) {	
+	if (pos == S.size()) {
 		return make_pair(0, "");
+	} else if (pos > S.size()) {
+		return make_pair(101010101, "");
 	} else {
 		pair<int, string>& ans = dp[pos];
 
 		if (ans.first == -1) {
-			ans = func(id + 1, pos);			
+			ans = make_pair(10101010, "");
 
-			for (int i = id; i < (int) vp.size(); i++) {
-				if (vp[i].first.first == pos || (vp[i].first.first == 0 && pos == 0)) {
-					pair<int, string> curr = func(i + 1, vp[i].first.second);
-					curr.first += 1;
-					curr.second = vp[i].second + " " + curr.second;
-
-					if (curr.first < ans.first) {
-						ans = curr;
-					}
+			for (int i = 0; i < (int) vp[pos].size(); i++) {
+				pair<int, string> curr = func(vp[pos][i].first);
+				curr.first += 1;
+				curr.second = vp[pos][i].second + " " + curr.second;
+				
+				if (curr.first < ans.first) {
+					ans = curr;
 				}
 			}
 		}
-
 		return ans;
 	}
 }
@@ -157,16 +137,14 @@ int main(void) {
 			str[i] = string(buff);
 			T.addWord(str[i]);
 		}
-
-		vp.clear();
-
+		for (int i = 0; i <= 100; i++) {			
+			dp[i] = make_pair(-1, "");			
+			vp[i].clear();
+		}
 		for (int i = 0; i < (int) S.size(); i++) {
 			T.find(S[i] - '0', i, 0, "");
 		}
-		for (int i = 0; i <= 100; i++) {
-			dp[i] = make_pair(-1, "");			
-		}
-		pair<int, string> ans = func(0, 0);
+		pair<int, string> ans = func(0);
 		if (ans.first > 100) {
 			printf("No solution.\n");
 			continue;

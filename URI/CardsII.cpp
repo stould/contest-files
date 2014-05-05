@@ -47,9 +47,15 @@ int main(void) {
 		for (int i = 0; i < N; i++) {
 			scanf("%d", &P[i]);
 			for (int j = i; j < N; j++) {
-				dp[i][j] = -1LL;
+				dp[i][j] = -INF;
 			}
 		}
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++) {
+				
+			}
+		}
+		
 		//		memset(dp, -1LL, sizeof(dp));
 		printf("%lld\n", func(0, N - 1));
 	}

@@ -109,6 +109,21 @@ void heapsort() {
     }
 }
 //**********************************************
+Kadade 2D simplificaco
+int best = 0;
+for(int i = 1; i <= n; i++){
+  for(int j = i; j <= n; j++){
+    int tmp = 0;
+    for(int k = 1; k <= n; k++){
+      tmp += (freq[j][k] - freq[i-1][k]);
+      best = max(tmp, best);
+      if(tmp < 0){
+       tmp = 0;
+      }
+    }
+  }
+}
+//////////////////////////////////////////////////////////
 //Kadane 2D
    int N;
     int t = 0;
