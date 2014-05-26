@@ -49,7 +49,7 @@ typedef unsigned uint;
 
 const int MAXN = 1010;
 
-const double EPS = 10e-14;
+const double EPS = 1e-7;
 
 int N;
 double X[MAXN];
@@ -78,7 +78,7 @@ int main(void) {
             }
         }
 
-        printf("$%.2lf\n", max(ansN, ansP));
+        printf("$%.2lf\n", max(ansN, ansP) + EPS);
     }
 
     return 0;
