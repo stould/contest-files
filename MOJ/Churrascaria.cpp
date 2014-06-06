@@ -22,6 +22,30 @@ const int MAXN = 100005;
 int N, K;
 int P[MAXN];
 
+inline void read(int &x) {
+    register int c = getchar_unlocked();
+
+    x = 0;
+
+    int neg = 0;
+
+    for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
+
+    if (c=='-') {
+        neg = 1;
+        c = getchar_unlocked();
+    }
+
+    for ( ; c>47 && c<58 ; c = getchar_unlocked()) {
+        x = (x<<1) + (x<<3) + c - 48;
+    }
+
+    if (neg) {
+        x = -x;
+    }
+}
+
+
 void maxSlidingWindow(int A[], int n, int w, int B[]) {
   deque<int> Q;
   for (int i = 0; i < w; i++) {
@@ -41,19 +65,22 @@ void maxSlidingWindow(int A[], int n, int w, int B[]) {
 }
 
 
-int main(void) {
-	for ( ; cin >> N >> K && N + K != 0; ) {
+int main(void) {	
+	for ( ; ; ) {
+		read(N);
+		read(K);
+		if (N + K == 0) break;
 		for (int i = 0; i < N; i++) {
-			cin >> P[i];
+			read(P[i]);
 		}
 		int M = K;
 		int ans[N - K];
 		maxSlidingWindow(P, N, M, ans);
 		for (int i = 0; i <= N - K; i++) {
-			if (i > 0) cout << " ";
-			cout << ans[i];
+			if (i > 0) printf(" ");
+			printf("%d", ans[i]);
 		}
-		cout << "\n";
+		printf("\n");
 	}
     return 0;
 }
