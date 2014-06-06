@@ -1,29 +1,164 @@
-20 139 5 7
-E 1 12
-E 2 14
-E32
-E42
-E54
-H25
-E 2 14
-10 1000003 6 11
-E13
-E24
-E35
-E46
-E57
-E68
-H16
-E30
-E39
-H13
-H46
-999999935 999999937 100000 7
-E 100000 6
-E17
-H 1 100000
-E 50000 8
-H 1 100000
-H 25000 75000
-H 23987 23987
-0000
+12
+h t 2
+i t 3
+a c 2
+a d 3
+a f 4
+f g 1
+g h 2
+g i 3
+b g 3
+c g 2
+d g 1
+a b 1
+a t
+4
+A B 2
+A C 1
+C B 1
+B D 1
+A D
+
+4
+A B 2
+A C 1
+C B 1
+B D 1
+A A
+
+5
+a b 20
+a c 10
+a b 5
+b d 10
+c d 10
+a d
+
+5
+Natal Assu 50
+Mossoro PaudosFerros 80
+Assu Mossoro 40
+Marcelino PaudosFerros 100
+Assu PaudosFerros 65
+Natal Mossoro
+
+2
+Limoeiro MoradaNova 140
+Limoeiro Jaguaribe 130
+Jaguaribe MoradaNova
+
+4
+Mossoro Paris 233
+Mossoro NewYork 412
+NewYork Tokio 501
+Tokio Paris 420
+Mossoro Tokio
+
+16
+a b 5
+b c 4
+b d 6
+c d 3
+d f 1
+f g 1
+g h 2
+h i 3
+i j 4
+j z 5
+z l 6
+z a 5
+l a 7
+d e 2
+f e 1
+e k 1
+k a
+
+16
+a b 2
+b c 4
+b d 6
+c d 3
+d f 1
+f g 1
+g h 2
+h i 3
+i j 4
+j z 5
+z l 6
+z a 5
+l a 7
+d e 2
+f e 1
+e k 1
+k a
+
+9
+A B 90
+A B 100
+B C 91
+B D 99
+C E 91
+E F 91
+D F 99
+B G 95
+G F 95
+A F
+
+6
+A B 30
+B C 30
+A C 50
+C D 50
+D E 50
+C E 30
+A E
+
+16
+a b 0
+b c 4
+b d 6
+c d 3
+d f 1
+f g 1
+g h 2
+h i 3
+i j 4
+j z 5
+z l 6
+z a 0
+l a 0
+d e 2
+f e 1
+e k 1
+k a
+
+5
+A B 1
+B C 2
+C D 3
+A D 4
+V G 5
+A G
+
+4
+A B 7
+B C 6
+C D 6
+V G 5
+D A
+
+13
+j h 1
+a b 1
+b c 1
+c d 1
+d e 1
+a f 1
+f g 1
+g h 1
+h e 1
+a i 1
+i j 1
+j k 1
+k e 1
+a e
