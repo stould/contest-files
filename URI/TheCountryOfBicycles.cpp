@@ -19,37 +19,86 @@ typedef unsigned uint;
 
 const int MAXN = 110;
 const int INF = INT_MAX / 3;
+const int SHOLD = 10000;
 
 int N, M, K;
-int dp[MAXN][MAXN];
+int D[MAXN], vis[MAXN];
+vector<pair<int, int> >  graph[MAXN];
+
+struct MyCmp {
+	bool operator()(int a, int b) {
+		return D[a] > D[b];
+	}
+};
+
+int func(int f, int t, int sp) {
+	priority_queue<int, vector<int>, MyCmp> q;
+	q.push(f);
+
+	fill(vis, vis + N + 1, -INF);	
+	fill(D, D + N + 1, INF);
+
+	D[f] = 0;
+
+	for ( ; !q.empty(); ) {
+		int now = q.top();
+		q.pop();
+
+		if (now == t) {
+			continue;
+		}
+
+		for (int i = 0; i < (int) graph[now].size(); i++) {
+			int u = graph[now][i].first;
+			int u_height = graph[now][i].second;
+
+			if (D[u] >= D[now] + u_height && u_height <= sp) {				
+				D[u] = D[now] + u_height;
+				vis[u] = max(vis[u], max(vis[now], u_height));
+				q.push(u);
+			}
+		}
+	}
+	return vis[t] != (-INF);
+}
+
 
 int main(void) {
 	int test = 1;
 	int A, B, C;
 	for ( ; scanf("%d%d", &N, &M) == 2 && N + M != 0; ) {
-		for (int i = 1; i <= N; i++) {
-			fill(dp[i], dp[i] + N + 1, -INF);
+		for (int i = 0; i < MAXN; i++) {
+			graph[i].clear();
 		}
-
 		for (int i = 0; i < M; i++) {
 			scanf("%d%d%d", &A, &B, &C);
-			dp[A][B] = dp[B][A] = C;
-		}
-
-		for (int k = 1; k <= N; k++) {
-			for (int i = 1; i <= N; i++) {
-				for (int j = 1; j <= N; j++) {					
-					dp[i][j] = max(dp[i][j], max(dp[i][k], dp[k][j]));
-				}
-			}
+			graph[A].push_back(make_pair(B, C + SHOLD));
+			graph[B].push_back(make_pair(A, C + SHOLD));
 		}
 
 		scanf("%d", &K);
 		printf("Instancia %d\n", test++);
 		for ( ; K--; ) {
-			scanf("%d%d", &A, &B);			
-			printf("%d\n", dp[A][B]);
+			scanf("%d%d", &A, &B);		
+
+			int l = -1000, h = 1000, m;
+			int ans = 0;
+
+			for ( ; l <= h; ) {
+				m = (l + h) / 2;
+
+				bool tmp = func(A, B, m + SHOLD);
+
+				if (tmp) {
+					ans = m;
+					h = m - 1;
+				} else {
+					l = m + 1;
+				}
+			}
+			printf("%d\n", ans);
 		}
+		printf("\n");
 	}
     return 0;
 }
