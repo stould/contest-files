@@ -1,4 +1,4 @@
-//*******Guia de Referencia-Maratona-Jeferson-Vinicius**********//
+//*******Guia de Referencia - UNITAU **********//
 //**********************************************
 //QuickSort O(N log N) worst case O(n^2)
 #include <iostream>
@@ -9,8 +9,6 @@ using namespace std;
 #define MAXN 10000
 
 int n, a[MAXN];
-
-
 void quicksort(int lo, int hi) {
     int i=lo, j=hi, h;
 
@@ -83,7 +81,7 @@ int n, a[MAXN];
 
 void downheap(int v) {
     int w = 2*v+1;
-    while(w < n) {
+    while (w < n) {
         if(w + 1 < n) {
             if (a[w+1]>a[w]) w++;
         }
@@ -96,18 +94,70 @@ void downheap(int v) {
 
 void buildheap() {
     for (int v = n/2-1; v >= 0; v--) {
-        downheap (v);
+        downheap(v);
     }
 }
 
 void heapsort() {
     buildheap();
-    while (n>1) {
+    while (n > 1) {
         n--;
         swap(a[0], a[n]);
-        downheap (0);
+        downheap(0);
     }
 }
+
+//**********************************************
+//
+int merge(int arr[], int temp[], int left, int mid, int right);
+ 
+int _mergeSort(int arr[], int temp[], int left, int right) {
+	int mid, inv_count = 0;
+	if (right > left) {
+		mid = (right + left)/2;
+		inv_count = _mergeSort(arr, temp, left, mid);
+		inv_count += _mergeSort(arr, temp, mid+1, right);
+		inv_count += merge(arr, temp, left, mid+1, right);
+	}
+	return inv_count;
+}
+
+int mergeSort(int arr[], int array_size) {
+	int *temp = (int*) malloc(sizeof(int)*array_size);
+	return _mergeSort(arr, temp, 0, array_size - 1);
+}
+ 
+int merge(int arr[], int temp[], int left, int mid, int right) {
+	int i, j, k;
+	int inv_count = 0;
+ 
+	i = left;
+	j = mid;
+	k = left;
+	while ((i <= mid - 1) && (j <= right)) {
+		if (arr[i] <= arr[j]) {
+			temp[k++] = arr[i++];
+		} else {
+			temp[k++] = arr[j++];
+			inv_count = inv_count + (mid - i);
+		}
+	}
+	
+	while (i <= mid - 1) {
+		temp[k++] = arr[i++];
+	}
+	
+	while (j <= right) {
+		temp[k++] = arr[j++];
+	}
+
+	for (i = left; i <= right; i++) {
+		arr[i] = temp[i];
+	}
+	
+	return inv_count;
+}
+//**********************************************
 //**********************************************
 Kadade 2D simplificaco
 int best = 0;
@@ -125,56 +175,28 @@ for(int i = 1; i <= n; i++){
 }
 //////////////////////////////////////////////////////////
 //Kadane 2D
-   int N;
-    int t = 0;
-    int a[100][100];
-    int pr[100];
-    int S = 1<<31, s = 0, k, l, x1 = 0,x2 = 0,y1 = 0,y2 = 0,j;
+for (int i = 1; i <= N; i++) {
+	for (int j = 1; j <= N; j++) {
+		cin >> M[i][j];
+	}
+	for (int j = 1; j <= N; j++) {
+		dp[i][j] = dp[i][j - 1] + M[i][j];
+	}
+ }
 
-    cin >> N;
- 
-    for( int i = 0; i < N; i++)
-        for( j = 0; j < N; j++)
-            cin >> a[i][j];
- 
-    for( int z = 0; z < N; z++)
-    {
-        for(int i = 0; i < N; i++) pr[i] = 0;
-        for(int x = z; x < N; x++)
-        {
-            t = 0;
-            s = 1<<31;
-            j = 0;
-            k = 0; l = 0;
-            for(int i = 0; i < N; i++)
-            {
-                pr[i] = pr[i] + a[x][i];
-                t = t + pr[i];
-                if( t > s)
-                {
-                    s = t;
-                    k = i;
-                    l = j;
-                }
-                if( t < 0 )
-                {
-                    t = 0;
-                    j = i + 1;
-                }
-            }
-            if( s > S)
-            {
-                S = s;
-                x1 = x;
-                y1 = k;
-                x2 = z;
-                y2 = l;
-            }
-        }
-    }
-    cout << x1 << " " << y1 << " " << x2 << " "  << y2 << endl;
+int ans = -INT_MAX / 3;
+for (int i = 1; i <= N; i++) {
+	for (int j = i; j <= N; j++) {
+		int sum = 0;
+		for (int k = 1; k <= N; k++) {
+			sum += dp[k][j] - dp[k][i - 1];
+			chmax(ans, sum);
+			if (sum < 0) sum = 0;
+		}
+	}
+ }
 //**********************************************
-//Pesquisa Binaria:[BIN]
+//Binary Search O(log n)
 void search(int x) {
 	int low = 0, high = INF, mid;
 
@@ -190,9 +212,8 @@ void search(int x) {
 	return low;
 }
 //**********************************************
-//Pesquisa Binaria com Numeros Reais:[BINR]
+//Binary Search for Real Number O(log N)
 void search(double x) {
-	//Real numbers are dense, set a bound rather then wait for the condition (low < high) be satisfied
 	int low = 0, high = INF, mid;
 	for(int i = 0; i <= 100; i++) {
 		mid = low + (high - low) / 2;
@@ -214,7 +235,7 @@ void split(vector<string>& v, const string& s) {
     }
 }
 //**********************************************
-KMP
+//Knuth-Morris-Pratt O(n)
 vector<int> KMP(string S, string K) {
     vector<int> T(K.size() + 1, -1);
     vector<int> matches;
@@ -241,7 +262,7 @@ vector<int> KMP(string S, string K) {
     return matches;
 }
 //**********************************************
-Suffix Array
+//Suffix Array
 #define max 100010
 
 int delta, len, SA[max], iSA[max], val[max], tval[max];
@@ -283,7 +304,7 @@ void build_SA() {
 build_SA();
 for (int i = 0; i < len; i++) printf("%d\n", SA[i]);
 /* ******************************* GRAPH ************************* */
-//Pesquisa em profundidade simples em Grafo - [DFS]:
+//DFS
 void dfs(int x) {
     vis[x] = 1;
     for(int i = 1; i <= n; i++) {
@@ -291,10 +312,12 @@ void dfs(int x) {
     }
 }
 //**********************************************
-//Pesquisa em largura simples em Grafo - [BFS] -> Utilizando 'dist' para guardar o menor caminho e 'x' -> 'i', já que as arestas tem pesos iguais:
-//N = Numero maximo de Vertices no grafo
+//BFS
 void bfs(int x) {
-	int dist[N], vis[N]; memset(dist, 0, sizeof(dist)); memset(vis, 0, sizeof(vis));
+	int dist[N], vis[N]; 
+	memset(dist, 0, sizeof(dist)); 
+	memset(vis, 0, sizeof(vis));
+	
 	queue<int> q;
 	q.push(x);
 	vis[x] = true;
@@ -313,7 +336,7 @@ void bfs(int x) {
 	}
 }
 //**********************************************
-//Ordenação topologica simples: [OTS]
+//Topological Sort (Recursive)
 void dfs(int x) {
     used[x] = 1;
     for(int b = 0; b < g[x].size(); b++) {
@@ -321,7 +344,36 @@ void dfs(int x) {
     }
     order.push_back(x);
 }
-
+//**********************************************
+//Topological Sort (Iterative) 
+for (int i = 0; i < M; i++) {
+	scanf("%d%d", &a, &b);
+	graph[a].push_back(b);
+	deg[b] += 1;
+}
+ 
+priority_queue<int, vector<int>, greater<int> > pq;
+ 
+for (int i = 0; i < N; i++) {
+	if(deg[i] == 0) {
+		pq.push(i);
+	}
+ }
+int on = 0;
+while (!pq.empty()) {
+	int now = pq.top(); 
+	pq.pop();
+	order.push_back(now);
+	for (int i = 0; i < (int) graph[now].size(); i++) {
+		int next = graph[now][i]; 
+		deg[next] -= 1;
+		
+		if(deg[next] == 0) {
+			pq.push(next);
+		}
+	}
+ }
+//**********************************************
 //Ordenação topologica com checagem de ciclos: [OTCC]
 //Se a variavel has se tornar verdade, o grafo contem um ciclo.
 void dfs(int x) {
@@ -338,24 +390,20 @@ void dfs(int x) {
 
 //**********************************************
 //Componentes fortemente conectados: [CFC]
-
 Matrix ga -> Matrix original
 Matrix gb -> Matrix transposta:
 
 Primeiro Ordena-se topologicamente os vertices, depois faz-se a checagem da quantidade e componentes em um
 componente fortemente conectado em um grafo direcionado:
 
-
-//Ordena topologicamente os vertices da matrix original, e guarda a ordem no vector order
 void dfs1(int x) {
     used[x] = 1;
     for(int b = 0; b < g[x].size(); b++) {
         if(!used[g[x][b]]) dfs1(g[x][b]);
     }
-    order.push_back(x);
+4    order.push_back(x);
 }
 
-//Procura por comoponentes fortemente conectados e guarda seus vertices no set component, usando a matrix transposta 'gr'
 void dfs2(int x) {
     used[x] = 1;
 	comoponent.insert(x);
@@ -364,12 +412,10 @@ void dfs2(int x) {
     }
 }
 
-//Rodando as buscas:
 //Ordenando Topologicamente
 for(i = 1; i <= n; i++) if(!used[i]) dfs1(i);
 
 //Procura pelos componentes:
-//A variavel "ans" guarda a quantidade de componentes conectados no grafo.
 for(i = 0; i < order.size(); i++) {
     int v = order[i];
 	if(!used[v]) {
@@ -379,49 +425,33 @@ for(i = 0; i < order.size(); i++) {
 	}
 }
 //**********************************************
-Procurando por Ciclos Negativos
-struct edge {
-	int a, b, cost;
-};
+//Bellman Ford - O(v * e)
+vector <pair<int, int> > edges;
+int graph[MAXN][MAXN]; 
+int dist[MAXN];
 
-int n, m;
-vector<edge> e;
-const int INF = 1000000000;
-
-void solve() {
-	vector<int> d (n);
-	vector<int> p (n, -1);
-	int x;
-	for (int i=0; i<n; ++i) {
-		x = -1;
-		for (int j=0; j<m; ++j)
-			if (d[e[j].b] > d[e[j].a] + e[j].cost) {
-				d[e[j].b] = max (-INF, d[e[j].a] + e[j].cost);
-				p[e[j].b] = e[j].a;
-				x = e[j].b;
-			}
-	}
-
-	if (x == -1)
-		cout << "No negative cycle found.";
-	else {
-		int y = x;
-		for (int i=0; i<n; ++i)
-			y = p[y];
-
-		vector<int> path;
-		for (int cur=y; ; cur=p[cur]) {
-			path.push_back (cur);
-			if (cur == y && path.size() > 1)  break;
+int N; 
+bool bellman_ford(int s) {
+	int M = edges.size();
+	memset (dist, INF, sizeof(int)*n);
+	dist[s] = 0;
+	for (int k = 0; k < N-1; ++k) {
+		for (int j = 0; j < M; ++j) {
+			int u = edges[j].first;
+			int v = edges[j].second;
+			if (dist[u] < INF && dist[v] > dist[u] + graph[u][v])
+				dist[v] = dist[u] + graph[u][v];
 		}
-		reverse (path.begin(), path.end());
-
-		cout << "Negative cycle: ";
-		for (size_t i=0; i<path.size(); ++i)
-			cout << path[i] << ' ';
 	}
+	//Negative Cycle
+	for (int j = 0; j < m; ++j) {
+		int u = edges[j].first, v = edges[j].second;
+		if (dist[u] < INF && dist[v] > dist[u] + graph[u][v]) {
+			return false;
+		}
+	}
+	return true;
 }
-
 //********************************************
 //Determinando se um grafo é bipartido ou não:
 //Sendo 'gr' a matrix de adjacencia representando o Grafo.
@@ -434,22 +464,22 @@ bool dfs(int node, int c) {
         }
     }
     color[node] = c;
-    for(int i = 1; i <= n; i++) if(gr[node][i] == 1) {
-        if(!dfs(i, -c)) {
-            return false;
+    for(int i = 1; i <= n; i++) 
+		if(gr[node][i] == 1) {
+			if(!dfs(i, -c)) {
+				return false;
+			}
         }
     }
     return true;
 }
-
-//Fazendo a pesquisa
-// Caso o Grafo seja '1' base
+//1-based graph
 dfs(1, 1);
-//Senão
+//othewise
 dfs(0, 1);
 
 //******************************************
-Multiplicação de Matrizes
+//Matrix Multiplication
 vector<vector<int> > multiply(vector<vector<int> > a, vector<vector<int> > b) {
 	vector<vector<int> > res(c, vector<int>(c));
 	for(int i = 0; i < c; i++) {
@@ -465,17 +495,17 @@ vector<vector<int> > multiply(vector<vector<int> > a, vector<vector<int> > b) {
 }
 
 vector<vector<int> > binPow(vector<vector<int> > a, int n) {
-	if (n == 1)
+	if (n == 1) {
 		return a;
-	if ((n & 1) != 0)
+	} else if ((n & 1) != 0) {
 		return multiply(a, binPow(a, n - 1));
-	else {
+	} else {
 		vector<vector<int> > b = binPow(a, n / 2);
 		return multiply(b, b);
 	}
 }
+
 //******************************************
-//Minimum Spanning Trees ->
 //Kruskal Algorithm
 struct edge {
     int from, to, cost;
@@ -495,6 +525,8 @@ for(i = 0; i < m; i++) {
 		ans += edges[i].cost;
 	}
 }
+
+//******************************************
 //Prim Algorithm
 int g[MAXN][MAXN], used[MAXN], min_e[MAXN], sel_e[MAXN];
 min_e[0] = 0;
@@ -517,10 +549,7 @@ for (int i = 0; i < n; ++i) {
 	}
 }
 //*********************************************
-
 //LCA O(<Nlog(N)>, <log(N)>)
-
-
 int N, Q, A, B;
 vector<pair<int, int> > adj[MAXN];
 int parent[MAXN], L[MAXN], vis[MAXN];
@@ -531,7 +560,7 @@ Int dist[MAXN];
 void dfs(int pos, int par){
     if(parent[pos] == -1){
         parent[pos] = par;
-
+		
         for(int i = adj[pos].size() - 1,to;i >= 0;--i){
             to = adj[pos][i].first;
             if(to != par) {
@@ -548,23 +577,34 @@ int get_level(int u){
     return 1+get_level(parent[u]);
 }
 
-void init(){
-  for(int i = 0;i<N;++i) L[i] = get_level(i);
+void init() {
+	for(int i = 0;i<N;++i) {
+		L[i] = get_level(i);
+	}
 
-  for(int i = 0;i < N;++i) level[L[i]].push_back(i);
+	for(int i = 0;i < N;++i) {
+		level[L[i]].push_back(i);
+	}
 
-  memset(P,-1,sizeof(P));
-
-  for(int i = 0;i<N;++i) P[i][0] = parent[i];
-
-  for(int j = 1;(1<<j)<N;++j)
-      for(int i = 0;i<N;++i)
-        if(P[i][j-1]!=-1)
-          P[i][j] = P[P[i][j-1]][j-1];
+	memset(P,-1,sizeof(P));
+	
+	for(int i = 0; i < N; ++i) {
+		P[i][0] = parent[i];
+	}
+	
+	for(int j = 1; (1<<j) < N; ++j) {
+		for(int i = 0; i < N; ++i) {
+			if(P[i][j-1]!=-1) {
+				P[i][j] = P[P[i][j-1]][j-1];
+			}
+		}
+	}
 }
 
-int LCA(int p, int q){
-    if(L[p]<L[q]) swap(p,q);
+int LCA(int p, int q) {
+    if(L[p] < L[q]) {
+		swap(p,q);
+	}
 
     int log = 1;
     while((1<<log)<=L[p]) ++log;
@@ -574,7 +614,7 @@ int LCA(int p, int q){
         if(L[p]-(1<<i)>=L[q])
             p = P[p][i];
 
-    if(p==q) return p;
+    if (p==q) return p;
 
     for(int i = log;i>=0;--i){
         if(P[p][i]!=-1 && P[p][i]!=P[q][i]){
@@ -587,25 +627,214 @@ int LCA(int p, int q){
 }
 
 for (i = 0; i <= N; i++) {
-            vis[i] = 0;
-            L[i] = parent[i] = -1;
-            dist[i] = 0LL;
-            adj[i].clear();
-	    }
-		for (i = 1; i < N; i++) {
-			scanf("%d%d", &t, &l);
-			adj[i].push_back(make_pair(t, l));
-			adj[t].push_back(make_pair(i, l));
+	vis[i] = 0;
+	L[i] = parent[i] = -1;
+	dist[i] = 0LL;
+	adj[i].clear();
+ }
+for (i = 1; i < N; i++) {
+	scanf("%d%d", &t, &l);
+	adj[i].push_back(make_pair(t, l));
+	adj[t].push_back(make_pair(i, l));
+ }
+
+dfs(0, -2);
+parent[0] = -1;
+init();
+//*********************************************
+//LCA using segment tree
+int H[MAXN], L[MAXN << 1], E[MAXN << 1], vis[MAXN], tree[MAXN * 8], path[MAXN << 1];
+vector<vector<pair<int, int> > > g(MAXN);
+
+void dfs(int x, int depth){
+	vis[x] = 1;//visited
+	if(H[x] == -1) H[x] = idx;//mark first time the i'th node is visited
+	L[idx] = depth;//when you visit a node you should mark the the depth you have found it.
+	E[idx++] = x;//the i'th recursion, global variable
+	for(int i = 0; i < g[x].size(); i++){
+		int next = g[x][i].first;
+		if(!vis[next]){
+			path[next] = x;
+			dfs(next, depth+1);
+			L[idx] = depth;
+			E[idx++] = x;
 		}
+	}
+}
 
-        dfs(0, -2);
-		parent[0] = -1;
+//NlogN build the segtree and minimize the height of the I'th visited node
+void build(int node, int l, int r){
+	if(l > r) return;
+	if(l == r){
+		tree[node] = l;
+	}else{
+		int mid = (l+r) >> 1;
+		build(node*2, l, mid);
+		build(node*2+1, mid+1, r);
+		int A = tree[node*2];
+		int B = tree[node*2+1];
+		if(L[A] <= L[B]){
+			tree[node] = A;
+		}else{
+			tree[node] = B;
+		}
+	}
+}
 
-		init();
+//Get the vertex with the minimum height, then it will be the LCA of A and B.
+int rmq(int node, int l, int r, int ra, int rb){
+	if(l > rb || r < ra){
+		return -1;
+	}else if(l >= ra && r <= rb){
+		return tree[node];
+	}else{
+		int mid = (l+r) >> 1;
+		int q1 = rmq(node*2, l, mid, ra, rb);
+		int q2 = rmq(node*2+1, mid+1, r, ra, rb);
+		if(q1 == -1){
+			return q2;
+		}else if(q2 == -1){
+			return q1;
+		}else{
+			if(L[q1] <= L[q2]){
+				return q1;
+			}else{
+				return q2;
+			}
+		}
+	}
+}
 
+idx = 0;
+for(int i = 0; i <= n; i++){
+	g[i].clear();
+	H[i] = -1;
+	L[i] = E[i] = vis[i] = 0;
+	path[i] = -1;
+ }
+dfs(0,0);
+build(1, 0, 2*n-1);
+for(int i = 0; i < k; i++){
+	scanf("%d%d", &u, &v);
+	u--;
+	v--;
+	int goFrom = H[u];
+	int goTo = H[v];
+	if(goFrom > goTo){
+		swap(goFrom, goTo);
+	}
+	int lcaAB = E[rmq(1, 0, 2*n-1, goFrom, goTo)]; //is the LCA of A and B;
+ }
 
 //*********************************************
+//2-sat (temp implementation)
+map<string, int> mp;
+string c1, c2;
+int vis[MAXN], low[MAXN], num[MAXN], sat[MAXN],dfs_counter, scc_counter ,n, test = 1;
+vector<vector<int> > graph(MAXN);
+stack<int> st;
 
+//Find strongly connected components
+void tarjan(int u, int depth) {
+	low[u] = num[u] = depth;
+	st.push(u);
+	vis[u] = 1;
+	for(int i = 0; i < graph[u].size(); i++) {
+		int v = graph[u][i];
+		if(num[v] == -1){
+			tarjan(v, depth+1);
+		}
+		if(vis[v]){
+			low[u] = min(low[u], low[v]);
+		}
+	}
+	if(low[u] == depth) {
+		while(1) {
+			int next = st.top();st.pop();
+			sat[next] = scc_counter;
+			vis[next]=0;
+			if(u == next) break;
+		}
+		++scc_counter;
+	}
+}
+
+/*
+  To use the 2-SAT property, it could be transformed in a boolean logic with AND or OR
+  A | B, means !A -> B
+  !A | B, means !!A -> B equals to A -> B
+  A | !B means !A -> !B
+  !A | !B means !!A -> !B equals to A -> !B
+  
+  "-> is an implicance to separate the usege of A AND B"
+  
+  2-sat property is YES if all the components have no disturbs, e.g.:
+  If you find !A and A in the same "scc", you're talking that !A = true AND A = true, it is not right.
+*/
+int main(void){
+	ios::sync_with_stdio(0);
+	while(cin >> n){
+		mp.clear();
+		for(int i = 0; i < MAXN; i++){
+			graph[i].clear();
+			vis[i] = 0;
+			num[i] = -1;
+			sat[i] = -1;
+			low[i] = 0;
+		}
+		cin.ignore();
+		int index = 0;
+		//Graph mount:
+		for(int i = 0; i < n; i++){
+			cin >> c1 >> c2;
+			string tmpA, tmpB;
+			bool A = 1, B = 1;
+			if(c1[0] == '!'){
+				tmpA = c1.substr(1);
+				A = 0;
+			}else{
+				tmpA = c1;
+			}
+			if(c2[0] == '!'){
+				tmpB = c2.substr(1);
+				B = 0;
+			}else{
+				tmpB = c2;
+			}
+			if(mp.find(tmpA) == mp.end()){
+				mp[tmpA] = index;
+				index += 2;
+			}
+			if(mp.find(tmpB) == mp.end()){
+				mp[tmpB] = index;
+				index += 2;
+			}
+			int U = mp[tmpA] + !A, V = mp[tmpB] + !B;
+			graph[U^1].push_back(V);
+			graph[V^1].push_back(U);
+		}
+		dfs_counter = scc_counter = 0;
+		for(int i = 0; i < index; i++){
+			if(num[i] == -1){
+				tarjan(i, 0);
+			}
+		}
+		int win = 1;
+		//Checking disturbs
+		for(int i = 0; i < index && win; i += 2){
+			if(sat[i^1] == sat[i]) win = 0;
+		}
+		printf("Instancia %d\n", test++);
+		if(win){
+			printf("sim\n");
+		}else{
+			printf("nao\n");
+		}
+		printf("\n");
+	}
+	return 0;
+}
+//*********************************************
 //Dijkstra
 struct MyLess {
     bool operator()(int x, int y) {
@@ -641,44 +870,6 @@ int start = destiny;
 while(start != -1) {
 	path.push_back(start);
 	start = prev[start];
-}
-//*******************************************************
-//Bellman-Ford
-#define INFINITY 0x3f3f3f3f
-#define MAXN 1000
-
-using namespace std;
-
-typedef struct {
-    int source;
-    int dest;
-    int weight;
-} edge;
-
-int N, M, dist[MAXN];
-
-void bellmanford(vector<Edge> edges, int source) {
-    int i,j,change;
-    for (i = 0; i < N; i++) {
-        dist[i] = INFINITY;
-    }
-    dist[source]=0;
-    for (i = 0; i < N; i++) {
-        change = 0;
-        for (j = 0; j < M; j++) {
-            if (dist[edges[j].dest] > dist[edges[j].source] + edges[j].weight) {
-                dist[edges[j].dest] = dist[edges[j].source] + edges[j].weight;
-                change=1;
-            }
-        }
-        if (change==0) break;
-    }
-    for (i = 0; i < M; i++) {
-        if (dist[edges[i].dest] > dist[edges[i].source] + edges[i].weight) {
-            //Negative Cycle
-            break;
-        }
-    }
 }
 //*******************************************************
 //Contando Pontes em um Grafo não Direcionado
@@ -727,12 +918,11 @@ int dfs(int u){
     }
     return less;
 }
-//Chamando
 times = 1;
 ans.clear();
 dfs(0);
 //*******************************************************
-Fluxo-Máximo - Edmonds-Karp O(N*M^2)
+//Fluxo-Máximo - Edmonds-Karp O(N*M^2)
 int max_flow(int source, int sink) {
     int residual[MAXN][MAXN]; memset(residual, 0, sizeof(residual));
     while(1) {
@@ -772,86 +962,6 @@ int max_flow(int source, int sink) {
         }
     }
 }
-//********************************************
-// Minimum Cost Max Flow (good implementation)
-struct edge {
-    int to;
-    int cap;
-    int cost;
-    int rev;
-};
-
-int V;
-vector <edge> g[50];
-int h[50];
-int dist[50];
-int prevv[50];
-int preve[50];
-
-void add_edge(int from, int to, int cap, int cost)
-{
-    g[from].push_back((edge){to, cap, cost, g[to].size()});
-    g[to].push_back((edge){from, 0, -cost, g[from].size() - 1});
-}
-
-long long min_cost_flow(int s, int t, int f)
-{
-    long long res = 0, i;
-
-    for (i = 0; i < V; i++) h[i] = 0;
-
-    while (f > 0) {
-        int d = f;
-        priority_queue <pair<int, int> > q;
-
-        for (i = 0; i < V; i++) dist[i] = 1e9;
-
-        dist[s] = 0;
-
-        q.push(make_pair(0, s));
-
-        while (!q.empty()) {
-            int c = -q.top().first;
-            int v = q.top().second;
-
-            q.pop();
-
-            if (dist[v] < c) continue;
-
-            for (i = 0; i < g[v].size(); i++) {
-                edge &e = g[v][i];
-
-                if (e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]) {
-                    dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
-                    prevv[e.to] = v;
-                    preve[e.to] = i;
-                    q.push(make_pair(-dist[e.to], e.to));
-                }
-            }
-        }
-
-        if (dist[t] == 1e9) return 1e9;
-
-        for (i = 0; i < V; i++) h[i] += dist[i];
-
-        for (i = t; i != s; i = prevv[i]) d = min(d, g[prevv[i]][preve[i]].cap);
-
-        f -= d;
-
-        res += d * h[t];
-
-        for (i = t; i != s; i = prevv[i]) {
-            edge &e = g[prevv[i]][preve[i]];
-            e.cap -= d;
-            g[i][e.rev].cap += d;
-        }
-    }
-
-    return res;
-}
-//********************************************
-//********************************************
-//Montagem do Grafo
 memset(capacity, 0, sizeof(capacity));
 int n, m, a, b, c;
 scanf("%d%d", &n, &m); //Tamanho/Numero de Arestar
@@ -935,8 +1045,84 @@ int max_flow(int s, int t) {
         }
     }
 }
-//*******************************************************
-//Min Cost Max Flow
+//********************************************
+// Minimum Cost Max Flow (good implementation)
+struct edge {
+    int to;
+    int cap;
+    int cost;
+    int rev;
+};
+
+int V;
+vector <edge> g[50];
+int h[50];
+int dist[50];
+int prevv[50];
+int preve[50];
+
+void add_edge(int from, int to, int cap, int cost) {
+    g[from].push_back((edge){to, cap, cost, g[to].size()});
+    g[to].push_back((edge){from, 0, -cost, g[from].size() - 1});
+}
+
+long long min_cost_flow(int s, int t, int f) {
+    long long res = 0, i;
+
+    for (i = 0; i < V; i++) h[i] = 0;
+
+    while (f > 0) {
+        int d = f;
+        priority_queue <pair<int, int> > q;
+
+        for (i = 0; i < V; i++) dist[i] = 1e9;
+
+        dist[s] = 0;
+
+        q.push(make_pair(0, s));
+
+        while (!q.empty()) {
+            int c = -q.top().first;
+            int v = q.top().second;
+
+            q.pop();
+
+            if (dist[v] < c) continue;
+
+            for (i = 0; i < g[v].size(); i++) {
+                edge &e = g[v][i];
+
+                if (e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]) {
+                    dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    q.push(make_pair(-dist[e.to], e.to));
+                }
+            }
+        }
+
+        if (dist[t] == 1e9) return 1e9;
+
+        for (i = 0; i < V; i++) h[i] += dist[i];
+
+        for (i = t; i != s; i = prevv[i]) d = min(d, g[prevv[i]][preve[i]].cap);
+
+        f -= d;
+
+        res += d * h[t];
+
+        for (i = t; i != s; i = prevv[i]) {
+            edge &e = g[prevv[i]][preve[i]];
+            e.cap -= d;
+            g[i][e.rev].cap += d;
+        }
+    }
+
+    return res;
+}
+
+
+//Min Cost Max Flow (Alternative Implementation)
 typedef int Flow;
 typedef int Cost;
 const Flow INF = 0x3f3f3f3f;
@@ -1000,13 +1186,12 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
             e.cap-=mi;
             G[e.dst][e.rev].cap+=mi;
         }
-        flow+=mi;
+        flow += mi;
     }
 
 }
 //*******************************************************
-//*******************************************************
-//BipartiÃ§Ã£o Maxima em um grafo
+//Maximum Bipartite Matching
 int n, k;
 vector<vector<int> > g;
 vector<int> mt;
@@ -1030,17 +1215,15 @@ for (int v=0; v<n; ++v) {
 	try_kuhn (v);
 }
 
-for (int i=0; i<k; ++i)
-	//Imprime as bipartiÃ§Ãµes
-	if (mt[i] != -1)
+for (int i=0; i<k; ++i) {
+	//Print partitions
+	if (mt[i] != -1) {
 		printf ("%d %d\n", mt[i]+1, i+1);
+	}
+ }
 
 //*******************************************
-//Floyd-Warshall - Menor Caminho de todos para todos - O(N^3)
-//Sendo 'dist[][]' a matrix de adjacencia com os pesos entre os vertices conectados 'i' e 'j' e os demais valores como '-INF'
-// dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-// Distancia minima do vertice 'i' ao vertice 'j' utilizando arestas entre '0' e 'k';
-
+//Floyd-Warshall - O(n^3)
 for(int k = 0; k < n; k++) {
 	for(int i = 0; i < n; i++) {
 		for(int j = 0; j < n; j++) {
@@ -1049,8 +1232,9 @@ for(int k = 0; k < n; k++) {
 	}
 }
 //*******************************************
-Corte Minimo em um grafo Stoer-Wager O(N^3)
+//Global Min-Cut Stoer-Wager O(N^3)
 int graph[MAXN][MAXN] //Matrix de Adjacencia do grafo.
+
 int minCut(int n) {
     bool a[n];
     int v[n];
@@ -1091,319 +1275,7 @@ int minCut(int n) {
     }
     return best;
 }
-//*******************************************
-//Maximimum Flow - Edward-Karp Method
-/**
- * Finds the maximum flow in a flow network.
- * @param E neighbour lists
- * @param C capacity matrix (must be n by n)
- * @param s source
- * @param t sink
- * @return maximum flow
- */
-
-=======
-map<int, int> v[1000];
-typedef map<int, int>::iterator iter;
-int n;
-
-int bfs(int s, int t) {
-        queue<pair<int, int> > q;
-        int visit[n];
-        fill(visit,visit+n,0);
-        q.push(make_pair(s, 0));
-        while (!q.empty()) {
-                int tmp = q.front().first;
-                int level = q.front().second;
-                if (tmp == t) return level;
-                q.pop();
-                if (!visit[tmp]) {
-                        visit[tmp] = 1;
-                        for (map<int, int>::iterator it = v[tmp].begin();
-                                        it != v[tmp].end(); it++)
-                        {
-                                if (it->second > 0 && !visit[it->first])
-                                        q.push(make_pair(it->first, level + 1));
-                        }
-                }
-        }
-        return 0;
-}
-
-int dfs(int s, int t, int lv, vector<int> *cf) {
-        int tmp;
-        if (s == t) {
-                int min = INT_MAX;
-                for (vector<int>::iterator it = cf->begin(); it != cf->end(); it++)
-                        if (min > *it) min = *it;
-                return min;
-        }
-        if (lv == 0) return 0;
-        for (iter it = v[s].begin(); it != v[s].end(); it++) {
-                cf->push_back(it->second);
-                if (it->second > 0 && (tmp = dfs(it->first, t, lv - 1, cf))) {
-                        it->second -= tmp;
-                        if (v[it->first].find(s) != v[it->first].end()) v[it->first].insert(
-                                        make_pair(s, tmp));
-                        else v[it->first][s] -= tmp;
-                        return tmp;
-                }
-                cf->pop_back();
-        }
-        return 0;
-}
-
-int augment(int s, int t, int lv) {
-        int sum = 0;
-        int tmp;
-        while ((tmp = dfs(s, t, lv, new vector<int>))) {
-                sum += tmp;
-        }
-        return sum;
-}
-
-int maxflow(int s, int t) {
-        int sum = 0;
-        int level;
-        while ((level = bfs(s, t))) {
-                sum += augment(s, t, level);
-        }
-        return sum;
-}
-
-int main() {
-        int e, s, t;
-        int a, b, w;
-        cin >> n >> e >> s >> t;
-        for (int i = 0; i < e; i++) {
-                cin >> a >> b >> w;
-                v[a].insert(make_pair(b, w));
-        }
-        cout << maxflow(s, t) << endl;
-        return 0;
-}
-//*******************************************************
-//*******************************************************
-//Bipartição Maxima em um grafo
-int n, k;
-vector<vector<int> > g;
-vector<int> mt;
-vector<char> used;
-
-bool try_kuhn(int v) {
-	if (used[v])  return false;
-	used[v] = true;
-	for (size_t i=0; i<g[v].size(); ++i) {
-		int to = g[v][i];
-		if (mt[to] == -1 || try_kuhn(mt[to])) {
-			mt[to] = v;
-			return true;
-		}
-	}
-	return false;
-}
-mt.assign (k, -1);
-for (int v=0; v<n; ++v) {
-	used.assign (n, false);
-	try_kuhn (v);
-}
-
-for (int i=0; i<k; ++i)
-	//Imprime as bipartições
-	if (mt[i] != -1)
-		printf ("%d %d\n", mt[i]+1, i+1);
-
-//*******************************************
-//Floyd-Warshall - Menor Caminho de todos para todos - O(N^3)
-//Sendo 'dist[][]' a matrix de adjacencia com os pesos entre os vertices conectados 'i' e 'j' e os demais valores como '-INF'
-// dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-// Distancia minima do vertice 'i' ao vertice 'j' utilizando arestas entre '0' e 'k';
-
-for(int k = 0; k < n; k++) {
-	for(int i = 0; i < n; i++) {
-		for(int j = 0; j < n; j++) {
-			dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-		}
-	}
-}
-//*******************************************
-Corte Minimo em um grafo Stoer-Wager O(N^3)
-int graph[MAXN][MAXN] //Matrix de Adjacencia do grafo.
-int minCut(int n) {
-    bool a[n];
-    int v[n];
-    int w[n];
-    for(int i = 0; i < n; i++) v[i] = i;
-    int best = INF;
-    while(n > 1) {
-        int maxj = 1;
-        a[v[0]] = true;
-        for(int i = 1; i < n; ++i) {
-            a[v[i]] = false;
-            w[i] = graph[v[0]][v[i]];
-            if(w[i] > w[maxj]) {
-                maxj = i;
-            }
-        }
-        int prev= 0 ,buf = n;
-        while(--buf) {
-            a[v[maxj]]=true;
-            if(buf == 1) {
-                best = min(best, w[maxj]);
-                for(int k = 0; k < n; k++) {
-                    graph[v[k]][v[prev]]= (graph[v[prev]][v[k]] += graph[v[maxj]][v[k]]);
-                }
-                v[maxj] = v[--n];
-            }
-            prev = maxj;
-            maxj = -1;
-            for(int j = 1; j < n; ++j) {
-                if(!a[v[j]]) {
-                    w[j] += graph[v[prev]][v[j]];
-                    if(maxj < 0 || w[j] > w[maxj]) {
-                        maxj=j;
-                    }
-                }
-            }
-        }
-    }
-    return best;
-}
-//*******************************************
-//Maximimum Flow - Edward-Karp Method
-/**
- * Finds the maximum flow in a flow network.
- * @param E neighbour lists
- * @param C capacity matrix (must be n by n)
- * @param s source
- * @param t sink
- * @return maximum flow
- */
-
->>>>>>> b265f1bfa589baf5a17c6cf570d8838bd20f2def
-int flow(vector<int> e[], vector<int> c[], int s, int t) {
-	int n = C.length;
-	// Residual capacity from u to v is C[u][v] - F[u][v]
-   int[][] F = new int[n][n];
-   while (true) {
-   	int[] P = new int[n]; // Parent table
-   	fill(P.begin(), P.end(), -1);
-      P[s] = s;
-      int M[n]; // Capacity of path to node
-      M[s] = INF
-
-		queue<int> q;
-		q.push(s);
-      while (!q.empty()) {
-      	int u = q.front(); q.pop();
-      	for (int v : E[u]) {
-         // There is available capacity,
-         // and v is not seen before in search
-         if (C[u][v] - F[u][v] > 0 && P[v] == -1) {
-         	P[v] = u;
-            M[v] = min(M[u], C[u][v] - F[u][v]);
-            if(v != t) {
-            	q.push(v);
-				} else {
-           	// Backtrack search, and write flow
-            	while (P[v] != v) {
-               	u = P[v];
-               	F[u][v] += M[t];
-               	F[v][u] -= M[t];
-               	v = u;
-               }
-               goto end;
-				}
-			}
-		}
-		end:;if (P[t] == -1) { // We did not find a path to t
-			int sum = 0;
-      	for (int x : F[s]) {
-      		sum += x;
-			}
-         return sum;
-		}
-	}
-}
-
-//Fluxo Maximo de Custo Minimo
-const int MAXN = 110;
-const Int INF = 901010100101010LL;
-
-Int cap[MAXN][MAXN], cost[MAXN][MAXN], fnet[MAXN][MAXN], adj[MAXN][MAXN], deg[MAXN], par[MAXN], d[MAXN], pi[MAXN];
-
-bool dijkstra(int n, int s, int t) {
-    for(int i = 0; i < n; i++) d[i] = INF, par[i] = -1;
-    d[s] = 0;
-    par[s] = -n - 1;
-
-    while(1) {
-        Int u = -1, bestD = INF;
-
-        for(int i = 0; i < n; i++) if(par[i] < 0 && d[i] < bestD) bestD = d[u = i];
-
-        if(bestD == INF) break;
-
-        par[u] = -par[u] - 1;
-
-        for(int i = 0; i < deg[u]; i++) {
-            int v = adj[u][i];
-
-            if(par[v] >= 0LL) continue;
-
-            if(fnet[v][u] && d[v] > (d[u] + pi[u] - pi[v]) - cost[v][u]) {
-                d[v] = (d[u] + pi[u] - pi[v]) - cost[v][u], par[v] = -u - 1;
-            }
-
-            if(fnet[u][v] < cap[u][v] && d[v] > (d[u] + pi[u] - pi[v]) + cost[u][v]) {
-                d[v] = (d[u] + pi[u] - pi[v]) + cost[u][v], par[v] = -u - 1;
-            }
-        }
-    }
-
-    for(int i = 0; i < n; i++) if(pi[i] < INF) pi[i] += d[i];
-
-    return par[t] >= 0LL;
-}
-
-int mcmf3(int n, int s, int t, Int &fcost) {
-    memset(deg, 0LL, sizeof(deg));
-
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(cap[i][j] || cap[j][i]) {
-                adj[i][deg[i]++] = j;
-            }
-        }
-    }
-
-    memset(fnet, 0LL, sizeof(fnet));
-    memset(pi, 0LL, sizeof(pi));
-
-    Int flow = fcost = 0LL;
-
-    while(dijkstra(n, s, t)) {
-        Int bot = INF;
-        for(int v = t, u = par[v]; v != s; u = par[v]) {
-            bot = min(bot, (Int) (fnet[v][u] ? fnet[v][u] : (cap[u][v] - fnet[u][v])));
-            v = u;
-        }
-        for(int v = t, u = par[v]; v != s; u = par[v = u]) {
-            if(fnet[v][u]) {
-                fnet[v][u] -= bot;
-                fcost -= bot * cost[v][u];
-            } else {
-                fnet[u][v] += bot;
-                fcost += bot * cost[u][v];
-            }
-        }
-        flow += bot;
-    }
-    return flow;
-}
-
 //*****************************Geometria*************************************//
-//*********************************
 //Distance between point - line
 double dot(pair<int, int> &A, pair<int, int> &B, pair<int, int> &C) {
     return (double) (B.first - A.first) * (C.first - B.first) + (B.second - A.second) * (C.second - B.second);
@@ -1591,20 +1463,22 @@ if(det == 0){
 	double x = (B2*C1 - B1*C2)/det
    double y = (A1*C2 - A2*C1)/det
 }
-/* ************************************ Programação Dinamica: ***************************** */
+/* ************************************ Dynamic Programming ***************************** */
 //*******************************************************
 //Binomial Coefficient
-bin [0][0] = 1;
-  for (n = 1; n < MAXN; n++) {
-    bin [n][0] = 1;
-    bin [n][n] = 1;
+//C(N, K) = N!/(K!(N - K)!)
+int bin[N][K];
+bin[0][0] = 1;
+for(n = 1; n < MAXN; n++) {
+    bin[n][0] = 1;
+    bin[n][n] = 1;
     for (k = 1; k < n; k++) {
-      bin [n][k] = bin [n - 1][k] + bin [n - 1][k - 1];
-      if (bin [n][k] >= MOD) {
-        bin [n][k] -= MOD;
-      }
+		bin [n][k] = bin [n - 1][k] + bin [n - 1][k - 1];
+		if (bin[n][k] >= MOD) {
+			bin[n][k] -= MOD;
+		}
     }
-  }
+ }
 //*******************************************************
 //String distance
 int dist(string& s1, string& s2) {
@@ -1672,7 +1546,6 @@ void funcA(void) {
         in[i] = top;
     }
 }
-//*******************************************************
 //*******************************************************
 //Longest Increasing Subsequence - (LIS) O(N^2)
 int lis(int array[], int n) {
@@ -1749,6 +1622,19 @@ string track(int i, int j) {
             }
         }
     }
+}
+//*******************************************************
+//Subset-Sum -> (G = O valor total sendo testado, N = numero de valores disponiveis no array 'values'
+int values[n];
+bool subsetSum(int n, int g) {
+    for(j = 0; j <= g; j++) sub[j] = 0;
+    sub[0] = 1;
+    for(j = 0; j < n; j++) if(values[j] != g) {
+        for(int k = g; k >= values[j]; k--) {
+            sub[k] |= sub[k - values[j]];
+        }
+    }
+    return sub[g];
 }
 //*******************************************************
 //Checa por Palindromos
@@ -1839,7 +1725,7 @@ int main(void) {
         printf("Teste %d\n%s\n\n", teste++, ok == 1 && (o == 0 || o == 2) ? "sim" : "nao");
     }
 }
-/* *************************** DATA STRUCTURES ***************************/
+/* *************************** Data Structures ***************************/
 //*******************************************************
 //Trie
 struct Trie {
@@ -1917,7 +1803,7 @@ struct UnionFind {
     }
 };
 //*******************************************************
-Binary Indexed Tree(Fenwick Tree)
+//Binary Indexed Tree(Fenwick Tree)
 template<typename T = int>
 struct FenwickTree {
     int N;
@@ -1982,12 +1868,7 @@ struct FenwickTree {
     }
 };
 //*******************************************************
-Binary Indexed Tree 2D(Fenwick Tree 2D)
-#include <iostream>
-#include <vector>
-
-using namespace std;
-
+//Binary Indexed Tree 2D(Fenwick Tree 2D)
 const int INF = 1000 * 1000 * 1000;
 
 int n, m;
@@ -2031,8 +1912,7 @@ int sum(int x1, int y1, int x2, int y2) {
     return sum(std::max(x1, x2), std::max(y1, y2)) - sum(std::min(x1, x2)-1, std::min(y1, y2)-1);
 }
 //*******************************************************
-Simple Segment Tree
-#include <iostream>
+//Simple Segment Tree
 const int MAXN = 4;
 const int INF = 10000010;
 
@@ -2159,10 +2039,6 @@ struct SegmentTree {
 
 };//*******************************************************
 //Segment Tree which find max and min value of an interval [l, r)
-#include <iostream>
-
-using namespace std;
-
 #define MAXN 1000
 #define INF 10000000
 
@@ -2284,7 +2160,6 @@ void maxSlidingWindow(int A[], int n, int w, int B[]) {
   }
   B[n-w] = A[Q.front()];
 }
-/*********************************************************************/
 /**************************** NUMBER THEORY ***************************/
 /*********************************************************************/
 //Contando a soma de todos os numeros do intervalo sum(a, b)
@@ -2379,19 +2254,14 @@ vector<int> func(int x) {
     return ans;
 }
 
- vector<int> d1 = func(A);
-    vector<int> d2 = func(B);
+vector<int> d1 = func(A);
+vector<int> d2 = func(B);
 
-    sort(d1.begin(), d1.end());
-    sort(d2.begin(), d2.end());
+sort(d1.begin(), d1.end());
+sort(d2.begin(), d2.end());
 
-    set_intersection(d1.begin(), d1.end(), d2.begin(), d2.end(), inserter(dv, dv.begin()));
-
-//*******************************************************
-//Checando se um numero Ã© primo ou nÃ£o
-=======
+set_intersection(d1.begin(), d1.end(), d2.begin(), d2.end(), inserter(dv, dv.begin()));
 //Checando se um numero é primo ou não
->>>>>>> b265f1bfa589baf5a17c6cf570d8838bd20f2def
 bool isPrime(long long n) {
     if(n <= 1) return false;
     if(n == 2) return true;
@@ -2458,26 +2328,26 @@ int func(void) {
 //Little Fermat Primarity test - (Testar se um numero e primo de maneira eficiente
 BigInteger getRandomFermatBase(BigInteger n) {
 	while(true) {
-            final BigInteger a = new BigInteger (n.bitLength(), rand);
-            if (BigInteger.ONE.compareTo(a) <= 0 && a.compareTo(n) < 0) {
-                return a;
-            }
-        }
+		final BigInteger a = new BigInteger (n.bitLength(), rand);
+		if (BigInteger.ONE.compareTo(a) <= 0 && a.compareTo(n) < 0) {
+			return a;
+		}
+	}
 }
 
 public static boolean checkPrime(BigInteger n, int maxIterations) {
 	if(n.equals(BigInteger.ONE)) {
-            return false;
+		return false;
 	}
-        for (int i = 0; i < maxIterations; i++) {
-            BigInteger a = getRandomFermatBase(n);
-            a = a.modPow(n.subtract(BigInteger.ONE), n);
-
-            if (!a.equals(BigInteger.ONE)) {
-                return false;
+	for (int i = 0; i < maxIterations; i++) {
+		BigInteger a = getRandomFermatBase(n);
+		a = a.modPow(n.subtract(BigInteger.ONE), n);
+		
+		if (!a.equals(BigInteger.ONE)) {
+			return false;
 		}
-        }
-        return true;
+	}
+	return true;
 }
 //*******************************************************
 //Soma de todos os divisores de um numero
@@ -2511,19 +2381,7 @@ void mount(int x) {
     }
     sum[other] = mult - other;
 }
-//*******************************************************
-//Subset-Sum -> (G = O valor total sendo testado, N = numero de valores disponiveis no array 'values'
-int values[n];
-bool subsetSum(int n, int g) {
-    for(j = 0; j <= g; j++) sub[j] = 0;
-    sub[0] = 1;
-    for(j = 0; j < n; j++) if(values[j] != g) {
-        for(int k = g; k >= values[j]; k--) {
-            sub[k] |= sub[k - values[j]];
-        }
-    }
-    return sub[g];
-}
+
 //*******************************************************
 //GCD - Maximo Divisor Comum
 int gcd(int a, int b) {
