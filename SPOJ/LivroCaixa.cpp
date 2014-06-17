@@ -40,6 +40,21 @@ typedef long double ld;
 const int MAXN = 1010010;
 
 int N, F;
+<<<<<<< HEAD
+int T[60];
+
+int dp1[16005], dp2[16005];
+
+void func1(void) {
+	memset(dp1, 63, sizeof(dp1));
+
+	dp1[0] = 0;
+
+	for (int i = 1; i <= F; i++) {
+		for (int j = 0; j < N; j++) {
+			if (i - T[j] >= 0) {
+				dp1[i] = min(dp1[i], dp1[i - T[j]] + 1);
+=======
 vector<int> A, B;
 int dp1[MAXN], dp2[MAXN];
 
@@ -65,6 +80,7 @@ void func2(void) {
 		for (int j = 0; j < (int) B.size(); j++) {
 			if (i - B[j] >= 0) {
 				dp2[i] = min(dp2[i], dp2[i - B[j]] + 1);
+>>>>>>> 638e145a317d94f9e5ee44f0d70723189b2bf385
 			}
 		}
 	}
@@ -72,6 +88,17 @@ void func2(void) {
 
 int main(void) {
     for ( ; scanf("%d%d", &N, &F) == 2 && N + F != 0; ) {
+<<<<<<< HEAD
+		for (int i = 0; i < N; i++) {
+			scanf("%d", &T[i]);			
+		}
+		func1();
+
+		for (int i = 0; i <= F; i++) {
+			printf("%d %d\n", i, dp1[i]);
+		}
+		puts("");
+=======
 		A.clear();
 		B.clear();
 
@@ -94,7 +121,9 @@ int main(void) {
 
 		func1();
 		func2();
+>>>>>>> 638e145a317d94f9e5ee44f0d70723189b2bf385
     }
+
     return 0;
 }
 

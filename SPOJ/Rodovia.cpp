@@ -20,39 +20,70 @@ typedef unsigned uint;
 const int MAXN = 10005;
 
 int A, B, N;
-vector<int> g[MAXN];
+vector<int> g[MAXN], tr_g[MAXN];
 bool vis[MAXN];
 
+vector<int> order;
+
+void dfs1(int x) {
+  vis[x] = 1;
+
+  for (int i = 0; i < (int) g[x].size(); i++) {
+    int u = g[x][i];
+
+    if (!vis[u]) {
+      dfs1(u);
+    }
+  }
+
+  order.push_back(x);
+}
+
+void dfs2(int x) {
+  vis[x] = 1;
+
+  for (int i = 0; i < (int) tr_g[x].size(); i++) {
+    int u = tr_g[x][i];
+
+    if (!vis[u]) {
+      dfs2(u);
+    }
+  }
+}
+
 int main(void) {
-	cin >> N;
+  for ( ; cin >> N; ) {
+    order.clear();
+    for (int i = 0; i <= N; i++) {
+      g[i].clear();
+      tr_g[i].clear();
+      vis[i] = 0;
+    }
+    for (int i = 0; i < N; i++) {
+      cin >> A >> B;
+      g[A].push_back(B);
+      tr_g[B].push_back(A);
+    }
+    
+    for (int i = 1; i <= N; i++) {
+      if (!vis[i]) {
+	dfs1(i);
+      }
+    }
 
-	for (int i = 0; i < N; i++) {
-		cin >> A >> B;
-		g[A].push_back(B);
-	}
-
-	bool ans = 1;
-	int curr = 1, visited = 0;
-
-	for (int i = 0; i < N && ans; i++) {
-		if (g[curr].size() > 1) {
-			ans = 0;
-		} else {
-			vis[curr] = true;
-
-			int next = g[curr][0];
-
-			if (!vis[next]) {
-				curr = next;
-			} else {
-				if (i != N - 1) {
-					ans = 0;
-				}
-			}
-		}
-	}
-
-	cout << (ans == 1 ? "S" : "N") << endl;
-
-    return 0;
+    memset(vis, 0, sizeof(vis));
+    reverse(order.begin(), order.end());
+    
+    int c = 0;
+    
+    for (int i = 0; i < N; i++) {
+      if (!vis[order[i]]) {
+	dfs2(order[i]);
+	c += 1;
+      }
+    }
+    
+    cout << (c == 1 ? "S" : "N") << endl;
+  }
+  return 0;
 }

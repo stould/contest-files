@@ -21,12 +21,14 @@ int N;
 list<int> ls;
 
 int main(void) {
+    freopen("i.in", "r", stdin);
     N = in();
 
     for (int i = 0; i < N; i++) {
         int bf;
         bf = in();
         ls.push_back(bf);
+        cout << bf << " ";
     }
 
     int ans[2];

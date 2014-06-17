@@ -86,19 +86,15 @@ int  lazy[4 * MAXN];
 
 data combine(data a, data b) {
     data ans;
-
     ans.h = a.h + b.h;
     ans.e = a.e + b.e;
     ans.r = a.r + b.r;
-
     return ans;
 }
 
 data dumb_data(void) {
     data ans;
-
     ans.h = ans.e = ans.r = 0;
-
     return ans;
 }
 
@@ -146,7 +142,7 @@ void update(int node, int l, int r, int bound_l, int bound_r) {
     func(node, l, r);
     if (bound_l > bound_r) {
         return;
-    } else if (bound_l <= l && bound_r >= r) {
+    } else if (bound_l == l && bound_r == r) {
         lazy[node] += 1;
         func(node, l, r);
     } else {

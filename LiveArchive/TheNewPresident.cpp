@@ -46,70 +46,72 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+#define TT 123
+
 const int MAXN = 1103;
 int T, C, V;
 
 int m[MAXN][MAXN];
 
+bool cmp(pair<int, int> a, pair<int, int> b) {
+	return a.second > b.second;
+}
+
 int main(void) {
     T = in();
 
-    int i, j, x;
-
-    for ( ; T--; ) {
+    for ( ; T--; ) {		
         C = in();
         V = in();
-
-        for (i = 0; i < V; i++) {
-            for (j = 0; j < C; j++) {
-                m[i][j] = in();
-            }
-        }
 
         int id = 0, cnt = 0;
 
         map<int, int> mp;
         vector<int> win;
+		map<int, int> vint;
+		map<int, int> pos[V];
 
-        for (i = 0; i < V; i++) {
-            int curr = m[i][0];
+		vector<pair<int, int> > v_vote(C + 1);
 
-            mp[curr] += 1;
+		for (int i = 1; i <= C; i++) {
+			v_vote[i].first = i;
+		}
 
-            if (mp[curr] > cnt) {
-                cnt = mp[curr];
-                id = curr;
-                win.clear(); win.push_back(curr);
-            } else if (mp[curr] == cnt) {
-                win.push_back(curr);
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < C; j++) {
+                m[i][j] = in();
+				if (j == 0) {
+					v_vote[m[i][j]].second += 1;
+				}
+				vint[m[i][j]] += C - j;
+				pos[i][m[i][j]] = j;
             }
         }
+		sort(v_vote.begin() + 1, v_vote.end(), cmp);
+		cnt = v_vote[1].second;
+		id = v_vote[1].first;
 
         if (cnt > (V / 2)) {
-            printf("%d %d", id, 1);
-        } else {
-            cnt = 0, id = 0;
+			printf("%d %d", id, 1);
+        } else {			
+			win.push_back(v_vote[1].first);
+			win.push_back(v_vote[2].first);
 
-            mp.clear();
-
-            for (i = 0; i < V; i++) {
-                for (j = 1; j < C; j++) {
-                    if (m[i][j] == win[0] || m[i][j] == win[1]) {
-                        mp[m[i][j]] += 1;
-
-                        if (mp[m[i][j]] > cnt) {
-                            cnt = mp[m[i][j]];
-                            id = m[i][j];
-                        }
-                        break;
-                    }
-                }
+            int p1 = 0, p2 = 0;
+			
+            for (int i = 0; i < V; i++) {
+				if (pos[i][win[0]] < pos[i][win[1]]) {
+					p1 += 1;
+				} else {
+					p2 += 1;
+				}
             }
+			if (p1 > p2) id = win[0];
+			else id = win[1];
 
-            printf("%d %d", id, 2);
+			printf("%d %d", id, 2);
         }
-        if (T != 0) printf("\n");
-
+		printf("\n");
     }
     return 0;
 }
