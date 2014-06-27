@@ -18,26 +18,43 @@ typedef long long Int;
 typedef unsigned uint;
 
 string S;
-set<string> sm;
+int N;
+int M[27][1001];
 
-void func(int id, string s) {
-	if (id == (int) S.size()) {
-		sm.insert(s);
+vector<string> vs;
+
+void build(int pos, string s) {
+	if (pos == N) {
+		return;
 	} else {
-		func(id + 1, s);
-		func(id + 1, s + S[id]);
+		for (int i = 0; i < 26; i++) {
+			if (M[i][pos] >= pos) {
+				vs.push_back(s + (char) ('a' + i));
+				build(M[i][pos] + 1, s + (char) ('a' + i));
+			}
+		}
 	}
 }
 
 int main(void) {
-	set<string>::iterator it;
 	for ( ; cin >> S; ) {
-		sm.clear();
-		
-		func(0, "");		
+		N = (int) S.size();
+		vs.clear();
+		memset(M, -1, sizeof(M));
 
-		for (it = sm.begin(); it != sm.end(); it++) {
-			cout << *it << "\n";
+		for (int i = 0; i < N; i++) {
+			M[S[i] - 'a'][i] = i;
+		}
+		for (int i = 0; i < 26; i++) {
+			for (int j = N - 1; j >= 0; j--) {
+				if (M[i][j] != -1) continue;
+				M[i][j] = M[i][j + 1];
+			}
+		}
+		build(0, "");
+		sort(vs.begin(), vs.end());
+		for (int i = 0; i < vs.size(); i++) {
+			cout << vs[i] << "\n";
 		}
 		cout << "\n";
 	}
