@@ -1,5 +1,6 @@
 typedef int Flow;
 typedef int Cost;
+
 const Flow INF = 0x3f3f3f3f;
 struct Edge {
     int src, dst;
