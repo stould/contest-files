@@ -1,4 +1,4 @@
-//*******Guia de Referencia - UNITAU **********//
+/*******Guia de Referencia - UNITAU **********//
 //**********************************************
 //QuickSort O(N log N) worst case O(n^2)
 #include <iostream>
@@ -744,7 +744,7 @@ void tarjan(int u, int depth) {
 		if(num[v] == -1){
 			tarjan(v, depth+1);
 		}
-		if(vis[v]){
+		if (vis[v]){
 			low[u] = min(low[u], low[v]);
 		}
 	}
@@ -752,7 +752,7 @@ void tarjan(int u, int depth) {
 		while(1) {
 			int next = st.top();st.pop();
 			sat[next] = scc_counter;
-			vis[next]=0;
+			vis[next] = 0;
 			if(u == next) break;
 		}
 		++scc_counter;

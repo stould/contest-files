@@ -17,15 +17,82 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int N, T;
-int P[62] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163 ,167, 173,179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293};
+int N, T, pz;
+vector<int> primes;
 
-int dp[1010][]
+bool u[310];
+bool dp[1005][15][150];
+int path[15];
+
+bool func(int n, int t, int id) {
+	if (id >= pz) {
+		return false;
+ 	} else if (t == T) {
+		return n == N;
+	} else if (n >= N) {
+		return false;
+	} else {
+		bool& ans = dp[n][t][id];
+
+		if (ans) {
+			path[t] = primes[id];
+			if (func(n + primes[id], t + 1, id + 1)) {
+				return true;
+			}
+			if (func(n, t, id + 1)) {
+				return true;
+			}
+		}
+		return ans = false;
+	}
+}
+
+bool cmp(int a, int b) {
+	stringstream sa;
+	stringstream sb;
+	sa << a;
+	sb << b;
+	return sa.str() < sb.str();
+}
 
 int main(void) {
-    //freopen("i.in", "r", stdin);
-    for ( ; scanf("%d%d", &N, &T) == 2 && N + T != 0; ) {
+	int t = 1;
 
+	memset(u, true, sizeof(u));
+
+	for (int i = 2; i <= sqrt(300); i++) {
+		if (u[i]) {
+			for (int j= i + i; j < 300; j += i) {
+				u[j] = false;
+			}
+		}
+	}
+	primes.push_back(2);
+	for (int i = 3; i < 300; i++) {
+		if (u[i]) {
+			primes.push_back(i);
+			primes.push_back(i);
+		}
+	}
+	pz = (int) primes.size();
+
+	sort(primes.begin(), primes.end(), cmp);
+    for ( ; scanf("%d%d", &N, &T) == 2 && N + T != 0; ) {
+		memset(dp, true, sizeof(dp));
+		bool outcome = func(0, 0, 0);
+
+		printf("CASE %d:\n", t++);
+
+		if (outcome) {
+			for (int i = 0; i < T; i++) {
+				printf("%d", path[i]);
+				if (i != T - 1) printf("+");
+			}
+			puts("");
+
+		} else {
+			printf("No Solution.\n");
+		}
     }
     return 0;
 }

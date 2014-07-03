@@ -43,10 +43,11 @@ int func(int pos, int mod, int plus, int minus) {
 				int p = i;
 				int q = cnt[pos] - i;
 
-				int p_mod = (((plus + i - minus) % MOD) + MOD) % MOD;
-				int m_mod = (((plus - i - minus) % MOD) + MOD) % MOD;
+				int p_mod = (((plus + i - minus) % 11) + 11) % 11;
+				int m_mod = (((plus - i - minus) % 11) + 11) % 11;
 
-				ans += func(pos + 1, 
+				
+				ans += comb[p - plus][p] * comb[n - minus][q] + func(pos + 1, p_mod, plus + p, minus + q);
 			}
 		}
 	}
@@ -56,7 +57,7 @@ int main(void) {
 	comb[0][0] = 1;
 	for (int i = 1; i < 110; i++) {
 		comb[i][0] = comb[i][i] = 1;
-		for (int j = 1; j < 1010; j++) {
+		for (int j = 1; j < 110; j++) {
 			comb[i][j] = comb[i - 1][j] + comb[i - 1][j - 1];
 
 			if (comb[i][j] >= MOD) {
