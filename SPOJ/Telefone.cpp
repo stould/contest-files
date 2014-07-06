@@ -29,7 +29,25 @@ int main(void) {
 		if ((S[i] >= '0' && S[i] <= '9') || S[i] == '-') {
 			cout << S[i];
 		} else {
-			cout << mp[S[i]];
+			char c = '$';
+			if (S[i] >= 'A' && S[i] <= 'C') {
+				c = '2';
+			} else if (S[i] >= 'D' && S[i] <= 'F') {
+				c = '3';
+			} else if (S[i] >= 'G' && S[i] <= 'I') {
+				c = '4';
+			} else if (S[i] >= 'J' && S[i] <= 'L') {
+				c = '5';
+			} else if (S[i] >= 'M' && S[i] <= 'O') {
+				c = '6';
+			} else if (S[i] >= 'P' && S[i] <= 'S') {
+				c = '7';
+			} else if (S[i] >= 'T' && S[i] <= 'V') {
+				c = '8';
+			} else if (S[i] >= 'W' && S[i] <= 'Z') {
+				c = '9';
+			}
+			cout << c;
 		}
 	}
 	cout << "\n";
