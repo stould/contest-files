@@ -108,7 +108,7 @@ void heapsort() {
 }
 
 //**********************************************
-//
+//Merge contando inversões
 int merge(int arr[], int temp[], int left, int mid, int right);
  
 int _mergeSort(int arr[], int temp[], int left, int right) {

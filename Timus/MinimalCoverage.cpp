@@ -26,54 +26,50 @@ pair<int, int> p[MAXN];
 bool used[MAXN];
 
 int main(void) {
-    T = in();
-    int A, B;
-
-    for ( ; T--; ) {
-        M = in();
-
-        N = 0;
-
-        for ( ; scanf("%d%d", &A, &B) == 2 && (A + B != 0); ) {
-            if (B < 0) continue;
-            p[N] = make_pair(A, B);
-            N++;
-        }
-
-        sort(p, p + N);
+	M = in();
 		
-        int l = 0;
-        int r = 0;
-		vector<pair<int, int> > ans;
-
-        for (int i = 0; i < N; i++) {
-			if (r >= M) break;
-			if (p[i].first <= l) {
-				int pos = i;
-				
-				r = p[i].second;
-				
-				while (i < N && p[i].first <= l) {
-					if (p[i].second > r) {
-						pos = i;
-						r = p[i].second;
+	N = 0;
+	int A, B;
+	for ( ; scanf("%d%d", &A, &B) == 2 && !(A == 0 && B == 0); ) {
+		if (B < 0) continue;
+		p[N] = make_pair(A, B);
+		N++;
+	}
+	
+	sort(p, p + N);
+	
+	int l = 0;
+	int r = 0;
+	vector<pair<int, int> > ans;
+	
+	for (int i = 0; i < N; i++) {
+		if (r >= M) break;
+		if (p[i].first <= l) {
+			int pos = i;
+			
+			r = p[i].second;
+			
+			while (i < N && p[i].first <= l) {
+				if (p[i].second > r) {
+					pos = i;
+					r = p[i].second;
 					}
-					i++;					
-				}
-				ans.push_back(p[pos]);
+				i++;					
+			}
+			ans.push_back(p[pos]);
 				l = r;
 				i--;
-			}
-        }
-
-		if (r < M) ans.clear();
-
+		}
+	}
+	
+	if (r < M) {
+		printf("No solution\n");
+	} else {
 		printf("%d\n", (int) ans.size());
 
 		for (int i = 0; i < (int) ans.size(); i++) {
 			printf("%d %d\n", ans[i].first, ans[i].second);
-		}
-		
+		}		
         printf("\n");
 	}
 
