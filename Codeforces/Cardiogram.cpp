@@ -45,6 +45,7 @@ int main(void) {
 				min_x = min(min_x, px);
 				max_x = max(max_x, px);
 			}
+			//	py++;
 		} else {
 			for (int j = 0; j < P[i]; j++) {
 				M[px][py] = '\\';
@@ -53,10 +54,11 @@ int main(void) {
 				min_x = min(min_x, px);
 				max_x = max(max_x, px);
 			}
+			//			py++;
 		}
-		px += 1;
+		//		px += 1;
 	}
-	for (int i = min_x + 1; i < c max_x; i++) {
+	for (int i = min_x + 1; i < max_x; i++) {
 		cout << M[i].substr(3 * MAXN / 2, 13) << "\n";
 	}
     return 0;
