@@ -1,4 +1,4 @@
-x#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
