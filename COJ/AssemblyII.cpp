@@ -23,60 +23,39 @@ const int INF = INT_MAX / 3;
 int N;
 int P[MAXN], Q[MAXN], stk[MAXN], in[MAXN];
 
-int funcA(void) {
-    int i, top = 0;
-	int ans = 0;
+int CeilIndex(int A[], int l, int r, int key) {
+    int m;
+ 
+    while( r - l > 1 ) {
+        m = l + (r - l)/2;
+        (A[m] >= key ? r : l) = m; 
 
-    stk[0] = INT_MIN;
-
-    for (i = 0; i < N; ++i) {
-        if (Q[i] > stk[top]) {
-            stk[++top] = Q[i];
-        } else {
-            int low = 0, high = top;
-            while (low <= high) {
-                int mid = (low + high) >> 1;
-                if (Q[i] < stk[mid]) {
-                    low = mid + 1;
-                } else {
-                    high = mid - 1;
-                }
-            }
-            stk[low] = Q[i];
-        }
-		chmax(ans, top);
-        in[i] = top;
     }
-	return top;
+ 
+    return r;
 }
-
-int funcB(void) {
-    int i, top = 0;
-	int ans = 0;
-
-    stk[0] = INT_MIN;
-
-    for (i = 0; i < N; ++i) {
-        if (P[i] > stk[top]) {
-            stk[++top] = P[i];
-        } else {
-            int low = 0, high = top;
-            while (low <= high) {
-                int mid = (low + high) >> 1;
-                if (P[i] < stk[mid]) {
-                    low = mid + 1;
-                } else {
-                    high = mid - 1;
-                }
-            }
-            stk[low] = P[i];
-        }
-		chmax(ans, top);
-        in[i] = top;
+int ep(int A[], int size) {
+    int *tailTable   = new int[size];
+    int len;
+ 
+    memset(tailTable, 0, sizeof(tailTable[0])*size);
+ 
+    tailTable[0] = A[0];
+    len = 1;
+    for( int i = 1; i < size; i++ ) {
+        if (A[i] < tailTable[0]) {
+            tailTable[0] = A[i];
+		} else if( A[i] > tailTable[len-1]) {
+            tailTable[len++] = A[i];
+		} else {
+            tailTable[CeilIndex(tailTable, -1, len-1, A[i])] = A[i];
+		}
     }
-	return top;
+ 
+    delete[] tailTable;
+ 
+    return len;
 }
-
 
 int main(void) {
 	for ( ; scanf("%d", &N) == 1; ) {
@@ -85,7 +64,7 @@ int main(void) {
 			Q[i] = P[i];
 		}
 		reverse(Q, Q + N);
-		int a = funcA(), b = funcB();
+		int a = ep(P, N), b = ep(Q, N);
 
 		if (a == b) {
 			puts("Caution. I will not intervene.");
