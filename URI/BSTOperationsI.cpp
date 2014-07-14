@@ -21,7 +21,7 @@ template<typename T>
 struct BST {
 	struct node {
 		T value;
-		node *left, *right;
+		node *left, *right, *parent;
 
 		node(T value): value(value), left(NULL), right(NULL) {}
 	};
@@ -31,19 +31,34 @@ struct BST {
 	BST(): root(NULL) {}
 
 	bool insert(T value) {
-		node** buff = &root;
-
-		while ((*buff) != NULL) {
-			if (value == (*buff)->value) {
-				return false;
-			} else if (value < (*buff)->value) {
-				buff = &(*buff)->left;
-			} else {
-				buff = &(*buff)->right;
-			}
+		if (root == NULL) {
+			root = new node(value);
+			return true;
 		}
 
-		*buff = new node(value);
+		node* buff = root;
+		bool ok = false;
+
+		while (!ok) {
+			if (value == buff->value) {
+				return false;
+			} else if (value < buff->value) {
+				if (buff->left == NULL) {
+					buff->left = new node(value);
+					ok = true;
+				} else {
+					buff = buff->left;
+				}
+			} else {
+				if (buff->right == NULL) {
+					buff->right = new node(value);								
+					ok = true;
+				} else {
+					buff = buff->right;
+				}
+			}
+		}
+		
 
 		return true;
 	}
