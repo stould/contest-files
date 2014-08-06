@@ -17,34 +17,40 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1010;
+int M, N;
 
-int N, M;
-int P[MAXN];
+vector<string> split(string S) {
+	string buff;
+	vector<string> ans;
+	istringstream ss(S);
+
+	while (ss >> buff) {
+		ans.push_back(buff);
+	}
+	return ans;
+}
 
 int main(void) {
-	cin >> N >> M;
-	
-	int ans = 0, buff = 0;
-	
-	for (int i = 0; i < N; i++) {
-		cin >> P[i];
-	}
-	
-	for (int i = 0; i < N; i++) {
-		P[i] += buff;
-		buff = 0;
+	cin >> M >> N;
+	string S;
+	int V;
 
-		if (P[i] > M) {
-			ans += P[i] - M;
-			buff = -(P[i] - M);
-		} else if (P[i] < M) {
-			ans += M - P[i];
-			buff = M - P[i];
+	map<string, int> mp;
+
+	for (int i = 0; i < M; i++) {
+		cin >> S >> V;
+		mp[S] = V;
+	}
+	for (int i = 0; i < N; i++) {
+		Int ans = 0LL;
+		while (getline(cin, S) && S != ".") {
+			vector<string> vs = split(S);
+			
+			for (int j = 0; j < (int) vs.size(); j++) {
+				ans += mp[vs[j]];
+			}
 		}
+		cout << ans << "\n";
 	}
-
-	cout << ans << "\n";
-
     return 0;
 }

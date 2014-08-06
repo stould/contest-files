@@ -46,48 +46,48 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int N;
+int N, ans;
 int A[15], B[15];
+map<int, int> dp;
 
-struct triplet {
-    int a, b, c;
+int func(int mask, int L, vector<int>& vs, int used) {
+	if (L - used < 3) return 0;	
 
-    triplet(){}
+	if (dp.find(mask) == dp.end()) {
+		for (int i = 0; i < L; i++) {
+			if (!(mask & (1 << i))) {
+				for (int j = i + 1; j < L; j++) {
+					if (!(mask & (1 << j))) {
+						for (int k = j + 1; k < L; k++) {
+							if (!(mask & (1 << k))) {
+								if (vs[i] + vs[j] > vs[k]) {
+									int new_mask = mask | (1 << i) | (1 << j) | (1 << k);
+									
+									chmax(dp[mask], 1 + func(new_mask, L, vs, used + 3));									
+								}									
+							}	
+						}	
+					}	
+				}	
+			}	
+		}	
+	}	
+	return dp[mask];
+}
 
-    triplet(int a, int b, int c): a(a), b(b), c(c){}
-};
-
-pair<int, int> func(vector<int > v) {
-    int i;
-
-    for (i = 0; i < (int) v.size(); i++) {
-        if (v[i] < 0) return make_pair(-1, -1);
-    }
-
-
+int run(vector<int>& vs) {
+	dp.clear();
+	int L = (int) vs.size();
+	return func(0, L, vs, 0);
 }
 
 int main(void) {
-    int i, j, k;
-
-    vector<triplet> vt;
-
-    for (i = 1; i <= 13; i++) vt.push_back(triplet(i, i, i));
-
-    for (i = 1; i <= 13; i++) {
-        for (j = i; j <= 13; j++) {
-            for (k = j; k <= 13; k++) {
-                if (i + j > k) {
-                    vt.push_back(triplet(i, j, k));
-                }
-            }
-        }
-    }
-
     for ( ; scanf("%d", &N) == 1 && N != 0; ) {
-        for (i = 0; i < 15; i++) A[i] = B[i] = 0;
+        for (int i = 0; i < 15; i++) {
+			A[i] = B[i] = 0;
+		}
 
-        for (i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
             int x = in();
             if (i % 2 == 0) {
                 A[x] += 1;
@@ -95,58 +95,39 @@ int main(void) {
                 B[x] += 1;
             }
         }
+		int A1 = 0, B1 = 0;
 
-        pair<int, int> a = func(vector<int>(A, A + 13));
-/*
-        int a1 = 0, a2 = 0, b1 = 0, b2 = 0;
+		for (int i = 1; i <= 13; i++) {
+			A1 += A[i] / 3;
+			A[i] %= 3;
+			B1 += B[i] / 3;
+			B[i] %= 3;
+		}
+		if (A1 != B1) {
+			puts(A1 > B1 ? "1" : "2");
+		} else {
+			vector<int> vs1, vs2;
+			
+			for (int i = 1; i <= 13; i++) {
+				while (A[i] > 0) {
+					vs1.push_back(i);
+					A[i] -= 1;
+				}
+				while (B[i] > 0) {
+					vs2.push_back(i);
+					B[i] -= 1;
+				}
+			}
+			
+			int cnt1 = run(vs1);			
+			int cnt2 = run(vs2);
 
-        for (i = 0; i < vt.size(); i++) {
-            while (1) {
-                A[vt[i].a] -= 1;
-                A[vt[i].b] -= 1;
-                A[vt[i].c] -= 1;
-
-                if (A[vt[i].a] >= 0 && A[vt[i].b] >= 0 && A[vt[i].c] >= 0) {
-                    if (vt[i].a == vt[i].b && vt[i].a == vt[i].c && vt[i].c == vt[i].c) {
-                        a1 += 1;
-                    } else {
-                        a2 += 1;
-                    }
-                } else {
-                    A[vt[i].a] += 1;
-                    A[vt[i].b] += 1;
-                    A[vt[i].c] += 1;
-                    break;
-                }
-            }
-            while (1) {
-                B[vt[i].a] -= 1;
-                B[vt[i].b] -= 1;
-                B[vt[i].c] -= 1;
-
-                if (B[vt[i].a] >= 0 && B[vt[i].b] >= 0 && B[vt[i].c] >= 0) {
-                    if (vt[i].a == vt[i].b && vt[i].a == vt[i].c && vt[i].c == vt[i].c) {
-                        b1 += 1;
-                    } else {
-                        b2 += 1;
-                    }
-                } else {
-                    B[vt[i].a] += 1;
-                    B[vt[i].b] += 1;
-                    B[vt[i].c] += 1;
-                    break;
-                }
-            }
-        }
-    */
-
-        if (a1 + a2 > b1 + b2 || (a1 + a2 == b1 + b2 && a1 > b1)) {
-            printf("1\n");
-        } else if (a1 + a2 < b1 + b2 || (a1 + a2 == b1 + b2 && a1 < b1)) {
-            printf("2\n");
-        } else {
-            printf("0\n");
-        }
+			if (cnt1 != cnt2) {
+				puts(cnt1 > cnt2 ? "1" : "2");
+			} else {
+				puts("0");
+			}
+		}
     }
 
     return 0;

@@ -46,54 +46,134 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 550;
+const int MAXN = 2 * 550 + 10;
+const Int INF = 10100100LL;
 
 int V, C;
+int freqV[550][30], freqC[550][30];
 
-string vc[MAXN];
-string ch[MAXN];
 
-bool func(string x, string y) {
-    int i;
+struct edge {
+    int to,rev;
+    Int cap;
+    edge(int to, Int cap, int rev): to(to), cap(cap), rev(rev) {}
+};
 
-    int freqX[30] = {0};
-    int freqY[30] = {0};
+vector<edge> G[MAXN];
+Int level[MAXN];
+int iter[MAXN];
 
-    for (i = 0; i < (int) x.size(); i++) freqX[x[i]-'a'] += 1;
-    for (i = 0; i < (int) y.size(); i++) freqY[y[i]-'a'] += 1;
+void init(int N) {
+    for (int i = 0; i < N; i++) {
+        G[i].clear();
+    }
+}
 
-    for (i = 0; i < 26; i++) {
-        if (freqY[i] != 0 && freqX[i] == 0) return false;
-        if (freqY[i] != 0 && freqX[i] != 0 && freqX[i] % freqY[i] != 0) return false;
+void add_edge(int from,int to,Int cap) {
+    G[from].push_back(edge(to, cap, G[to].size()));
+    G[to].push_back(edge(from, 0, G[from].size()-1));
+}
+
+void bfs(int s) {
+    memset(level, -1, sizeof(level));
+    queue<int> que;
+    level[s] = 0;
+    que.push(s);
+
+    while(!que.empty()) {
+        int v = que.front();
+        que.pop();
+        for (int i = 0; i < G[v].size(); i++) {
+            edge& e = G[v][i];
+            if(e.cap > 0 && level[e.to] < 0) {
+                level[e.to] = level[v] + 1;
+                que.push(e.to);
+            }
+        }
+    }
+}
+
+Int dfs(int v, int t, Int f) {
+    if(v == t) return f;
+    for(int& i = iter[v]; i < (int) G[v].size(); i++) {
+        edge &e = G[v][i];
+        if(e.cap > 0 && level[v] < level[e.to]) {
+            Int d = dfs(e.to, t, min(f, e.cap));
+            if (d > 0) {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+int max_flow(int s, int t) {
+    Int flow = 0;
+    for( ; ; ) {
+        bfs(s);
+        if (level[t] < 0) {
+            return flow;
+        }
+        memset(iter, 0, sizeof(iter));
+        int f;
+        while ((f=dfs(s,t,INF*INF)) > 0) {
+            flow += f;
+        }
+    }
+}
+
+ 
+bool func(int a, int b) {
+    for (int i = 0; i < 26; i++) {
+		if (freqV[a][i] < freqC[b][i]) {
+			return false;
+		}
     }
 
     return true;
 }
 
-int main(void) {
-    int i, j;
+string vc[MAXN];
+string ch[MAXN];
 
-    for ( ; scanf("%d%d", &V, &C) == 2; ) {
-        for (i = 0; i < V; i++) {
-            cin >> vc[i]; sort(vc[i].begin(), vc[i].end());
+int main(void) {
+    for ( ; cin >> V >> C; ) {
+		memset(freqV, 0, sizeof(freqV));
+		memset(freqC, 0, sizeof(freqC));
+		for (int i = 0; i < MAXN; i++) {
+			G[i].clear();
+		}
+
+        for (int i = 1; i <= V; i++) {
+            cin >> vc[i];
+			
+			for (int j = 0; j < (int) vc[i].size(); j++) {
+				freqV[i][vc[i][j] - 'a'] += 1;
+			}
+			
+			add_edge(0, i, 1);
         }
 
-        bool used[V]; memset(used, false, sizeof(used));
+        for (int i = 1; i <= C; i++) {
+            cin >> ch[i]; 
 
-        int ans = 0;
+			for (int j = 0; j < (int) ch[i].size(); j++) {
+				freqC[i][ch[i][j] - 'a'] += 1;
+			}
 
-        for (i = 0; i < C; i++) {
-            cin >> ch[i]; sort(ch[i].begin(), ch[i].end());
-            for (j = 0; j < V; j++) if (!used[j]) {
-                if (func(vc[j], ch[i])) {
-                    ans += 1;
-                    used[j] = true;
-                    break;
+			add_edge(V + i, V + C + 2, 1);
+		}
+		for (int i = 1; i <= V; i++) {
+            for (int j = 1; j <= C; j++) {
+                if (func(i, j)) {
+					add_edge(i, V + j, 1);
                 }
             }
         }
-
-        printf("%d\n", ans);
-    }
+		
+		printf("%d\n", max_flow(0, V + C + 2));
+	}
     return 0;
 }

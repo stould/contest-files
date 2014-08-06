@@ -22,9 +22,9 @@
 
 using namespace std;
 
-#define REP(i, n) for(i = 0; i < (n); i++)
-#define FOR(i, a, n) for(i = a; i < n; i++)
-#define REV(i, a, n) for(i = a; i > n; i--)
+#define REP(i, n) for(int i = 0; i < (n); i++)
+#define FOR(i, a, n) for(int i = a; i < n; i++)
+#define REV(i, a, n) for(int i = a; i > n; i--)
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -37,28 +37,61 @@ template<typename T> T lcm(T a, T b) {
 typedef long long ll;
 typedef long double ld;
 
-const int MAXN = 1000010
+const int MAXN = 1000010;
 
-trapezio tr[MAXN];
-int n, all = 0;
+int N;
+int P[MAXN];
+struct tr {
+	int f, p, id;
 
-struct trapezio {
-    int peso, forca, index;
-    trapezio(){}
-    trapezio(int peso, int forca, int index): peso(peso), forca(forca), index(index){}
-    bool operator<(const trapezio& t) const {
-        if(forca != t.forca) return forca > t.forca;
-        if(peso != t.peso) return peso < t.peso;
-        return index < t.index;
-    }
+	tr(){}
+
+	tr(int f, int p, int id): f(f), p(p), id(id) {}
+
+	bool operator<(const tr& t) const {
+		return f + p > t.f + t.p;
+	}
 };
 
 int main(void) {
-    scanf("%d", &n);
-    REP(i, n) {
-        scanf("%d%d", &tr[i]., &tr[i].second);
-        all += tr[i].first;
+    scanf("%d", &N);
+
+	int sum = 0;
+	vector<int> ans(N);
+	vector<tr> vt(N);
+	
+
+    REP(i, N) {
+        scanf("%d%d", &vt[i].p, &vt[i].f);
+		P[i] = vt[i].p;
+		vt[i].id = i + 1;
+		sum += vt[i].p;
     }
+	
+	sort(vt.begin(), vt.end());
+
+	set<int> id;
+	int pos = 0;
+
+	for (int i = 0; i < N; i++) {
+		while (pos < N && vt[pos].f >= sum - vt[pos].p) {
+			id.insert(vt[pos].id);
+			pos++;
+		}
+		if (id.empty()) {
+			puts("IMPOSSIVEL");
+			return 0;
+		} 
+		int k = *id.begin();
+
+		ans[i] = k;
+		id.erase(k);
+		sum -= P[k - 1];
+	}
+	
+	for (int i = 0; i < N; i++) {
+		printf("%d\n", ans[i]);
+	}
 
     return 0;
 }

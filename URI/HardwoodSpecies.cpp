@@ -17,34 +17,34 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1010;
-
-int N, M;
-int P[MAXN];
+int T;
 
 int main(void) {
-	cin >> N >> M;
-	
-	int ans = 0, buff = 0;
-	
-	for (int i = 0; i < N; i++) {
-		cin >> P[i];
-	}
-	
-	for (int i = 0; i < N; i++) {
-		P[i] += buff;
-		buff = 0;
+	cin >> T;
+	string S;
+	getline(cin, S);	
 
-		if (P[i] > M) {
-			ans += P[i] - M;
-			buff = -(P[i] - M);
-		} else if (P[i] < M) {
-			ans += M - P[i];
-			buff = M - P[i];
+	for (int t = 1; t <= T; t++) {		
+		if (t == 1)	getline(cin, S);	
+		double u = 0.0;
+
+		map<string, int> mp;
+		set<string> st;
+		
+
+		for ( ; getline(cin, S) && S != ""; ) {
+			mp[S] += 1;
+			st.insert(S);
+			u += 1.0;
+		}
+		for (auto& it: st) {
+			double per = mp[it] / u;
+
+			cout << fixed << setprecision(4) << it << " " << 100.0 * per << "\n";
+		}
+		if (t != T) {
+			cout << "\n";
 		}
 	}
-
-	cout << ans << "\n";
-
     return 0;
 }

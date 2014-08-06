@@ -1,5 +1,29 @@
 /*******Guia de Referencia - UNITAU **********//
 //**********************************************
+//Fast IO Read
+inline void rd(int &x) {
+    register int c = getchar_unlocked();
+
+    x = 0;
+
+    int neg = 0;
+
+    for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
+
+    if (c=='-') {
+        neg = 1;
+        c = getchar_unlocked();
+    }
+
+    for ( ; c>47 && c<58 ; c = getchar_unlocked()) {
+        x = (x<<1) + (x<<3) + c - 48;
+    }
+
+    if (neg) {
+        x = -x;
+    }
+}
+//**********************************************
 //QuickSort O(N log N) worst case O(n^2)
 #include <iostream>
 #include <vector>
@@ -260,6 +284,21 @@ vector<int> KMP(string S, string K) {
     }
 
     return matches;
+}
+//**********************************************
+//Z-Function O(n) => Z[i] = biggest prefix of a substring starting from i which is as a prefix of s
+vector<int> z_function (string s) {
+	int n = (int) s.length();
+	vector<int> z (n);
+	for (int i=1, l=0, r=0; i<n; ++i) {
+		if (i <= r)
+			z[i] = min (r-i+1, z[i-l]);
+		while (i+z[i] < n && s[z[i]] == s[i+z[i]])
+			++z[i];
+		if (i+z[i]-1 > r)
+			l = i,  r = i+z[i]-1;
+	}
+	return z;
 }
 //**********************************************
 //Suffix Array
@@ -1134,7 +1173,7 @@ struct Edge {
     int rev;
 };
 bool operator<(const Edge a, const Edge b) {
-    return a.cst>b.cst;
+    return a.cst > b.cst;
 }
 
 typedef vector<Edge> Edges;
@@ -1146,18 +1185,19 @@ void add_edge(Graph&G, int u, int v, Flow c, Cost l) {
 }
 
 pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
-    int n=G.size();
-    Flow flow=0;
-    Cost cost=0;
-    for (;;) {
+    int n = G.size();
+    Flow flow = 0;
+    Cost cost = 0;
+    for ( ; ; ) {
         priority_queue<Edge> Q;
         vector<int> prev(n, -1), prev_num(n, -1);
         vector<Cost> length(n, INF);
         Q.push((Edge){-1,s,0,0,0});
         prev[s]=s;
         for (;!Q.empty();) {
-            Edge e=Q.top(); Q.pop();
-            int v=e.dst;
+            Edge e=Q.top();
+			Q.pop();
+            int v = e.dst;
             for (int i=0; i<(int)G[v].size(); i++) {
                 if (G[v][i].cap>0 && length[G[v][i].dst]>e.cst+G[v][i].cst) {
                     prev[G[v][i].dst]=v;
@@ -2444,6 +2484,116 @@ struct SegmentTreeRMQ {
         }
     }
 };
+//*******************************************************
+// Segment Tree 2D
+
+
+pair<int, int> tree[4 * MAXN][4 * MAXN];
+
+void build_y(int nx, int ny, int xl, int xr, int yl, int yr) {
+	if (yl == yr) {
+		if (xl == xr) {
+			tree[nx][ny].first = tree[nx][ny].second = P[xl][yl];
+		} else {
+			tree[nx][ny].first = min(tree[2 * nx][ny].first, tree[2 * nx + 1][ny].first);
+			tree[nx][ny].second = max(tree[2 * nx][ny].second, tree[2 * nx + 1][ny].second);
+		}
+	} else {
+		int m = (yl + yr) / 2;
+
+		build_y(nx, 2 * ny, xl, xr, yl, m);
+		build_y(nx, 2 * ny + 1, xl, xr, m + 1, yr);
+		
+		tree[nx][ny].first = min(tree[nx][2 * ny].first, tree[nx][2 * ny + 1].first);
+		tree[nx][ny].second = max(tree[nx][2 * ny].second, tree[nx][2 * ny + 1].second);
+	}
+}
+
+void build_x(int nx, int xl, int xr) {
+	if (xl > xr) {
+		return;
+	} else if (xl != xr) {
+		int m = (xl + xr) / 2;
+		
+		build_x(2 * nx, xl, m);
+		build_x(2 * nx + 1, m + 1, xr);
+	}
+	build_y(nx, 1, xl, xr, 0, M - 1);
+}
+
+pair<int, int> query_y(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	if (yl > yr || yl > bound_ry || yr < bound_ly) {
+		return make_pair(INF, -INF);
+	} else if (yl >= bound_ly && yr <= bound_ry) {
+		return tree[nx][ny];
+	} else {
+		int m = (yl + yr) / 2;
+
+		pair<int, int> q1 = query_y(nx, 2 * ny, xl, xr, yl, m, bound_lx, bound_rx, bound_ly, bound_ry);
+		pair<int, int> q2 = query_y(nx, 2 * ny + 1, xl, xr, m + 1, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+
+		return make_pair(min(q1.first, q2.first), max(q1.second, q2.second));
+	}
+}
+
+pair<int, int> query_x(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	if (xl > xr || xl > bound_rx || xr < bound_lx) {
+		return make_pair(INF, -INF);
+	} else if (xl >= bound_lx && xr <= bound_rx) {
+		return query_y(nx, 1, xl, xr, 0, M - 1, bound_lx, bound_rx, bound_ly, bound_ry);
+	} else {
+		int m = (xl + xr) / 2;
+		
+		pair<int, int> q1 = query_x(2 * nx, ny, xl, m, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+		pair<int, int> q2 = query_x(2 * nx + 1, ny, m + 1, xr, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+
+		return make_pair(min(q1.first, q2.first), max(q1.second, q2.second));
+	}
+}
+
+pair<int, int> query(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	return query_x(1, 1, xl, xr, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+}
+
+void update_y(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {
+	if (yl == yr) {
+		if (xl == xr) {
+			tree[nx][ny].first = tree[nx][ny].second = value;
+		} else {
+			tree[nx][ny].first = min(tree[2 * nx][ny].first, tree[2 * nx + 1][ny].first);
+			tree[nx][ny].second = max(tree[2 * nx][ny].second, tree[2 * nx + 1][ny].second);
+		}
+	} else {
+		int m = (yl + yr) / 2;
+		
+		if (posy <= m) {
+			update_y(nx, 2 * ny, xl, xr, yl, m, posx, posy, value);
+		} else {
+			update_y(nx, 2 * ny + 1, xl, xr, m + 1, yr, posx, posy, value);
+		}
+
+		tree[nx][ny].first = min(tree[nx][2 * ny].first, tree[nx][2 * ny + 1].first);
+		tree[nx][ny].second = max(tree[nx][2 * ny].second, tree[nx][2 * ny + 1].second);
+	}
+}
+
+void update_x(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {	
+	if (xl != xr) {
+		int m = (xl + xr) / 2;
+
+		if (posx <= m) {
+			update_x(2 * nx, ny, xl, m, yl, yr, posx, posy, value);
+		} else {
+			update_x(2 * nx + 1, ny, m + 1, xr, yl, yr, posx, posy, value);
+		}
+	}
+	update_y(nx, 1, xl, xr, 0, M - 1, posx, posy, value);
+}
+
+void update(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {
+	return update_x(1, 1, xl, xr, yl, yr, posx, posy, value);
+}
+
 /*********************************************************************/
 //Sliding RMQ in O(N)
 void maxSlidingWindow(int A[], int n, int w, int B[]) {
@@ -2835,6 +2985,26 @@ int factmod (int n, int p) {
 	return res % p;
 }
 //*******************************************************
+//Catalan numbers with DP
+void getCatalan(int n){
+    int catalan[n+1];
+    int MOD = 100000000;
+    for (int i=0; i <= n; i++){
+        if (i==0 || i==1){
+            catalan[i] = 1;
+        }else{
+            int sum =0;
+            int l, r;
+            for (int k=1;k<=i;k++){
+                l = catalan[k-1] % MOD;
+                r = catalan[i-k] % MOD;
+                sum = (sum + (l * r) % MOD) % MOD;
+            }
+            catalan[i] = sum;
+        }
+    }
+}
+//*******************************************************
 //Euler phi function using less memory
 //*******************************************************
 #include <cstdio>
@@ -2916,3 +3086,29 @@ public String decToOthers(int value, int toBase) {
 	}
 	return ans;
 }
+//*******************************************************
+//Commom Formulas
+Tronco cônico:
+Volume: (Pi * h / 3) * (r * r  +  r * R  +  R * R)
+Área de superfície: Pi * (R + r) * sqrt(h^2 + (R-r)*(R-r))
+
+Esfera:
+Volume: 4/3 * pi * r *r *r
+Área de superfície: 4 * pi * r *r
+Area do fuso esférico: angle/360 * 4/3 * pi * r *r *r
+
+Triangulos + Cirfunferencias:
+Supondo que se tenha as medidas dos lados de um triangulo: a, b, c
+P = semiperimetro = (a + b+ c)/2
+M = mediana = sqrt((P*(P-a)*(P-b)*(P-c)));
+Maior raio de um círculo inscrito numa circunferencia: M / P
+Raio da circunferencia que passa pelos 3 vertices do triangulo: (a*b*c) / (4*M)
+
+Equilateral Triangle
+Area: L = lado = L*L * sqrt(3)/4
+Altura: L * sqrt(3)/2
+
+//*******************************************************
+//Numeros de catalão: 
+C n = n-ésimo número da sequencia
+C-n = (2*n)! / (n+1)! * n! -> 1, 1, 2, 5, 14, 42, 132

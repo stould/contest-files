@@ -24,25 +24,21 @@ int T, N, M;
 
 struct interval {
 	int l, r;
-
-	interval() {
-	}
-	
+	interval() {}	
 	interval(int ll, int rr) {
 		l = ll;
 		r = rr;
 	}
 
 	int dist(int x) {
-		if (x < l) {
-		} else if (x > r) {
-			return INF;
+		if (x < l || x > r) {
+			return -INF;
 		} else {
 			return min(x - l, r - x);
 		}
 	}
 	bool operator<(const interval& it) const {
-		return m < it.m;
+		return (l != it.l) ? (l < it.l) : (r > it.r);
 	}
 };
 
@@ -54,46 +50,60 @@ int main(void) {
 		M = in();
 
 		vector<interval> data;
+		vector<pair<int, int> > query;
 
 		for (int i = 0; i < N; i++) {
-			int a = in();
-			int b = in();
+			int A = in();
+			int B = in();			
+			data.push_back(interval(A, B));
+		}
 
-			if ((b - a + 1) % 2 == 0) {
-				int m = (a + b) / 2;
-				data.push_back(interval(a, m, m));
-			} else {
-				int m = (a + b) / 2;
-				data.push_back(interval(a, n, m));
-				data.push_back(interval(a, b, m + 1));				
-				data.push_back(interval(a, b, m - 1));				
+		sort(data.begin(), data.end());
+		sort(query.begin(), query.end());
+
+		for (int i = 0; i < M; i++) {
+			int X = in();
+			query.push_back(make_pair(X, i));
+		}
+		
+		for (int i = 0; i < (int) data.size(); i++) {
+			while (i + 1 < (int) data.size() && data[i + 1].r <= data[i].r && data[i + 1].l >= data[i].l) {
+				data.erase(data.begin() + i + 1);
 			}
 		}
 
 		N = (int) data.size();
+		vector<int> ans(M);
 
-		sort(data.begin(), data.end());
+		int pivot = 0;
 
 		for (int i = 0; i < M; i++) {
-			int x = in();
-
-			int ans = 0;
-			int l = 0, h = N - 1, m;
-
-			for ( ; l <= h; ) {
-				m = (l + h) / 2;
-
-				if (x >= data[m].l && x <= data[m].r) {
-					ans = max(ans, data[m].dist(x));
-				}
-
-				if (data[m].m > x) {
-					l = m + 1;
-				} else  {
-					h = m - 1;
-				}
+			while (pivot < N && data[pivot].r < query[i].first) {
+				pivot += 1;
 			}
-			printf("%d\n", ans);
+			ans[query[i].second] = 0;
+
+			if (pivot >= N) pivot--;
+			
+			while (pivot < N && data[pivot].l <= query[i].first) {
+				if (data[pivot].r < query[i].first) {
+					pivot++;
+					continue;
+				}
+				int curr = data[pivot].dist(query[i].first);
+
+				if (curr >= ans[query[i].second]) {
+					ans[query[i].second] = curr;
+				} else {
+					break;
+				}
+				pivot++;
+			}			
+			pivot--;
+		}
+		printf("Case %d:\n", t);
+		for (int i = 0; i < M; i++) {
+			printf("%d\n", ans[i]);
 		}
 	}
     return 0;
