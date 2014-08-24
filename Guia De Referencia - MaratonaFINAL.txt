@@ -546,7 +546,7 @@ void dfs(int x) {
 }
 
 //**********************************************
-//Componentes fortemente conectados: [CFC]
+//Componentes fortemente conectados: [CFC] - Stongly Connected Components
 Matrix ga -> Matrix original
 Matrix gb -> Matrix transposta:
 
@@ -558,7 +558,7 @@ void dfs1(int x) {
     for(int b = 0; b < g[x].size(); b++) {
         if(!used[g[x][b]]) dfs1(g[x][b]);
     }
-4    order.push_back(x);
+	order.push_back(x);		
 }
 
 void dfs2(int x) {
@@ -1030,7 +1030,7 @@ while(start != -1) {
 	start = prev[start];
 }
 //*******************************************************
-//Contando Pontes em um Grafo não Direcionado
+//counting bridges
 int a, b, n, m, cont, ct, vis[1010], nivel[1010], menor[1010], pai[1010];
 vector<int> graph[1010];
 void dfs(int x) {
@@ -1349,7 +1349,43 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
     }
 
 }
-//*******************************************************
+//*****************************************************
+//Maximum Bipartite Matching (Prefereed implementation)
+vector<int> graph[MAXN];
+
+bool bpm(int u, bool seen[], int matchR[]) {
+    for (int i = 0; i < (int) graph[u].size(); i++) {
+		int v = graph[u][i];
+
+        if (!seen[v]) {
+            seen[v] = true; 
+ 
+            if (matchR[v] < 0 || bpm(matchR[v], seen, matchR)) {
+                matchR[v] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+ 
+int maxBPM() {
+    int matchR[MAXN];
+ 
+    memset(matchR, -1, sizeof(matchR));
+ 
+    int result = 0; 
+    for (int u = 1; u <= C; u++) {
+        bool seen[MAXN];
+        memset(seen, 0, sizeof(seen));
+ 
+        if (bpm(u, seen, matchR)) {
+            result++;
+		}
+    }
+    return result;
+}
+//*****************************************************
 //Maximum Bipartite Matching
 int n, k;
 vector<vector<int> > g;
@@ -2731,6 +2767,32 @@ void maxSlidingWindow(int A[], int n, int w, int B[]) {
     Q.push_back(i);
   }
   B[n-w] = A[Q.front()];
+}
+/*********************************************************************/
+//Sliding RMQ in O(N) - Faster (No use of STL)
+int Q[MAXN];
+
+Int maxSlidingWindow(Int A[], int n, int w, Int B[]) {
+	int b = 0, e = 0;
+	Int ans = 0LL;
+	for (int i = 0; i < w; i++) {
+		while (!(b == e) && A[i] >= A[Q[e-1]]) {
+			e -= 1;
+		}
+		Q[e++] = i;
+	}
+	for (int i = w; i < n; i++) {
+		B[i-w] = A[Q[b]];
+		ans += B[i-w];
+		while (!(e == b) && A[i] >= A[Q[e-1]])
+			e--;
+		while (!(e == b) && Q[b] <= i-w)
+			b += 1;
+		Q[e++] = i;
+	}
+	ans += A[Q[b]];
+
+	return ans;
 }
 /**************************** NUMBER THEORY ***************************/
 //Generate Highly Composite Numbers
