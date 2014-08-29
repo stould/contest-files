@@ -1204,6 +1204,117 @@ int max_flow(int s, int t) {
     }
 }
 //********************************************
+//********************************************
+///------Maxflow min-cut (Cutting edges only and restore the cutted edges)------///
+vector<vector<int> > g(MAXN);
+int n,m,u,v,c;
+int cost[MAXN][MAXN], res[MAXN][MAXN], vis[MAXN], path[MAXN];
+set<int> Sc;
+ 
+int maxmatching(int s, int t){
+        //      standart maxflow Edmonds-karp or Dinic
+}
+ 
+//Special case, the back edge have equal weight
+void edge(int u, int v, int c){
+	g[u].push_back(v);
+	g[v].push_back(u);
+	cost[u][v] = c;
+	cost[v][u] = c;
+}
+
+//dfs from source
+void dfs(int u){
+	vis[u] = 1;
+	Sc.insert(u);
+	for(int i = 0; i < g[u].size(); i++){
+		if(!vis[g[u][i]] && cost[u][g[u][i]] - res[u][g[u][i]] > 0){
+			dfs(g[u][i]);
+		}
+	}
+}
+
+/*
+  -Run the standart maxflow
+  -Run dfs/bfs from source to get the reacheable (cost[U][V] - res[U][V] > 0) vertex and store in set Sc
+  -Check for every vertex in Sc, check if the neighbor is not in Sc and if (cost[U][V] - res[U][V] <= 0), case true, edge from U to V was cutted.
+*/
+int main(void){
+	while(scanf("%d%d", &n, &m) && (n+m)){
+		for(int i = 0; i <= n; i++){
+			g[i].clear();
+		}
+		Sc.clear();
+		memset(cost,0,sizeof(cost));
+		memset(res,0,sizeof(res));
+		for(int i = 0; i < m; i++){
+			scanf("%d%d%d", &u,&v, &c);
+			edge(u-1,v-1,c);
+		}
+		maxmatching(0,1);
+		memset(vis,0,sizeof(vis));
+		dfs(0);
+		for(set<int>::iterator it = Sc.begin(); it != Sc.end(); it++){
+			for(int j = 0; j < g[*it].size(); j++){
+				int next = g[*it][j];
+				if(Sc.find(next) == Sc.end()){
+					if(cost[*it][next] - res[*it][next] <= 0){
+						//edge is off
+						printf("%d %d\n", 1+(*it), 1+next);
+					}
+				}
+			}
+		}
+		printf("\n");
+	}
+}
+//********************************************
+///-----Maxflow min-cut, destroy vertex and cut edges - Graph modeling------/////
+int n, m, u, v, c, cost[MAXN][MAXN], res[MAXN][MAXN], vis[MAXN], path[MAXN];
+vector<vector<int> > g(MAXN);
+
+int maxMatching(int S, int T){
+    standart maxflow
+		}
+
+/*
+  
+ */
+
+int main(void){
+    while(scanf("%d%d", &n, &m) && (n+m)){
+        for(int i = 0; i < 2*n+1; i++){
+            g[i].clear();
+        }
+        memset(res,0,sizeof(res));
+        memset(cost,0,sizeof(cost));
+        for(int i = 0; i < n-2; i++){
+            scanf("%d%d", &u, &c);
+            u--;
+            g[u].push_back(u+n);
+            g[u+n].push_back(u);
+            cost[u][u+n] = c;
+        }
+        g[0].push_back(n);//0 = S
+        g[n].push_back(0);//2*n-1 = T
+        g[n-1].push_back((n << 1) - 1);
+        g[(n << 1) - 1].push_back(n-1);
+        cost[0][n] = INF;
+        cost[n-1][(n << 1) - 1] = INF;
+        for(int i = 0; i < m; i++){
+            scanf("%d%d%d", &u,&v,&c);
+            u--;v--;
+            g[u+n].push_back(v);
+            g[v].push_back(u+n);
+            g[v+n].push_back(u);
+            g[u].push_back(v+n);
+            cost[u+n][v] = c;
+            cost[v+n][u] = c;
+        }
+        printf("%d\n", maxMatching(0, (n << 1) - 1));
+    }
+}
+//********************************************
 // Minimum Cost Max Flow (good implementation)
 struct edge {
     int to;
@@ -1471,6 +1582,80 @@ int minCut(int n) {
     return best;
 }
 //*****************************Geometria*************************************//
+///----Closes pair with divide and conquer----///
+struct point{
+    double x, y;
+    point(double a, double b): x(a), y(b){}
+    point(){};
+};
+
+bool compareX(point a, point b){
+    return a.x < b.x;
+}
+
+bool compareY(point a, point b){
+    return a.y < b.y;
+}
+ 
+double bruteForce(vector<point> &p){
+    double ans = 40000.*40001.;
+    for(int i = 0; i < p.size(); i++){
+        for(int j = i + 1; j < p.size(); j++){
+            double dst = hypot(p[j].x - p[i].x, p[j].y - p[i].y);
+            if(dst < ans){
+                ans = dst;
+            }
+        }
+    }
+    return ans;
+}
+ 
+double strip(vector<point> &p, double d){
+    sort(p.begin(), p.end(), compareY);
+    double ans = d;
+    for(int i = 0; i < p.size(); i++){
+        for(int j = i + 1; j < p.size() && (p[j].y - p[i].y) < d; j++){
+            double dst = hypot(p[j].x - p[i].x, p[j].y - p[i].y);
+            if(dst < ans){
+                ans = dst;
+            }
+        }
+    }
+    return ans;
+}
+ 
+double X, Y;
+int n;
+double closest(vector<point> v){
+    int n = v.size();
+    if(n <= 3){
+            return bruteForce(v);
+    }
+    vector<point> left;
+    vector<point> right;
+    int mid = n >> 1;
+    for(int i = 0; i < mid; i++){
+        left.push_back(v[i]);
+    }
+    for(int i = mid; i < n; i++){
+        right.push_back(v[i]);
+    }
+ 
+    double lh = closest(left);
+    double rh = closest(right);
+    double d = min(lh,rh);
+    vector<point> stripArray;
+    for(int i = 0; i < n; i++){
+        if(fabs(v[i].x - v[mid].x) < d){
+            stripArray.push_back(v[i]);
+        }
+    }
+    return min(d, strip(stripArray,d));
+}
+ 
+sort(pos.begin(), pos.begin()+n, compareX);
+double ans = closest(pos);
+//*********************************
 //Distance between point - line
 double dot(pair<int, int> &A, pair<int, int> &B, pair<int, int> &C) {
     return (double) (B.first - A.first) * (C.first - B.first) + (B.second - A.second) * (C.second - B.second);
@@ -1497,8 +1682,8 @@ double linePointDist(pair<int, int> A, pair<int, int> B, pair<int, int> C, bool 
     return abs(dist);
 }
 //*********************************
-Cordenadas integrais em um segmento, incluindo os pontos iniciais e finais:
-Segmento entre pontos (x1, y1) e (x2, y2) = gcd(abs(x1 - x2), abs(y1 - y2)) + 1
+//Cordenadas integrais em um segmento, incluindo os pontos iniciais e finais:
+//Segmento entre pontos (x1, y1) e (x2, y2) = gcd(abs(x1 - x2), abs(y1 - y2)) + 1
 
 //*****************************
 //Area de um Poligono Convexo
@@ -2006,6 +2191,71 @@ for(int k = 2; k < N; k++) {
     REP(i, N - k) {
         dp[i][i + k] = dp[i + 1][i + k - 1] && str[i] == str[i + k];
     }
+}
+//*******************************************************
+//Manacher algorithm (Check for palindromes in linear time)
+string preProcess(string s) {
+  int n = s.length();
+  if (n == 0) return "^$";
+  string ret = "^";
+  for (int i = 0; i < n; i++)
+    ret += "#" + s.substr(i, 1);
+  
+  ret += "#$";
+  return ret;
+}
+  
+vector<int> manacher(string s, int id) {
+  string T = preProcess(s);
+  int n = T.length();
+  vector<int> P(n);
+ 
+  map<string, bool> seen;
+ 
+  int C = 0, R = 0;
+  for (int i = 1; i < n-1; i++) {
+      int i_mirror = 2*C-i;
+       
+      P[i] = (R > i) ? min(R-i, P[i_mirror]) : 0;
+       
+      while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+          P[i]++;
+      }
+ 
+      int ulen = P[i];
+      while (ulen >= 1) {
+          string curr = s.substr((i - 1 - ulen)/2, ulen);
+           
+          if (curr != "" && !seen[curr]) {
+              seen[curr] = 1;
+              memo[curr] += 1;
+               
+              if (id == N - 1 && memo[curr] == N) {
+                  chmax(ans, (int) curr.size());
+              }
+          }
+          ulen--;
+      }
+  
+      if (i + P[i] > R) {
+          C = i;
+          R = i + P[i];
+      }
+  }
+   
+  int maxLen = 0;
+  int centerIndex = 0;
+  for (int i = 1; i < n-1; i++) {
+      if (P[i] > maxLen) {
+          maxLen = P[i];
+          centerIndex = i;
+      }
+  }
+  //to return actual longets substring
+  //  return s.substr((centerIndex - 1 - maxLen)/2, maxLen);
+ 
+  // P[i] is the length of the largest palindrome centered at i
+  return P;
 }
 //*******************************************************
 //Domino perfect matching - recursive
