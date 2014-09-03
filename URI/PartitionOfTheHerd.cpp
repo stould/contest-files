@@ -21,13 +21,38 @@ const int MAXN = 1010;
 
 int N, P[MAXN];
 
-int func(int a, int b) {
-	int ans = 0; 
+//Outside interval [0, a) + (b, N - 1]
+int funcO(int a, int b) {
+	int L = a + (N - 1) - b;
 
-	for (int i = a; i < b; i++) {
-		for (int j = i + 1; j <= b; j++) {
-			ans += abs(P[i] - P[j]);
-		}
+	if (L == 1) return 0;
+	int ans = 0, pos = 1;
+
+	for (int i = 0; i < a; i++) {
+		ans -= P[i] * (L - pos);
+		ans += P[i] * (pos - 1);
+		pos += 1;
+	}
+	for (int i = b + 1; i <= N - 1; i++) {
+		ans -= P[i] * (L - pos);
+		ans += P[i] * (pos - 1);
+		pos += 1;
+	}
+
+	return ans;
+}
+
+//Inside interval [a, b]
+int funcI(int a, int b) {
+	int L = b - a + 1;
+
+	if (L == 1) return 0;
+	int ans = 0, pos = 1;
+
+	for (int i = a; i <= b; i++) {
+		ans -= P[i] * (L - pos);
+		ans += P[i] * (pos - 1);
+		pos += 1;
 	}
 
 	return ans;
@@ -41,45 +66,21 @@ int main(void) {
 
 		sort(P, P + N);
 
-		int b = -1, e = -2;
+		int ans = funcI(0, N - 1);
+		int l = 0, r = N - 1;
 
 		for (int i = 0; i < N; i++) {
-			int j = i + 1;
-			while (j < N && P[i] == P[j]) {
-				j += 1;
-			}
-			if (j != i + 1) {
-				if (j - i > e - b) {
-					b = i;
-					e = j - 1;
+			for (int j = i + (N / 2) - 1; j < N; j++) {
+				int now = funcI(i, j) + funcO(i, j);
+				if (now < ans) {
+					ans = now;
+					l = i;
+					r = j;
 				}
 			}
-			i = j - 1;
-		}
-		int ans = INT_MAX;
-
-		if (b != -1) {
-			vector<int> vs;
-			for (int i = 0; i <= b - 1; i++) {
-				vs.push_back(P[i]);
-			}
-			for (int i = e + 1; i < N; i++) {
-				vs.push_back(P[i]);
-			}
-			for (int i = 0; i < (int) vs.size(); i++) {
-				P[i] = vs[i];
-			}
-			N = (int) vs.size();
-			ans = func(0, N - 1);
-		} else {
-			int A = 0, B = 0;
-			A = func(0, N / 2 - 1) + func(N / 2, N - 1);
-			B = func(0, N / 2) + func(N / 2 + 1, N - 1);
-			ans = min(A, B);
 		}
 
 		printf("%d\n", ans);
-		
 	}
     return 0;
 }
