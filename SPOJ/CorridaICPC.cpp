@@ -48,7 +48,7 @@ bool best, eq;
 
 vector<int> graph[MAXN];
 int dist[MAXN][MAXN];
-
+/*
 bool vis[MAXN];
 
 void dfs(int x, int root, int len, int seen) {
@@ -75,6 +75,36 @@ void dfs(int x, int root, int len, int seen) {
 		}
 	}
 }
+*/
+
+
+int dp[110][110];
+
+//shortest cycle starting with root with lenght = len
+
+int func(int id, int len, int root) {
+	if (len >= 3 && len % 2 == 1 && id == root) {
+		return 0;
+	} else {
+		int& ans = dp[id][len];
+
+		if (ans == -1) {
+			ans = INF;
+
+			for (int i = 0; i < (int) graph[id].size(); i++) {
+				int u = graph[id][i];
+
+				if (u == root) {
+					chmin(ans, dist[id][u] + func(u, len, root));
+				} else {
+					chmin(ans, dist[id][u] + func(u, len + 1, root));
+				}
+			}
+		}
+
+		return ans;
+	}
+}
 
 int main(void) {
     T = in();
@@ -85,7 +115,7 @@ int main(void) {
 		for (int i = 1; i <= N; i++) {
 			graph[i].clear();
 			for (int j = 1; j <= N; j++) {
-				dist[i][j] = 0;
+				dist[i][j] = INT_MAX / 3;
 			}
 		}
 
@@ -97,10 +127,10 @@ int main(void) {
 			graph[a].push_back(b);
 			graph[b].push_back(a);
 
-            chmax(dist[a][b], c);
-            chmax(dist[b][a], c);
+            chmin(dist[a][b], c);
+            chmin(dist[b][a], c);
         }
-
+		/*
 		int ans = INF;
 		int l = 0, h = 20, m;
 		
@@ -118,7 +148,7 @@ int main(void) {
 				dfs(i, i, 0, 1);
 
 				if (best) {
-					ok = true;
+				ok = true;
 					break;
 				}
 			}
@@ -132,6 +162,19 @@ int main(void) {
 			} else {
 				l = m + 1;
 			}
+		}
+		*/
+		
+		int ans = INF;
+
+		for (int i = 1; i <= N; i++) {
+			memset(dp, -1, sizeof(dp));
+
+			int curr = func(i, 1, i);
+
+			printf("%d %d\n", i, curr);
+
+			if (curr < ans) ans = curr;
 		}
 
         if (ans == INF) {

@@ -24,21 +24,22 @@ int main(void) {
 	
 	for ( ; T--; ) {
 		cin >> N >> M;
-
+		
 		int p, id, ans = 0;
 		map<int, int> mp;
-
+		
 		for (int i = 0; i < M; i++) {
 			cin >> p;
+			
 			mp[p] += 1;
-
+			
 			if (mp[p] > ans) {
 				ans = mp[p];
 				id = p;
 			}
 		}
 
-		if (p > N / 2.0) {
+		if (ans > M / 2.0) {
 			cout << id << "\n";
 		} else {
 			cout << "-1\n";

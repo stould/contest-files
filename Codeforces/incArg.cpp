@@ -17,41 +17,31 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXM = 50005;
-
-int T, N, C, M;
-int P[MAXM];
+int N;
+string S, P;
 
 int main(void) {
-	cin >> T;
+	cin >> N >> S;
 
-	for ( ; T--; ) {
-		cin >> N >> C >> M;
+	P = S;
 
-		for (int i = 0; i < M; i++) {
-			cin >> P[i];
-		}
+	int ans = 0, tr = 1;
 
-		sort(P, P + M);
-		reverse(P, P + M);
+	for (int i = 0; i < N; i++) {
+		int p = S[i] - '0';
 		
-
-		int ans = 0;
-
-		for (int i = 0; i < M; i++) {
-			int j = i, best = 0;
-
-			while (j < M && j - i + 1 <= C) {
-				chmax(best, P[j]);
-				j++;
-			}
-			
-			ans += best * 2;
-
-			i = j - 1;
+		p += tr;
+		if (p <= 1) {
+			P[i] = '0' + p;
+			if (P[i] != S[i]) ans += 1;
+			break;
+		} else {
+			ans += 1;
+			P[i] = '0';
 		}
-
-		cout << ans << "\n";
 	}
+
+	cout << ans << "\n";
+
     return 0;
 }

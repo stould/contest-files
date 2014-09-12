@@ -20,14 +20,14 @@ typedef unsigned uint;
 const int MAXN = 10005;
 
 int T, N, M;
-bool vis[MAXN];
+int vis[MAXN];
 vector<int> graph[MAXN];
 vector<int> order;
 
 bool ok;
 
 void dfs1(int x) {
-	vis[x] = true;
+	vis[x] = 1;
 
 	for (const auto& i: graph[x]) {
 		if (!vis[i]) {
@@ -39,15 +39,16 @@ void dfs1(int x) {
 }
 
 void dfs2(int x) {
-	vis[x] = true;
+	vis[x] = 1;
 
 	for (const auto& i: graph[x]) {
-		if (!vis[i]) {
+		if (vis[i] == 0) {
 			dfs2(i);
-		} else {
+		} else if (vis[i] == 1) {
 			ok = false;
 		}
 	}
+	vis[x] = 2;
 }
 
 int main(void) {
@@ -56,10 +57,10 @@ int main(void) {
 		cin >> N >> M;
 
 		order.clear();
-
+		
 		for (int i = 0; i < MAXN; i++) {
 			graph[i].clear();
-			vis[i] = false;
+			vis[i] = 0;
 		}
 
 		int A, B;
@@ -76,10 +77,10 @@ int main(void) {
 				dfs1(i);
 			}
 		}
-
+		
 		reverse(order.begin(), order.end());
-		memset(vis, false, sizeof(vis));
-
+		memset(vis, 0, sizeof(vis));
+		
 		ok = true;
 
 		for (int i = 0; ok && i < N; i++) {

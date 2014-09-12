@@ -29,7 +29,7 @@ void dfs(int s, int c, int p) {
 	vis[s] = true;
 
 	if (ok) return;
-
+	
 	if (p == N) {
 		ok = true;
 	}
@@ -63,43 +63,21 @@ int main(void) {
 				belong[B[j]].push_back(i);
 			}
 		}
-		int odd = 0;
-		for (int i = 0; i < C; i++) {
-			if (color[i].size() % 2 != 0) {
-				ok += 1;
-			}
-		}
-		if (odd >= 2) {
-			cout << "-1\n";
-			continue;
 
-		}
 		int id = -1;
 		ok = false;
-		for (int i = 0; !ok && i < N; i++) {
-				for (int j = 0; !ok && j < belong[i].size(); j++) {
-					memset(vis, false, sizeof(vis));
-					dfs(i, belong[i][j], 1);
-					if (ok) {
-						id = i;
-						ok = true;
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < C; i++) {
-				if (color[i].size() % 2 == 0) continue;
-				for (int j = 0; j < (int) color[i].size(); j++) {
-					memset(vis, false, sizeof(vis));
-					dfs(i, belong[i][j], 1);
-					if (ok) {
-						id = i;
-						ok = true;
-					}
 
+		for (int i = 0; !ok && i < N; i++) {
+			for (int j = 0; !ok && j < belong[i].size(); j++) {
+				memset(vis, false, sizeof(vis));
+				dfs(i, belong[i][j], 1);
+				if (ok) {
+					id = i;
+					ok = true;
 				}
-			}
-		}
+			}	
+		} 
+		
 		cout << id << "\n";
 	}
     return 0;
