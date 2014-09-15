@@ -1,68 +1,76 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <bits/stdc++.h>
 
-const double EPS = 0.00000001;
-
-int cmp (double a, double b) {
-    return fabs(a - b) <= EPS;
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
 }
 
-int main(void) {
-    freopen("i.in", "r", stdin);
-    //freopen("o.ot", "w", stdout);
-    int n;
-    double coord[1000][2];
-    int k;
-    int maxCon,ri;
-    int instancia,con;
-    int contador = 0;
-    scanf("%d",&instancia);
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
-    while(contador < instancia) {
-        k = 0;
-        maxCon = 1;
+using namespace std;
 
-        scanf("%d",&n);
-        //if (contador == 82) printf("%d\n", n);
-        while(k < n) {
-            scanf("%lf %lf",&coord[k][0],&coord[k][1]);
-            if (contador == 82) {
-                printf("%d %d\n", coord[k][0], coord[k][1]);
-            }
-            k++;
-        }
+typedef long long Int;
+typedef unsigned uint;
 
+int T, N;
 
-        double m, m2;
-
-        for(ri = 0 ; ri<n-1 ; ri++) {
-            if (coord[ri+1][0]-coord[ri][0] == 0) {
-                m = 0;
-            } else {
-                m = (coord[ri+1][1] - coord[ri][1])*1.0/(coord[ri+1][0]- coord[ri][0]);
-            }
-
-            con = 2;
-
-            for(k = 0; k<n ; k++) {
-                if (k == ri || k == ri + 1) continue;
-                if (coord[k][0]-coord[ri][0] == 0) {
-                    m2= 0;
-                } else {
-                    m2 = (coord[k][1] - coord[ri][1])*1.0/(coord[k][0] - coord[ri][0]);
-                }
-
-                if (cmp(m, m2)) {
-                    con++;
-                }
-            }
-            if(con>maxCon) {
-                maxCon = con;
-            }
-        }
-        printf("%d\n",maxCon);
-        contador ++;
+struct point {
+    int x, y;
+    point(int x, int y): x(x), y(y){}
+    point(){}
+    bool operator <(const point &p) const {
+        return x < p.x || (x == p.x && y < p.y);
     }
+    bool operator==(const point &p) const {
+        return x == p.x && y == p.y;
+    }
+};
+
+int main(void) {
+	scanf("%d", &T);
+	for ( ; T--; ) {
+		scanf("%d", &N);
+		
+		vector<point> P(N);
+
+		for (int i = 0; i < N; i++) {
+			scanf("%d%d", &P[i].x, &P[i].y);			
+		}
+
+		int ans = 0;
+
+		for (int i = 0; i < N; i++) {
+			int hor = 1, ver = 1;
+			int c = 1;
+
+			map<double, int> mp;
+
+			for (int j = 0; j < N; j++) {
+				if (i != j) {
+					if (P[i].x == P[j].x) {
+						hor += 1;
+					} else if (P[i].y == P[j].y) {
+						ver += 1;
+					} else {
+						double cof = (P[j].y - P[i].y) / (double) (P[j].x - P[i].x);
+
+						mp[cof] += 1;
+
+						chmax(ans, mp[cof] + 1);
+					}
+				}
+			}
+
+			chmax(ans, hor);
+			chmax(ans, ver);
+		}
+
+		printf("%d\n", ans);
+	}
     return 0;
 }
