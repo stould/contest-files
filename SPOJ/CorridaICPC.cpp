@@ -7,6 +7,7 @@
 #include <list>
 #include <queue>
 #include <stack>
+#include <bitset>
 #include <memory>
 #include <iomanip>
 #include <numeric>
@@ -41,59 +42,145 @@ typedef unsigned uint;
 const int MAXN = 110;
 const int INF = 1001000010;
 
-int T, N, M, a, b, c;
+int T, N, M;
+int goal;
+bool best, eq;
 
+vector<int> graph[MAXN];
 int dist[MAXN][MAXN];
-int path[MAXN][MAXN];
+/*
+bool vis[MAXN];
+
+void dfs(int x, int root, int len, int seen) {
+	if (best) return;
+	vis[x] = true;
+
+	if (x == root && seen > 1) {
+		if (seen % 2 == 1) {			
+			if (len <= goal) {
+				best = true;
+			}
+			if (len == goal) {
+				eq = true;
+			}
+		}
+		return;
+	} else {
+		for (int i = 0; i < (int) graph[x].size(); i++) {
+			int u = graph[x][i];
+			
+			if (!vis[u] || (u == root && seen % 2 == 1)) {
+				dfs(u, root, len + dist[x][u], u == root ? seen : seen + 1);
+			}
+		}
+	}
+}
+*/
+
+
+int dp[110][110];
+
+//shortest cycle starting with root with lenght = len
+
+int func(int id, int len, int root) {
+	if (len >= 3 && len % 2 == 1 && id == root) {
+		return 0;
+	} else {
+		int& ans = dp[id][len];
+
+		if (ans == -1) {
+			ans = INF;
+
+			for (int i = 0; i < (int) graph[id].size(); i++) {
+				int u = graph[id][i];
+
+				if (u == root) {
+					chmin(ans, dist[id][u] + func(u, len, root));
+				} else {
+					chmin(ans, dist[id][u] + func(u, len + 1, root));
+				}
+			}
+		}
+
+		return ans;
+	}
+}
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    //freopen("o.out", "w", stdout);
-
-    int i, j, k;
-
     T = in();
 
     for ( ; T--; ) {
         N = in(), M = in();
 
-        for (i = 1; i <= N; i++) {
-            for (j = 1; j <= N; j++) {
-                dist[i][j] = INF;
-                path[i][j] = 0;
-            }
-        }
+		for (int i = 1; i <= N; i++) {
+			graph[i].clear();
+			for (int j = 1; j <= N; j++) {
+				dist[i][j] = INT_MAX / 3;
+			}
+		}
 
-        for(i = 0; i < M; i++) {
-            a = in(), b = in(), c = in();
-            dist[a][b] = c;
-            if (a == 1 || b == 1) {
-                dist[b][a] = c;
-            }
-            path[a][b] = path[b][a] = 2;
-        }
+        for(int i = 0; i < M; i++) {			
+            int a = in();
+			int b = in();
+			int c = in();
 
-        for (k = 1; k <= N; k++) {
-            for (i = 1; i <= N; i++) {
-                for (j = 1; j <= N; j++) {
-                    if (j != 1 || (j == 1 && (path[i][k] + path[k][j] - 1) % 2 == 1)) {
-                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
-                            dist[i][j] = dist[i][k] + dist[k][j];
-                            path[i][j] = path[i][k] + path[k][j] - 1;
-                        }
-                    }
-                }
-            }
-        }
+			graph[a].push_back(b);
+			graph[b].push_back(a);
 
-        for (i = 2; i <= N; i++) {
-            printf("%d %d %d\n", i, dist[1][i], path[1][i]);
+            chmin(dist[a][b], c);
+            chmin(dist[b][a], c);
         }
+		/*
+		int ans = INF;
+		int l = 0, h = 20, m;
+		
+		for ( ; l <= h; ) {		
+			m = (l + h) / 2;
 
-        if (dist[1][1] == INF) {
+			goal = m;
+
+			bool ok = false;
+			
+			for (int i = 1; i <= N; i++) {
+				best = eq = false;
+				
+				memset(vis, false, sizeof(vis));
+				dfs(i, i, 0, 1);
+
+				if (best) {
+				ok = true;
+					break;
+				}
+			}
+			
+			if (eq) {
+				chmin(ans, m);
+			}
+
+			if (ok) {
+				h = m - 1;
+			} else {
+				l = m + 1;
+			}
+		}
+		*/
+		
+		int ans = INF;
+
+		for (int i = 1; i <= N; i++) {
+			memset(dp, -1, sizeof(dp));
+
+			int curr = func(i, 1, i);
+
+			printf("%d %d\n", i, curr);
+
+			if (curr < ans) ans = curr;
+		}
+
+        if (ans == INF) {
             puts("impossivel");
         } else {
-            printf("%d - %d\n", dist[1][1], path[1][1]);
+            printf("%d\n", ans);
         }
     }
 

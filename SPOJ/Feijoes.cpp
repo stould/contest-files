@@ -39,28 +39,35 @@ template<typename T> T lcm(T a, T b) {
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
 typedef long double ld;
 
-ll goal;
+const Int INF = 1000100100101001010LL;
+
+Int goal, ans;
 int T, cnt;
 
-void rec(ll curr, int mask, ll base) {
+void rec(Int curr, int mask, int id, Int base) {
+	if (curr > goal) {
 
+	}
 }
 
 int main(void) {
     scanf("%d", &T);
 
     for( ; T--; ) {
-        scanf("%lld%d", &goal, &cnt);
+        scanf("%ll%d", &goal, &cnt);
+		int L = len(goal);
         for(int i = 0; i < (1 << 10); i++) if(__builtin_popcount(i) == cnt) {
             int pre_mask = 0;
-            for(int j = 0; j < 10; j++) if((i >> j) & 1) pre_mask |= (1 << j);
+            for(int j = 0; j < 10; j++) {
+				if ((1 << j) & i) {
+					pre_mask |= (1 << j);
+				}
+			}
 
-            for(int j = 0; j < 10; j++) if((i >> j) & 1) {
-                rec((ll) j, pre_mask, 10LL);
-            }
+
         }
     }
 

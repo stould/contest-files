@@ -22,31 +22,29 @@ const int MAXN = 1010;
 int N, M;
 int P[MAXN];
 
-int dp[MAXN][120];
-
-int func(int id, int last) {
-	if (id == N) {
-		return last == M ? 0 : INF;
-	} else {
-		int& ans = dp[id][last];
-		
-		if (ans == -1) {
-			ans = INF;
-
-		}
-
-		return ans;
-	}
-}
-
 int main(void) {
 	cin >> N >> M;
-
+	
+	int ans = 0, buff = 0;
+	
 	for (int i = 0; i < N; i++) {
 		cin >> P[i];
 	}
 	
-	
+	for (int i = 0; i < N; i++) {
+		P[i] += buff;
+		buff = 0;
+
+		if (P[i] > M) {
+			ans += P[i] - M;
+			buff = -(P[i] - M);
+		} else if (P[i] < M) {
+			ans += M - P[i];
+			buff = M - P[i];
+		}
+	}
+
+	cout << ans << "\n";
 
     return 0;
 }

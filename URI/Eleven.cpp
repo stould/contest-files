@@ -17,39 +17,36 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MOD = 1000000007;
+const Int MOD = 1000000007;
 
 string S;
 int N;
 int cnt[12];
-int dp[15][15][60][60];
-int comb[110][110];
+Int dp[15][15][60][60];
+Int comb[110][110];
 
-int func(int pos, int mod, int plus, int minus) {
-	int p = ceil(N / 2.0);
-	int n = N - p;
-
-	if (plus > p || minus > n) {
-		return 0;
+Int func(int pos, int mod, int plus, int minus) {
+	if (plus < 0 || minus < 0) {
+		return 0LL;
 	} else if (pos == 10) {
-		return mod == 0 && plus + minus == N;
+		return mod == 0 && plus == 0 && minus == 0;
 	} else  {
-		int& ans = dp[pos][mod][plus][minus];
-
-		if (ans == -1) {
-			ans = 0;
+		Int& ans = dp[pos][mod][plus][minus];
+		
+		if (ans == -1LL) {
+			ans = 0LL;
 
 			for (int i = 0; i <= cnt[pos]; i++) {
 				int p = i;
 				int q = cnt[pos] - i;
 
-				int p_mod = (((plus + i - minus) % 11) + 11) % 11;
-				int m_mod = (((plus - i - minus) % 11) + 11) % 11;
-
-				
-				ans += comb[p - plus][p] * comb[n - minus][q] + func(pos + 1, p_mod, plus + p, minus + q);
+				int sum = (((mod + p * pos - q * pos) % 11) + 11) % 11;
+			
+				ans = (ans + ((comb[pos == 0 ? plus - 1 : plus][p] * comb[minus][q]) % MOD) * func(pos + 1, sum, plus - p, minus - q)) % MOD;
 			}
 		}
+
+		return ans;
 	}
 }
 
@@ -68,12 +65,13 @@ int main(void) {
 	for ( ; cin >> S; ) {
 		N = (int) S.size();
 
+		memset(cnt, 0, sizeof(cnt));
+
 		for (int i = 0; i < N; i++) {
 			cnt[S[i] - '0'] += 1;
 		}
-		memset(dp, -1, sizeof(dp));
-		
-		printf("%d\n", func(0, 0, 0, 0));
+		memset(dp, -1LL, sizeof(dp));
+		printf("%lld\n", func(0, 0, (N + 1) / 2, N / 2));
 	}
     return 0;
 }

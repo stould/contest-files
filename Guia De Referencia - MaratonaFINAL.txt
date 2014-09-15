@@ -1,5 +1,29 @@
 /*******Guia de Referencia - UNITAU **********//
 //**********************************************
+//Fast IO Read
+inline void rd(int &x) {
+    register int c = getchar_unlocked();
+
+    x = 0;
+
+    int neg = 0;
+
+    for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
+
+    if (c=='-') {
+        neg = 1;
+        c = getchar_unlocked();
+    }
+
+    for ( ; c>47 && c<58 ; c = getchar_unlocked()) {
+        x = (x<<1) + (x<<3) + c - 48;
+    }
+
+    if (neg) {
+        x = -x;
+    }
+}
+//**********************************************
 //QuickSort O(N log N) worst case O(n^2)
 #include <iostream>
 #include <vector>
@@ -308,6 +332,140 @@ vector<int> manacher(string s) {
   // P[i] is the length of the largest palindrome centered at i
   return P;
 }
+//Z-Function O(n) => Z[i] = biggest prefix of a substring starting from i which is as a prefix of s
+vector<int> z_function (string s) {
+	int n = (int) s.length();
+	vector<int> z (n);
+	for (int i=1, l=0, r=0; i<n; ++i) {
+		if (i <= r)
+			z[i] = min (r-i+1, z[i-l]);
+		while (i+z[i] < n && s[z[i]] == s[i+z[i]])
+			++z[i];
+		if (i+z[i]-1 > r)
+			l = i,  r = i+z[i]-1;
+	}
+	return z;
+}
+//**********************************************
+//Suffix Array O(n log n) and LCP in O(n)
+//Better Implementation
+
+const int MAXN = 100005;
+
+// Begins Suffix Arrays implementation
+// O(n log n) - Manber and Myers algorithm
+
+//Usage:
+// Fill str with the characters of the string.
+// Call SuffixSort(n), where n is the length of the string stored in str.
+// That's it!
+
+//Output:
+// pos = The suffix array. Contains the n suffixes of str sorted in lexicographical order.
+//       Each suffix is represented as a single integer (the position of str where it starts).
+// rnk = The inverse of the suffix array. rnk[i] = the index of the suffix str[i..n)
+//        in the pos array. (In other words, pos[i] = k <==> rnk[k] = i)
+//        With this array, you can compare two suffixes in O(1): Suffix str[i..n) is smaller
+//        than str[j..n) if and only if rnk[i] < rnk[j]
+
+int str[MAXN]; //input
+int rnk[MAXN], pos[MAXN]; //output
+int cnt[MAXN], nxt[MAXN]; //internal
+bool bh[MAXN], b2h[MAXN];
+
+bool smaller_first_char(int a, int b){
+    return str[a] < str[b];
+}
+
+void SuffixSort(int n){
+ //sort suffixes according to their first character
+    for (int i=0; i<n; ++i){
+        pos[i] = i;
+    }
+    sort(pos, pos + n, smaller_first_char);
+ //{pos contains the list of suffixes sorted by their first character}
+
+    for (int i=0; i<n; ++i){
+        bh[i] = i == 0 || str[pos[i]] != str[pos[i-1]];
+        b2h[i] = false;
+    }
+
+    for (int h = 1; h < n; h <<= 1){
+   //{bh[i] == false if the first h characters of pos[i-1] == the first h characters of pos[i]}
+        int buckets = 0;
+        for (int i=0, j; i < n; i = j){
+            j = i + 1;
+            while (j < n && !bh[j]) j++;
+            nxt[i] = j;
+            buckets++;
+        }
+        if (buckets == n) break; // We are done! Lucky bastards!
+   //{suffixes are separted in buckets containing strings starting with the same h characters}
+
+        for (int i = 0; i < n; i = nxt[i]){
+            cnt[i] = 0;
+            for (int j = i; j < nxt[i]; ++j){
+                rnk[pos[j]] = i;
+            }
+        }
+
+        cnt[rnk[n - h]]++;
+        b2h[rnk[n - h]] = true;
+        for (int i = 0; i < n; i = nxt[i]){
+            for (int j = i; j < nxt[i]; ++j){
+                int s = pos[j] - h;
+                if (s >= 0){
+                    int head = rnk[s];
+                    rnk[s] = head + cnt[head]++;
+                    b2h[rnk[s]] = true;
+                }
+            }
+            for (int j = i; j < nxt[i]; ++j){
+                int s = pos[j] - h;
+                if (s >= 0 && b2h[rnk[s]]){
+                    for (int k = rnk[s]+1; !bh[k] && b2h[k]; k++) b2h[k] = false;
+                }
+            }
+        }
+        for (int i=0; i<n; ++i){
+            pos[rnk[i]] = i;
+            bh[i] |= b2h[i];
+        }
+    }
+    for (int i=0; i<n; ++i){
+        rnk[pos[i]] = i;
+    }
+}
+// End of suffix array algorithm
+
+
+// Begin of the O(n) longest common prefix algorithm
+int lcp[MAXN];
+// lcp[i] = length of the longest common prefix of suffix pos[i] and suffix pos[i-1]
+// lcp[0] = 0
+void getLcp(int n){
+    for (int i=0; i<n; ++i) rnk[pos[i]] = i;
+    lcp[0] = 0;
+    for (int i=0, h=0; i<n; ++i){
+        if (rnk[i] > 0){
+            int j = pos[rnk[i]-1];
+            while (i + h < n && j + h < n && str[i+h] == str[j+h]) h++;
+            lcp[rnk[i]] = h;
+            if (h > 0) h--;
+        }
+    }
+}
+// End of the longest common prefix algorithm
+
+int N = (int) S.size();
+				
+for (int i = 0; i < N; i++) {
+	str[i] = S[i];
+}
+
+SuffixSort(N);
+getLcp(N);
+
 //**********************************************
 //Suffix Array
 #define max 100010
@@ -350,6 +508,172 @@ void build_SA() {
 
 build_SA();
 for (int i = 0; i < len; i++) printf("%d\n", SA[i]);
+
+//**********************************************
+//Aho Corasick Algorithm
+
+#define foreach(x, v) for (typeof (v).begin() x=(v).begin(); x !=(v).end(); ++x)
+#define For(i, a, b) for (int i=(a); i<(b); ++i)
+#define D(x) cout << #x " is " << x << endl
+ 
+/////////////////////////////////////////////////////////////////////////////////////////
+// Aho-Corasick's algorithm, as explained in http://dx.doi.org/10.1145/360825.360855 //
+/////////////////////////////////////////////////////////////////////////////////////////
+ 
+const int MAXS = 6 * 50 + 10; // Max number of states in the matching machine.
+// Should be equal to the sum of the length of all keywords.
+ 
+const int MAXC = 26; // Number of characters in the alphabet.
+ 
+int out[MAXS]; // Output for each state, as a bitwise mask.
+// Bit i in this mask is on if the keyword with index i appears when the
+// machine enters this state.
+ 
+// Used internally in the algorithm.
+int f[MAXS]; // Failure function
+int g[MAXS][MAXC]; // Goto function, or -1 if fail.
+ 
+// Builds the string matching machine.
+//
+// words - Vector of keywords. The index of each keyword is important:
+// "out[state] & (1 << i)" is > 0 if we just found word[i] in the text.
+// lowestChar - The lowest char in the alphabet. Defaults to 'a'.
+// highestChar - The highest char in the alphabet. Defaults to 'z'.
+// "highestChar - lowestChar" must be <= MAXC, otherwise we will
+// access the g matrix outside its bounds and things will go wrong.
+//
+// Returns the number of states that the new machine has.
+// States are numbered 0 up to the return value - 1, inclusive.
+int buildMatchingMachine(const vector<string> &words, char lowestChar = 'a', char highestChar = 'z') {
+	memset(out, 0, sizeof out);
+	memset(f, -1, sizeof f);
+	memset(g, -1, sizeof g);
+	int states = 1; // Initially, we just have the 0 state
+	for (int i = 0; i < words.size(); ++i) {
+		const string &keyword = words[i];
+		int currentState = 0;
+		for (int j = 0; j < keyword.size(); ++j) {
+			int c = keyword[j] - lowestChar;
+			if (g[currentState][c] == -1) { // Allocate a new node
+				g[currentState][c] = states++;
+			}
+			currentState = g[currentState][c];
+		}
+		out[currentState] |= (1 << i); // There's a match of keywords[i] at node currentState.
+	}
+	// State 0 should have an outgoing edge for all characters.
+	for (int c = 0; c < MAXC; ++c) {
+		if (g[0][c] == -1) {
+			g[0][c] = 0;
+		}
+	}
+	
+	// Now, let's build the failure function
+	queue<int> q;
+	for (int c = 0; c <= highestChar - lowestChar; ++c) { // Iterate over every possible input
+		// All nodes s of depth 1 have f[s] = 0
+		if (g[0][c] != -1 and g[0][c] != 0) {
+			f[g[0][c]] = 0;
+			q.push(g[0][c]);
+		}
+	}
+	while (q.size()) {
+		int state = q.front();
+		q.pop();
+		for (int c = 0; c <= highestChar - lowestChar; ++c) {
+			if (g[state][c] != -1) {
+				int failure = f[state];
+				while (g[failure][c] == -1) {
+					failure = f[failure];
+				}
+				failure = g[failure][c];
+				f[g[state][c]] = failure;
+				out[g[state][c]] |= out[failure]; // Merge out values
+				q.push(g[state][c]);
+			}
+		}
+	}
+	
+	return states;
+}
+
+// Finds the next state the machine will transition to.
+//
+// currentState - The current state of the machine. Must be between
+// 0 and the number of states - 1, inclusive.
+// nextInput - The next character that enters into the machine. Should be between lowestChar
+// and highestChar, inclusive.
+// lowestChar - Should be the same lowestChar that was passed to "buildMatchingMachine".
+ 
+// Returns the next state the machine will transition to. This is an integer between
+// 0 and the number of states - 1, inclusive.
+int findNextState(int currentState, char nextInput, char lowestChar = 'a') {
+	int answer = currentState;
+	int c = nextInput - lowestChar;
+	while (g[answer][c] == -1) answer = f[answer];
+	return g[answer][c];
+}
+
+
+// How to use this algorithm:
+//
+// 1. Modify the MAXS and MAXC constants as appropriate.
+// 2. Call buildMatchingMachine with the set of keywords to search for.
+// 3. Start at state 0. Call findNextState to incrementally transition between states.
+// 4. Check the out function to see if a keyword has been matched.
+//
+// Example:
+//
+// Assume keywords is a vector that contains {"he", "she", "hers", "his"} and text is a string
+// that contains "ahishers".
+//
+// Consider this program:
+//
+// buildMatchingMachine(v, 'a', 'z');
+// int currentState = 0;
+// for (int i = 0; i < text.size(); ++i) {
+// currentState = findNextState(currentState, text[i], 'a');
+// if (out[currentState] == 0) continue; // Nothing new, let's move on to the next character.
+// for (int j = 0; j < keywords.size(); ++j) {
+// if (out[currentState] & (1 << j)) { // Matched keywords[j]
+// cout << "Keyword " << keywords[j] << " appears from "
+// << i - keywords[j].size() + 1 << " to " << i << endl;
+// }
+// }
+// }
+//
+// The output of this program is:
+//
+// Keyword his appears from 1 to 3
+// Keyword he appears from 4 to 5
+// Keyword she appears from 3 to 5
+// Keyword hers appears from 4 to 7
+ 
+/////////////////////////////////////////////////////////////////////////////////////////
+// End of Aho-Corasick's algorithm. //
+/////////////////////////////////////////////////////////////////////////////////////////
+ 
+int main(){
+	vector<string> keywords;
+	keywords.push_back("he");
+	keywords.push_back("she");
+	keywords.push_back("hers");
+	keywords.push_back("his");
+	string text = "ahishers";
+	buildMatchingMachine(keywords, 'a', 'z');
+	int currentState = 0;
+	for (int i = 0; i < text.size(); ++i) {
+		currentState = findNextState(currentState, text[i], 'a');
+		if (out[currentState] == 0) continue; // Nothing new, let's move on to the next character.
+		for (int j = 0; j < keywords.size(); ++j) {
+			if (out[currentState] & (1 << j)) { // Matched keywords[j]
+				cout << "Keyword " << keywords[j] << " appears from "
+					 << i - keywords[j].size() + 1 << " to " << i << endl;
+			}
+		}
+	}
+	return 0;
+}
 /* ******************************* GRAPH ************************* */
 //DFS
 void dfs(int x) {
@@ -436,7 +760,7 @@ void dfs(int x) {
 }
 
 //**********************************************
-//Componentes fortemente conectados: [CFC]
+//Componentes fortemente conectados: [CFC] - Stongly Connected Components
 Matrix ga -> Matrix original
 Matrix gb -> Matrix transposta:
 
@@ -448,7 +772,7 @@ void dfs1(int x) {
     for(int b = 0; b < g[x].size(); b++) {
         if(!used[g[x][b]]) dfs1(g[x][b]);
     }
-4    order.push_back(x);
+	order.push_back(x);		
 }
 
 void dfs2(int x) {
@@ -920,7 +1244,7 @@ while(start != -1) {
 	start = prev[start];
 }
 //*******************************************************
-//Contando Pontes em um Grafo não Direcionado
+//counting bridges
 int a, b, n, m, cont, ct, vis[1010], nivel[1010], menor[1010], pai[1010];
 vector<int> graph[1010];
 void dfs(int x) {
@@ -1094,6 +1418,186 @@ int max_flow(int s, int t) {
     }
 }
 //********************************************
+//Min Cost Max Flow with negative edges
+const int maxn = 2002;
+const int NEED_FLOW = 1000000000;
+
+typedef int int_e;
+
+struct edge {
+	int from, to;
+	int cap;
+	int_e cost;
+	int flow;
+};
+
+vector<edge> edges;
+
+void add_edge(int from, int to, int_e cost, int cap) {
+	edge e = {from, to, cap, cost, 0};
+	edges.push_back(e);
+	edge e2 = {to, from, 0, -cost, 0};
+	edges.push_back(e2);
+}
+
+int_e mincost(int n, int s, int t) {
+	int_e cost = 0;
+	int flow = 0;
+	while(flow < NEED_FLOW) {
+		vector<int> p(n, -1);
+		vector<int_e> d(n);
+		d[s] = 0;
+		p[s] = s;
+		bool changed = true;
+		while(changed) {
+			changed = false;
+			for(size_t i = 0; i < edges.size(); ++i) {
+				edge& e = edges[i];
+				if(e.cap == e.flow || p[e.from] == -1)
+					continue;
+				if(p[e.to] == -1 || d[e.to] > d[e.from] + e.cost) {
+					d[e.to] = d[e.from] + e.cost;
+					p[e.to] = i;
+					changed = true;
+				}
+			}
+		}
+		if(p[t] == -1)
+			break;
+		if(d[t] >= 0) { // only for mincost, not mincostmaxflow
+			break;
+		}
+		int cur = t;
+		int maxAdd = NEED_FLOW - flow;
+		while(cur != s) {
+			edge& e = edges[p[cur]];
+			cur = e.from;
+			maxAdd = min(maxAdd, e.cap - e.flow);
+		}
+		flow += maxAdd;
+		cost += d[t] * maxAdd;
+		cur = t;
+		while(cur != s) {
+			int id = p[cur];
+			edges[id].flow += maxAdd;
+			edges[id ^ 1].flow -= maxAdd;
+			cur = edges[id].from;
+		}
+	}
+	// cost and flow are final here
+	return cost;
+}
+//********************************************
+///------Maxflow min-cut (Cutting edges only and restore the cutted edges)------///
+vector<vector<int> > g(MAXN);
+int n,m,u,v,c;
+int cost[MAXN][MAXN], res[MAXN][MAXN], vis[MAXN], path[MAXN];
+set<int> Sc;
+ 
+int maxmatching(int s, int t){
+        //      standart maxflow Edmonds-karp or Dinic
+}
+ 
+//Special case, the back edge have equal weight
+void edge(int u, int v, int c){
+	g[u].push_back(v);
+	g[v].push_back(u);
+	cost[u][v] = c;
+	cost[v][u] = c;
+}
+
+//dfs from source
+void dfs(int u){
+	vis[u] = 1;
+	Sc.insert(u);
+	for(int i = 0; i < g[u].size(); i++){
+		if(!vis[g[u][i]] && cost[u][g[u][i]] - res[u][g[u][i]] > 0){
+			dfs(g[u][i]);
+		}
+	}
+}
+
+/*
+  -Run the standart maxflow
+  -Run dfs/bfs from source to get the reacheable (cost[U][V] - res[U][V] > 0) vertex and store in set Sc
+  -Check for every vertex in Sc, check if the neighbor is not in Sc and if (cost[U][V] - res[U][V] <= 0), case true, edge from U to V was cutted.
+*/
+int main(void){
+	while(scanf("%d%d", &n, &m) && (n+m)){
+		for(int i = 0; i <= n; i++){
+			g[i].clear();
+		}
+		Sc.clear();
+		memset(cost,0,sizeof(cost));
+		memset(res,0,sizeof(res));
+		for(int i = 0; i < m; i++){
+			scanf("%d%d%d", &u,&v, &c);
+			edge(u-1,v-1,c);
+		}
+		maxmatching(0,1);
+		memset(vis,0,sizeof(vis));
+		dfs(0);
+		for(set<int>::iterator it = Sc.begin(); it != Sc.end(); it++){
+			for(int j = 0; j < g[*it].size(); j++){
+				int next = g[*it][j];
+				if(Sc.find(next) == Sc.end()){
+					if(cost[*it][next] - res[*it][next] <= 0){
+						//edge is off
+						printf("%d %d\n", 1+(*it), 1+next);
+					}
+				}
+			}
+		}
+		printf("\n");
+	}
+}
+//********************************************
+///-----Maxflow min-cut, destroy vertex and cut edges - Graph modeling------/////
+int n, m, u, v, c, cost[MAXN][MAXN], res[MAXN][MAXN], vis[MAXN], path[MAXN];
+vector<vector<int> > g(MAXN);
+
+int maxMatching(int S, int T){
+    standart maxflow
+		}
+
+/*
+  
+ */
+
+int main(void){
+    while(scanf("%d%d", &n, &m) && (n+m)){
+        for(int i = 0; i < 2*n+1; i++){
+            g[i].clear();
+        }
+        memset(res,0,sizeof(res));
+        memset(cost,0,sizeof(cost));
+        for(int i = 0; i < n-2; i++){
+            scanf("%d%d", &u, &c);
+            u--;
+            g[u].push_back(u+n);
+            g[u+n].push_back(u);
+            cost[u][u+n] = c;
+        }
+        g[0].push_back(n);//0 = S
+        g[n].push_back(0);//2*n-1 = T
+        g[n-1].push_back((n << 1) - 1);
+        g[(n << 1) - 1].push_back(n-1);
+        cost[0][n] = INF;
+        cost[n-1][(n << 1) - 1] = INF;
+        for(int i = 0; i < m; i++){
+            scanf("%d%d%d", &u,&v,&c);
+            u--;v--;
+            g[u+n].push_back(v);
+            g[v].push_back(u+n);
+            g[v+n].push_back(u);
+            g[u].push_back(v+n);
+            cost[u+n][v] = c;
+            cost[v+n][u] = c;
+        }
+        printf("%d\n", maxMatching(0, (n << 1) - 1));
+    }
+}
+//********************************************
 // Minimum Cost Max Flow (good implementation)
 struct edge {
     int to;
@@ -1181,7 +1685,7 @@ struct Edge {
     int rev;
 };
 bool operator<(const Edge a, const Edge b) {
-    return a.cst>b.cst;
+    return a.cst > b.cst;
 }
 
 typedef vector<Edge> Edges;
@@ -1193,18 +1697,19 @@ void add_edge(Graph&G, int u, int v, Flow c, Cost l) {
 }
 
 pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
-    int n=G.size();
-    Flow flow=0;
-    Cost cost=0;
-    for (;;) {
+    int n = G.size();
+    Flow flow = 0;
+    Cost cost = 0;
+    for ( ; ; ) {
         priority_queue<Edge> Q;
         vector<int> prev(n, -1), prev_num(n, -1);
         vector<Cost> length(n, INF);
         Q.push((Edge){-1,s,0,0,0});
         prev[s]=s;
         for (;!Q.empty();) {
-            Edge e=Q.top(); Q.pop();
-            int v=e.dst;
+            Edge e=Q.top();
+			Q.pop();
+            int v = e.dst;
             for (int i=0; i<(int)G[v].size(); i++) {
                 if (G[v][i].cap>0 && length[G[v][i].dst]>e.cst+G[v][i].cst) {
                     prev[G[v][i].dst]=v;
@@ -1238,7 +1743,43 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
     }
 
 }
-//*******************************************************
+//*****************************************************
+//Maximum Bipartite Matching (Prefereed implementation)
+vector<int> graph[MAXN];
+
+bool bpm(int u, bool seen[], int matchR[]) {
+    for (int i = 0; i < (int) graph[u].size(); i++) {
+		int v = graph[u][i];
+
+        if (!seen[v]) {
+            seen[v] = true; 
+ 
+            if (matchR[v] < 0 || bpm(matchR[v], seen, matchR)) {
+                matchR[v] = u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+ 
+int maxBPM() {
+    int matchR[MAXN];
+ 
+    memset(matchR, -1, sizeof(matchR));
+ 
+    int result = 0; 
+    for (int u = 1; u <= C; u++) {
+        bool seen[MAXN];
+        memset(seen, 0, sizeof(seen));
+ 
+        if (bpm(u, seen, matchR)) {
+            result++;
+		}
+    }
+    return result;
+}
+//*****************************************************
 //Maximum Bipartite Matching
 int n, k;
 vector<vector<int> > g;
@@ -1324,6 +1865,80 @@ int minCut(int n) {
     return best;
 }
 //*****************************Geometria*************************************//
+///----Closes pair with divide and conquer----///
+struct point{
+    double x, y;
+    point(double a, double b): x(a), y(b){}
+    point(){};
+};
+
+bool compareX(point a, point b){
+    return a.x < b.x;
+}
+
+bool compareY(point a, point b){
+    return a.y < b.y;
+}
+ 
+double bruteForce(vector<point> &p){
+    double ans = 40000.*40001.;
+    for(int i = 0; i < p.size(); i++){
+        for(int j = i + 1; j < p.size(); j++){
+            double dst = hypot(p[j].x - p[i].x, p[j].y - p[i].y);
+            if(dst < ans){
+                ans = dst;
+            }
+        }
+    }
+    return ans;
+}
+ 
+double strip(vector<point> &p, double d){
+    sort(p.begin(), p.end(), compareY);
+    double ans = d;
+    for(int i = 0; i < p.size(); i++){
+        for(int j = i + 1; j < p.size() && (p[j].y - p[i].y) < d; j++){
+            double dst = hypot(p[j].x - p[i].x, p[j].y - p[i].y);
+            if(dst < ans){
+                ans = dst;
+            }
+        }
+    }
+    return ans;
+}
+ 
+double X, Y;
+int n;
+double closest(vector<point> v){
+    int n = v.size();
+    if(n <= 3){
+            return bruteForce(v);
+    }
+    vector<point> left;
+    vector<point> right;
+    int mid = n >> 1;
+    for(int i = 0; i < mid; i++){
+        left.push_back(v[i]);
+    }
+    for(int i = mid; i < n; i++){
+        right.push_back(v[i]);
+    }
+ 
+    double lh = closest(left);
+    double rh = closest(right);
+    double d = min(lh,rh);
+    vector<point> stripArray;
+    for(int i = 0; i < n; i++){
+        if(fabs(v[i].x - v[mid].x) < d){
+            stripArray.push_back(v[i]);
+        }
+    }
+    return min(d, strip(stripArray,d));
+}
+ 
+sort(pos.begin(), pos.begin()+n, compareX);
+double ans = closest(pos);
+//*********************************
 //Distance between point - line
 double dot(pair<int, int> &A, pair<int, int> &B, pair<int, int> &C) {
     return (double) (B.first - A.first) * (C.first - B.first) + (B.second - A.second) * (C.second - B.second);
@@ -1350,8 +1965,8 @@ double linePointDist(pair<int, int> A, pair<int, int> B, pair<int, int> C, bool 
     return abs(dist);
 }
 //*********************************
-Cordenadas integrais em um segmento, incluindo os pontos iniciais e finais:
-Segmento entre pontos (x1, y1) e (x2, y2) = gcd(abs(x1 - x2), abs(y1 - y2)) + 1
+//Cordenadas integrais em um segmento, incluindo os pontos iniciais e finais:
+//Segmento entre pontos (x1, y1) e (x2, y2) = gcd(abs(x1 - x2), abs(y1 - y2)) + 1
 
 //*****************************
 //Area de um Poligono Convexo
@@ -1468,7 +2083,6 @@ double dot(PT& a, PT& b) {
 	return(a.x*b.x+a.y*b.y);
 }
 r.x=x*sc; r.y=y*sc;
-// ===============================================================
 // Areas
 // ===============================================================
 double trap(PT a, PT b) {
@@ -1859,6 +2473,71 @@ for(int k = 2; k < N; k++) {
     REP(i, N - k) {
         dp[i][i + k] = dp[i + 1][i + k - 1] && str[i] == str[i + k];
     }
+}
+//*******************************************************
+//Manacher algorithm (Check for palindromes in linear time)
+string preProcess(string s) {
+  int n = s.length();
+  if (n == 0) return "^$";
+  string ret = "^";
+  for (int i = 0; i < n; i++)
+    ret += "#" + s.substr(i, 1);
+  
+  ret += "#$";
+  return ret;
+}
+  
+vector<int> manacher(string s, int id) {
+  string T = preProcess(s);
+  int n = T.length();
+  vector<int> P(n);
+ 
+  map<string, bool> seen;
+ 
+  int C = 0, R = 0;
+  for (int i = 1; i < n-1; i++) {
+      int i_mirror = 2*C-i;
+       
+      P[i] = (R > i) ? min(R-i, P[i_mirror]) : 0;
+       
+      while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+          P[i]++;
+      }
+ 
+      int ulen = P[i];
+      while (ulen >= 1) {
+          string curr = s.substr((i - 1 - ulen)/2, ulen);
+           
+          if (curr != "" && !seen[curr]) {
+              seen[curr] = 1;
+              memo[curr] += 1;
+               
+              if (id == N - 1 && memo[curr] == N) {
+                  chmax(ans, (int) curr.size());
+              }
+          }
+          ulen--;
+      }
+  
+      if (i + P[i] > R) {
+          C = i;
+          R = i + P[i];
+      }
+  }
+   
+  int maxLen = 0;
+  int centerIndex = 0;
+  for (int i = 1; i < n-1; i++) {
+      if (P[i] > maxLen) {
+          maxLen = P[i];
+          centerIndex = i;
+      }
+  }
+  //to return actual longets substring
+  //  return s.substr((centerIndex - 1 - maxLen)/2, maxLen);
+ 
+  // P[i] is the length of the largest palindrome centered at i
+  return P;
 }
 //*******************************************************
 //Domino perfect matching - recursive
@@ -2258,8 +2937,9 @@ void update(int x, int y, int new_value) {
     }
 }
 
-int sum(int x1, int y1, int x2, int y2) {
-    return sum(std::max(x1, x2), std::max(y1, y2)) - sum(std::min(x1, x2)-1, std::min(y1, y2)-1);
+// sum[(r1, c1), (r2, c2)]
+int sum(int[][] t, int r1, int c1, int r2, int c2) {
+	return sum(t, r2, c2) - sum(t, r1 - 1, c2) - sum(t, r2, c1 - 1) + sum(t, r1 - 1, c1 - 1);
 }
 //*******************************************************
 //Simple Segment Tree
@@ -2491,6 +3171,116 @@ struct SegmentTreeRMQ {
         }
     }
 };
+//*******************************************************
+// Segment Tree 2D
+
+
+pair<int, int> tree[4 * MAXN][4 * MAXN];
+
+void build_y(int nx, int ny, int xl, int xr, int yl, int yr) {
+	if (yl == yr) {
+		if (xl == xr) {
+			tree[nx][ny].first = tree[nx][ny].second = P[xl][yl];
+		} else {
+			tree[nx][ny].first = min(tree[2 * nx][ny].first, tree[2 * nx + 1][ny].first);
+			tree[nx][ny].second = max(tree[2 * nx][ny].second, tree[2 * nx + 1][ny].second);
+		}
+	} else {
+		int m = (yl + yr) / 2;
+
+		build_y(nx, 2 * ny, xl, xr, yl, m);
+		build_y(nx, 2 * ny + 1, xl, xr, m + 1, yr);
+		
+		tree[nx][ny].first = min(tree[nx][2 * ny].first, tree[nx][2 * ny + 1].first);
+		tree[nx][ny].second = max(tree[nx][2 * ny].second, tree[nx][2 * ny + 1].second);
+	}
+}
+
+void build_x(int nx, int xl, int xr) {
+	if (xl > xr) {
+		return;
+	} else if (xl != xr) {
+		int m = (xl + xr) / 2;
+		
+		build_x(2 * nx, xl, m);
+		build_x(2 * nx + 1, m + 1, xr);
+	}
+	build_y(nx, 1, xl, xr, 0, M - 1);
+}
+
+pair<int, int> query_y(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	if (yl > yr || yl > bound_ry || yr < bound_ly) {
+		return make_pair(INF, -INF);
+	} else if (yl >= bound_ly && yr <= bound_ry) {
+		return tree[nx][ny];
+	} else {
+		int m = (yl + yr) / 2;
+
+		pair<int, int> q1 = query_y(nx, 2 * ny, xl, xr, yl, m, bound_lx, bound_rx, bound_ly, bound_ry);
+		pair<int, int> q2 = query_y(nx, 2 * ny + 1, xl, xr, m + 1, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+
+		return make_pair(min(q1.first, q2.first), max(q1.second, q2.second));
+	}
+}
+
+pair<int, int> query_x(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	if (xl > xr || xl > bound_rx || xr < bound_lx) {
+		return make_pair(INF, -INF);
+	} else if (xl >= bound_lx && xr <= bound_rx) {
+		return query_y(nx, 1, xl, xr, 0, M - 1, bound_lx, bound_rx, bound_ly, bound_ry);
+	} else {
+		int m = (xl + xr) / 2;
+		
+		pair<int, int> q1 = query_x(2 * nx, ny, xl, m, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+		pair<int, int> q2 = query_x(2 * nx + 1, ny, m + 1, xr, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+
+		return make_pair(min(q1.first, q2.first), max(q1.second, q2.second));
+	}
+}
+
+pair<int, int> query(int nx, int ny, int xl, int xr, int yl, int yr, int bound_lx, int bound_rx, int bound_ly, int bound_ry) {
+	return query_x(1, 1, xl, xr, yl, yr, bound_lx, bound_rx, bound_ly, bound_ry);
+}
+
+void update_y(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {
+	if (yl == yr) {
+		if (xl == xr) {
+			tree[nx][ny].first = tree[nx][ny].second = value;
+		} else {
+			tree[nx][ny].first = min(tree[2 * nx][ny].first, tree[2 * nx + 1][ny].first);
+			tree[nx][ny].second = max(tree[2 * nx][ny].second, tree[2 * nx + 1][ny].second);
+		}
+	} else {
+		int m = (yl + yr) / 2;
+		
+		if (posy <= m) {
+			update_y(nx, 2 * ny, xl, xr, yl, m, posx, posy, value);
+		} else {
+			update_y(nx, 2 * ny + 1, xl, xr, m + 1, yr, posx, posy, value);
+		}
+
+		tree[nx][ny].first = min(tree[nx][2 * ny].first, tree[nx][2 * ny + 1].first);
+		tree[nx][ny].second = max(tree[nx][2 * ny].second, tree[nx][2 * ny + 1].second);
+	}
+}
+
+void update_x(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {	
+	if (xl != xr) {
+		int m = (xl + xr) / 2;
+
+		if (posx <= m) {
+			update_x(2 * nx, ny, xl, m, yl, yr, posx, posy, value);
+		} else {
+			update_x(2 * nx + 1, ny, m + 1, xr, yl, yr, posx, posy, value);
+		}
+	}
+	update_y(nx, 1, xl, xr, 0, M - 1, posx, posy, value);
+}
+
+void update(int nx, int ny, int xl, int xr, int yl, int yr, int posx, int posy, int value) {
+	return update_x(1, 1, xl, xr, yl, yr, posx, posy, value);
+}
+
 /*********************************************************************/
 //Sliding RMQ in O(N)
 void maxSlidingWindow(int A[], int n, int w, int B[]) {
@@ -2509,6 +3299,32 @@ void maxSlidingWindow(int A[], int n, int w, int B[]) {
     Q.push_back(i);
   }
   B[n-w] = A[Q.front()];
+}
+/*********************************************************************/
+//Sliding RMQ in O(N) - Faster (No use of STL)
+int Q[MAXN];
+
+Int maxSlidingWindow(Int A[], int n, int w, Int B[]) {
+	int b = 0, e = 0;
+	Int ans = 0LL;
+	for (int i = 0; i < w; i++) {
+		while (!(b == e) && A[i] >= A[Q[e-1]]) {
+			e -= 1;
+		}
+		Q[e++] = i;
+	}
+	for (int i = w; i < n; i++) {
+		B[i-w] = A[Q[b]];
+		ans += B[i-w];
+		while (!(e == b) && A[i] >= A[Q[e-1]])
+			e--;
+		while (!(e == b) && Q[b] <= i-w)
+			b += 1;
+		Q[e++] = i;
+	}
+	ans += A[Q[b]];
+
+	return ans;
 }
 /**************************** NUMBER THEORY ***************************/
 //Generate Highly Composite Numbers
@@ -2587,7 +3403,7 @@ int modpow(int a, int n, int mod) {
         return res;
 }
 //*******************************************************
-//Calculando n-th numero de fibonnaci em O(n)
+//Calculando n-th numero de fibonnaci em O(n) (Deve ser Evitado)
 static double inverseSqrt5 = 1 / sqrt(5);
 static double phi = (1 + sqrt(5)) / 2;
 
@@ -2605,6 +3421,26 @@ int binpow (int a, int n) {
 		n >>= 1;
 	}
 	return res;
+}
+//*******************************************************
+// Fibonacci with fast doubling (faster than matrix exponentiation)
+typedef long long int lli;
+typedef pair<lli, lli> ii;
+
+ii fast_doubling(lli n, lli mod) {
+	if(n == 1) return ii(1, 1);
+	else if(n == 2) return ii(1, 2);
+	
+	ii aux = fast_doubling(n/2, mod);
+	ii ret;
+	ret.first = (aux.first*(aux.second*2 + mod - aux.first))%mod;
+	ret.second = ((lli)pow(aux.first, 2)+(lli)pow(aux.second, 2))%mod;
+	
+	if(n%2 == 0) {
+		return ret;
+	} else {
+		return ii(ret.second, (ret.first+ret.second)%mod);
+	}
 }
 //*******************************************************
 //Contando o numero de divisores inteiros de um determinado nume 'N' O(sqrt(N))
@@ -2882,6 +3718,26 @@ int factmod (int n, int p) {
 	return res % p;
 }
 //*******************************************************
+//Catalan numbers with DP
+void getCatalan(int n){
+    int catalan[n+1];
+    int MOD = 100000000;
+    for (int i=0; i <= n; i++){
+        if (i==0 || i==1){
+            catalan[i] = 1;
+        }else{
+            int sum =0;
+            int l, r;
+            for (int k=1;k<=i;k++){
+                l = catalan[k-1] % MOD;
+                r = catalan[i-k] % MOD;
+                sum = (sum + (l * r) % MOD) % MOD;
+            }
+            catalan[i] = sum;
+        }
+    }
+}
+//*******************************************************
 //Euler phi function using less memory
 //*******************************************************
 #include <cstdio>
@@ -2963,3 +3819,29 @@ public String decToOthers(int value, int toBase) {
 	}
 	return ans;
 }
+//*******************************************************
+//Commom Formulas
+Tronco cônico:
+Volume: (Pi * h / 3) * (r * r  +  r * R  +  R * R)
+Área de superfície: Pi * (R + r) * sqrt(h^2 + (R-r)*(R-r))
+
+Esfera:
+Volume: 4/3 * pi * r *r *r
+Área de superfície: 4 * pi * r *r
+Area do fuso esférico: angle/360 * 4/3 * pi * r *r *r
+
+Triangulos + Cirfunferencias:
+Supondo que se tenha as medidas dos lados de um triangulo: a, b, c
+P = semiperimetro = (a + b+ c)/2
+M = mediana = sqrt((P*(P-a)*(P-b)*(P-c)));
+Maior raio de um círculo inscrito numa circunferencia: M / P
+Raio da circunferencia que passa pelos 3 vertices do triangulo: (a*b*c) / (4*M)
+
+Equilateral Triangle
+Area: L = lado = L*L * sqrt(3)/4
+Altura: L * sqrt(3)/2
+
+//*******************************************************
+//Numeros de catalão: 
+C n = n-ésimo número da sequencia
+C-n = (2*n)! / (n+1)! * n! -> 1, 1, 2, 5, 14, 42, 132

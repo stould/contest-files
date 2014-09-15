@@ -52,15 +52,20 @@ Int func(int i, int j) {
 }
 
 int main(void) {
-    int i, j;
     for ( ; scanf("%d", &N) == 1; ) {
-        for (i = 0; i < N; i++) {
+        for (int i = 2; i <= N + 2; i++) {
             V[i] = readInt();
-            for (j = i + 1; j < N; j++) {
-                dp[i][j] = -1LL;
-            }
         }
-        printf("%lld\n", func(0, N - 1));
+		for (int i = 2; i <= N + 2; i++) {
+			for (int j = i + 1; j < N + 2; j++) {
+				if (j == i + 1) {
+					dp[i][j] = max(V[i], V[j]); 
+				} else {
+					dp[i][j] = max(V[i] + min(dp[i + 1][j - 1], dp[i + 2][j]), V[j] + min(dp[i + 1][j - 1], dp[i][j - 2]));
+				}
+			}
+		}
+        printf("%lld\n", dp[2][N + 2]);
     }
     return 0;
 }

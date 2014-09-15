@@ -19,8 +19,8 @@ typedef unsigned uint;
 
 const int MAXN = 4000006;
 
-int N, A, B;
-int P[MAXN];
+Int N, A, B;
+Int P[MAXN];
 Int tree[MAXN];
 
 void add(int id, Int value) {
@@ -39,11 +39,11 @@ Int sum(int id) {
 
 int main(void) {
 	int test = 1;
-	for ( ; scanf("%d%d%d", &N, &A, &B) == 3 && !(N == 0 && A == 0 && B == 0); ) {
+	for ( ; cin >> N >> A >> B && !(N == 0 && A == 0 && B == 0); ) {
 		memset(tree, 0LL, sizeof(tree));
 		Int ans = 0;
 		for (int i = 0; i < N; i++) {
-			P[i] = (int) ((Int) ((A * i + B) % N) + N) % N;
+			P[i] = ((Int) ((A * (Int) i + B) % N) + N) % N;
 			ans += sum(N) - sum(P[i] + 1);
 			add(P[i] + 1, 1);
 		}
