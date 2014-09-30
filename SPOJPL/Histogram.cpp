@@ -46,7 +46,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-3int N;
+int N;
 int H[1 << 4];
 
 struct data {
@@ -73,7 +73,7 @@ data func(int index, int mask) {
     }
 
     int i;
-
+	
     mark[index][mask] = 1;
     data& ans = dp[index][mask] = data(0, 0);
 
@@ -83,7 +83,7 @@ data func(int index, int mask) {
             data aux = func(i, mask | pos);
 
             aux.p += abs(H[index] - H[i]) + 1;
-
+			
             if (aux.p > ans.p) {
                 ans.p = aux.p;
                 ans.c = aux.c;

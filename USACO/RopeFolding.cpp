@@ -10,22 +10,26 @@ using namespace std;
 int n, l, ct, all;
 
 int main(void) {
-    freopen("11.in", "r", stdin);
-    freopen("o.o", "w", stdout);
     scanf("%d%d", &n, &l);
     vector<int> v(n);
+
+	printf("%b", n);
+
     for(int i = 0; i < n; i++) {
         scanf("%d", &v[i]);
     }
+
     sort(v.begin(), v.end());
     int fold = 0;
     if(n == 2) {
         puts("1"); return 0;
     }
+
     for(int i = 0; i < n - 1; i++) {
         double mid = (double) v[i] + ((v[i + 1] - v[i]) / 2.0);
         ct = 0, all = 0;
-        for(int j = i + 1, k = i; j < n && k >= 0; j++, k--) {
+        
+		for(int j = i + 1, k = i; j < n && k >= 0; j++, k--) {
             if(mid - v[k] == v[j] - mid) {
                 ct += 1;
             }

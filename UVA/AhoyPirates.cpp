@@ -75,15 +75,19 @@ void propagate(int node, int l, int r) {
 }
 
 void build(int node, int l, int r) {
-	if (l == r) {
-		lazy[node] = 0;
-		tree[node] = (S[l] - '0');
+	if (l > r) {
+		return;
 	} else {
-		int m = (l + r) / 2;
-		build(LEFT(node), l, m);
-		build(RIGHT(node), m + 1, r);
-
-		tree[node] = tree[LEFT(node)] + tree[RIGHT(node)];
+		lazy[node] = 0;	
+		if (l == r) {
+			tree[node] = (S[l] - '0');
+		} else {
+			int m = (l + r) / 2;
+			build(LEFT(node), l, m);
+			build(RIGHT(node), m + 1, r);
+			
+			tree[node] = tree[LEFT(node)] + tree[RIGHT(node)];
+		}
 	}
 }
 
@@ -146,7 +150,7 @@ int main(void) {
 		scanf("%d", &M);
 		S = "";
 
-		memset(lazy, 0, sizeof(lazy));
+		//		memset(lazy, 0, sizeof(lazy));
 		
 		for ( ; M--; ) {
 			scanf("%d%s", &P, buff);

@@ -286,6 +286,52 @@ vector<int> KMP(string S, string K) {
     return matches;
 }
 //**********************************************
+//Manacher Algorithm (Longest Palindromic Substring)
+string preProcess(string s) {
+  int n = s.length();
+  if (n == 0) return "^$";
+  string ret = "^";
+  for (int i = 0; i < n; i++)
+    ret += "#" + s.substr(i, 1);
+ 
+  ret += "#$";
+  return ret;
+}
+ 
+vector<int> manacher(string s) {
+  string T = preProcess(s);
+  int n = T.length();
+  vector<int> P(n);
+
+  int C = 0, R = 0;
+  for (int i = 1; i < n-1; i++) {
+	  int i_mirror = 2*C-i;
+	  
+	  P[i] = (R > i) ? min(R-i, P[i_mirror]) : 0;
+	  
+	  while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+		  P[i]++;
+	  }
+ 
+	  if (i + P[i] > R) {
+		  C = i;
+		  R = i + P[i];
+	  }
+  }
+  
+  int maxLen = 0;
+  int centerIndex = 0;
+  for (int i = 1; i < n-1; i++) {
+	  if (P[i] > maxLen) {
+		  maxLen = P[i];
+		  centerIndex = i;
+	  }
+  }
+  //to return actual longets substring
+  //  return s.substr((centerIndex - 1 - maxLen)/2, maxLen);
+  // P[i] is the length of the largest palindrome centered at i
+  return P;
+}
 //Z-Function O(n) => Z[i] = biggest prefix of a substring starting from i which is as a prefix of s
 vector<int> z_function (string s) {
 	int n = (int) s.length();
@@ -1674,17 +1720,13 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
             }
         }
         if (prev[t]<0) return make_pair(flow, cost);
-
+		
         Flow mi=INF;
         Cost cst=0;
         for (int v=t; v!=s; v=prev[v]) {
             mi=min(mi, G[prev[v]][prev_num[v]].cap);
             cst+=G[prev[v]][prev_num[v]].cst;
         }
-
-		if (cst>K) return make_pair(flow, cost);
-		
-		if (cst != 0) mi = min(mi, K/cst);
 
 		K -= cst*mi;
         cost+=cst*mi;
@@ -2038,7 +2080,6 @@ double dot(PT& a, PT& b) {
 	return(a.x*b.x+a.y*b.y);
 }
 r.x=x*sc; r.y=y*sc;
-// ===============================================================
 // Areas
 // ===============================================================
 double trap(PT a, PT b) {

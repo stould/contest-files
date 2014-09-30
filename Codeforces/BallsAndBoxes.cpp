@@ -24,40 +24,40 @@ int N, X;
 Int P[MAXN];
 
 int main(void) {
-	cin.tie(0);
-	ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    ios_base::sync_with_stdio(false);
 
-	cin >> N >> X;
+    cin >> N >> X;
 
-	X -= 1;
+    X -= 1;
 
-	Int L = INF;
+    Int L = INF;
 
-	for (int i = 0; i < N; i++) {
-		cin >> P[i];
+    for (int i = 0; i < N; i++) {
+        cin >> P[i];
 
-		L = min(L, P[i]);
-	}
-	
-	for (int i = 0; i < N; i++) {
-		P[i] -= L;
-	}
+        L = min(L, P[i]);
+    }
+    
+    for (int i = 0; i < N; i++) {
+        P[i] -= L;
+    }
 
-	int ps = X, sum = 0;
-	
-	for ( ; ; ) {
-		if (P[ps] == 0) break;
-		P[ps] -= 1;
-		sum += 1;
-		ps = (ps - 1 + N) % N;
-	}
+    int ps = X, sum = 0;
+    
+    for ( ; ; ) {
+        if (P[ps] == 0) break;
+        P[ps] -= 1;
+        sum += 1;
+        ps = (ps - 1 + N) % N;
+    }
 
-	P[ps] += sum + (L * N);
-	
-	for (int i = 0; i < N; i++) {
-		cout << P[i] << " ";
-	}
-	cout << "\n";
+    P[ps] += sum + (L * N);
+    
+    for (int i = 0; i < N; i++) {
+        cout << P[i] << " ";
+    }
+    cout << "\n";
 
     return 0;
 }
