@@ -46,7 +46,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int N;
+3int N;
 int H[1 << 4];
 
 struct data {
