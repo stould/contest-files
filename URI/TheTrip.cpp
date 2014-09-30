@@ -49,37 +49,41 @@ typedef unsigned uint;
 
 const int MAXN = 1010;
 
-const double EPS = 1e-5;
+const double EPS = 1e-3;
 
 int N;
 double X[MAXN];
 
-
 int main(void) {
     int i;
 
-    for ( ; scanf("%d.", &N) == 1 && N != 0; ) {
-        double sum = 0.0;
-        double ansN = 0.0, ansP = 0.0;
-
+    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+        double sum = 0;
+        double ansN = 0, ansP = 0;
+		
         for (i = 0; i < N; i++) {
-            scanf("%lf", &X[i]); 
+			int d, f;
+			scanf("%lf", &X[i]);
 			sum += X[i];
         }
 
-        sum /= (double) N;
+		sum = sum / N;
 
         for (i = 0; i < N; i++) {
-            double dif = (double) ((long long) ((sum - X[i]) * 100.0) / 100.0);
-
-            if (dif < 0.0) {
+            double dif = (double) (long long) ((X[i] - sum) * 1000) / 1000;
+			
+            if (dif < 0) {
                 ansN -= dif;
             } else {
                 ansP += dif;
             }
         }
 
-        printf("$%.2lf\n", max(ansN, ansP) + EPS);
+		double ans = max(ansN, ansP) * 100.0;
+
+		long long al = (int) ans;
+
+        printf("$%ld.%ld\n", al / 100, al % 100);
     }
 
     return 0;

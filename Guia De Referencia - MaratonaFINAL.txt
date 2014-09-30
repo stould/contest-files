@@ -1726,8 +1726,8 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, int K) {
         for (int v=t; v!=s; v=prev[v]) {
             mi=min(mi, G[prev[v]][prev_num[v]].cap);
             cst+=G[prev[v]][prev_num[v]].cst;
-        }		
-		
+        }
+
 		K -= cst*mi;
         cost+=cst*mi;
 
@@ -3380,9 +3380,52 @@ for (set<Int>::iterator it = st.begin(); it != st.end(); it++) {
 		curr = s;
 	}
 }
+//******************************************************
+//Inverse mod using extended little fermat theorem
+/* This function calculates (a^b)%MOD */
+int pow(int a, int b, int MOD) {
+int x = 1, y = a;
+    while(b > 0) {
+        if(b%2 == 1) {
+            x=(x*y);
+            if(x>MOD) x%=MOD;
+        }
+        y = (y*y);
+        if(y>MOD) y%=MOD;
+        b /= 2;
+    }
+    return x;
+}
+ 
+int modInverse(int a, int m) {
+    return pow(a,m-2,m);
+}
+//******************************************************
+//Inverse mod using extended euclid algorith,
 
+/* This function return the gcd of a and b followed by
+    the pair x and y of equation ax + by = gcd(a,b)*/
+pair<int, pair<int, int> > extendedEuclid(int a, int b) {
+    int x = 1, y = 0;
+    int xLast = 0, yLast = 1;
+    int q, r, m, n;
+    while(a != 0) {
+        q = b / a;
+        r = b % a;
+        m = xLast - q * x;
+        n = yLast - q * y;
+        xLast = x, yLast = y;
+        x = m, y = n;
+        b = a, a = r;
+    }
+    return make_pair(b, make_pair(xLast, yLast));
+}
+ 
+int modInverse(int a, int m) {
+    return (extendedEuclid(a,m).second.first + m) % m;
+}
 /*********************************************************************/
-//Contando a soma de todos os numeros do intervalo sum(a, b)
+//Contando a soma de todos os numeros do intervalo sum(a, b)		   
 public static int sum(int a, int b) {
 	a -= 1;
 	return ((b * (b + 1)) / 2) - (((a) * (a + 1)) / 2);
@@ -3501,6 +3544,7 @@ sort(d1.begin(), d1.end());
 sort(d2.begin(), d2.end());
 
 set_intersection(d1.begin(), d1.end(), d2.begin(), d2.end(), inserter(dv, dv.begin()));
+//*******************************************************
 //Checando se um numero é primo ou não
 bool isPrime(long long n) {
     if(n <= 1) return false;

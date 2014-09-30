@@ -95,6 +95,7 @@ int main(void) {
 		for (int i = 0; i < P; i++) {
 			cin >> W[i].first >> W[i].second;
 		}
+
 		cin >> G;
 
 		for (int i = 0; i < G; i++) {
@@ -111,16 +112,14 @@ int main(void) {
 			line l2(bomb, point(0, W[i].second));
 
 			while (pg < G && below(l2, GM[pg])) {				
-				if (above(l1, GM[pg]) && below(l2, GM[pg])) {
-					/*				cout << "L1 => " << bomb.x << " " << bomb.y << " = " << 0 << " " << W[i].first << " <=> "; 
-					cout << "L2 => " << bomb.x << " " << bomb.y << " = " << 0 << " " << W[i].second << " <=> ";
-					cout << GM[pg].x << " " << GM[pg].y << "\n";
-					*/
+				if (above(l1, GM[pg])) {
 					ans += 1;				
 				} 
 				pg++;
 			}
+			pg--;
 		}
+
 
 		cout << ans << "\n";
 	}
