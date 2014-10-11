@@ -17,33 +17,35 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int T;
-int N;
-
-int x[1010];
+int P[10];
 
 int main(void) {
-    T = in();
+	int t;
+	for (int i = 0; i < 6; i++) {
+		cin >> t;
+		P[t] += 1;
+	}
 
-    int i;
+	for (int i = 1; i <= 9; i++) {
+		if (P[i] >= 4) {
+			P[i] -= 4;
+			vector<int> s;
+			for (int j = 1; j <= 9; j++) {
+				while (P[j] > 0) {
+					s.push_back(j);
+					P[j] -= 1;
+				}				
+			}
+			if (s[0] < s[1]) {
+				cout << "Bear\n";
+			} else {
+				cout << "Elephant\n";
+			}
+			return 0;
+		}
+	}
 
-    for ( ; T--; ) {
-        N = in();
-        for (i = 0; i < N; i++) {
-            x[i] = in();
-        }
-
-        Int sum = (Int) x[0], ans = 2;
-
-        for (i = 1; i < N - 1; i++) {
-            if (sum + x[i] < x[i + 1]) {
-                sum += (Int) x[i];
-                ans += 1;
-            }
-        }
-
-        printf("%d\n", ans);
-    }
+	cout << "Alien\n";
 
     return 0;
 }

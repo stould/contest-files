@@ -17,33 +17,25 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int T;
-int N;
-
-int x[1010];
+int N, M, K;
+int P[1010];
 
 int main(void) {
-    T = in();
+	cin >> N >> M >> K;
 
-    int i;
+	int ans = 0;
 
-    for ( ; T--; ) {
-        N = in();
-        for (i = 0; i < N; i++) {
-            x[i] = in();
-        }
-
-        Int sum = (Int) x[0], ans = 2;
-
-        for (i = 1; i < N - 1; i++) {
-            if (sum + x[i] < x[i + 1]) {
-                sum += (Int) x[i];
-                ans += 1;
-            }
-        }
-
-        printf("%d\n", ans);
-    }
-
+	for (int i = 0; i <= M; i++) {
+		cin >> P[i];
+	}
+	
+	for (int j = 0; j < M; j++) {
+		int d = __builtin_popcount(P[j] ^ P[M]);
+		
+		if (d <= K) ans += 1;	
+	}
+	
+	cout << ans << "\n";
+	
     return 0;
 }

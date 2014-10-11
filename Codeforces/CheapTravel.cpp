@@ -17,33 +17,19 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int T;
-int N;
-
-int x[1010];
+int N, M, A, B;
 
 int main(void) {
-    T = in();
+	cin >> N >> M >> A >> B;
 
-    int i;
+	int ans = N * A;
 
-    for ( ; T--; ) {
-        N = in();
-        for (i = 0; i < N; i++) {
-            x[i] = in();
-        }
+	for (int i = 1; ; i++) {
+		chmin(ans, i * B + max(0, (N - (M * i))) * A);
+		if (M * i > N) break;
+	}
 
-        Int sum = (Int) x[0], ans = 2;
-
-        for (i = 1; i < N - 1; i++) {
-            if (sum + x[i] < x[i + 1]) {
-                sum += (Int) x[i];
-                ans += 1;
-            }
-        }
-
-        printf("%d\n", ans);
-    }
+	cout << ans << "\n";
 
     return 0;
 }

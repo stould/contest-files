@@ -17,33 +17,36 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int T;
-int N;
+Int N;
 
-int x[1010];
+bool func(Int h) {
+	Int sn = h * (3 * h + 1) / 2;
+
+	if (sn <= N && (N - sn) % 3 == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 int main(void) {
-    T = in();
+	cin >> N;
 
-    int i;
+	Int l = 1LL, h = 1000000000LL, m;
+	Int ans = 0;
 
-    for ( ; T--; ) {
-        N = in();
-        for (i = 0; i < N; i++) {
-            x[i] = in();
-        }
+	for ( ; l <= h; ) {
+		m = (l + h) / 2;
 
-        Int sum = (Int) x[0], ans = 2;
-
-        for (i = 1; i < N - 1; i++) {
-            if (sum + x[i] < x[i + 1]) {
-                sum += (Int) x[i];
-                ans += 1;
-            }
-        }
-
-        printf("%d\n", ans);
-    }
+		if (func(m + 1)) {
+			l = m + 1;
+			ans = max(ans, m);
+		} else {
+			h = m - 1;
+		}
+	}
+	
+	cout << ans << "\n";
 
     return 0;
 }
