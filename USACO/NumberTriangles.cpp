@@ -1,7 +1,7 @@
 /*
 ID: jeferso1
 LANG: C++
-TASK: skidesign
+TASK: numtri
 */
 
 #include <iostream>
@@ -15,6 +15,7 @@ TASK: skidesign
 #include <stack>
 #include <memory>
 #include <iomanip>
+#include <numeric>
 #include <functional>
 #include <new>
 #include <algorithm>
@@ -25,6 +26,14 @@ TASK: skidesign
 #include <climits>
 #include <cctype>
 #include <ctime>
+
+#define REP(i, n) for(int (i) = 0; i < n; i++)
+#define FOR(i, a, n) for(int (i) = a; i < n; i++)
+#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
+#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
+#define sz(n) n.size()
+#define pb(n) push_back(n)
+#define all(n) n.begin(), n.end()
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -43,46 +52,44 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1010;
 int N;
-int H[MAXN];
+int P[1010][1010];
+int dp[1010][1010];
+
+int func(int i, int j) {
+	if (j > i) {
+		return 101010101;
+	} else if (i == N - 1) {
+		return P[i][j];
+	} else {
+		int& ans = dp[i][j];
+
+		if (ans == -1) {
+			ans = P[i][j] + max(func(i + 1, j), func(i + 1, j + 1));
+		}
+
+		return ans;
+	}
+}
 
 int main(void) {
-	freopen("skidesign.in", "r", stdin);
-	freopen("skidesign.out", "w", stdout);
-	
-	N = in();
+	freopen("numtri.in", "r", stdin);
+	freopen("numtri.out", "w", stdout);
+
+	cin >> N;
 
 	for (int i = 0; i < N; i++) {
-		H[i] = in();
-	}
-	
-	long long ans = 101010010101001LL;
-	
-	for (int i = 1; i <= 1000; i++) {
-		for (int j = i; j <= 1000; j++) {
-			if (j - i > 17) break;
-			long long df = 0LL;
-
-			for (int k = 0; k < N; k++) {
-				long long ds = 0LL;
-				
-				if (H[k] < i) {
-					ds = H[k] - i;
-				} else if (H[k] > j) {
-					ds = j - H[k];
-				}
-
-				df += ds * ds;
-			}
-			if (df < ans) {
-				ans = df;
-			}
+		for (int j = 0; j <= i; j++) {
+			cin >> P[i][j];
 		}
 	}
 
+	memset(dp, -1, sizeof(dp));
 
-	printf("%lld\n", ans);
+	int ans = func(0, 0);
+
+	cout << ans << endl;
 
     return 0;
 }
+

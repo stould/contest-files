@@ -1,7 +1,7 @@
 /*
 ID: jeferso1
 LANG: C++
-TASK: combo
+TASK: sprime
 */
 
 #include <iostream>
@@ -53,50 +53,46 @@ typedef long long Int;
 typedef unsigned uint;
 
 int N;
-int F[5], M[5];
+set<int> prime;
 
-bool check(int i, int j, int k) {
-	int li = abs(i - F[0]);
-	int lj = abs(j - F[1]);
-	int lk = abs(k - F[2]);
+bool isPrime(long long n) {
+    if(n <= 1) return false;
+    if(n == 2) return true;
+    if(n % 2 == 0) return false;
 
+    long long m = (long long) sqrt(n);
 
-	int ri = abs(i - M[0]);
-	int rj = abs(j - M[1]);
-	int rk = abs(k - M[2]);
-	
-	bool A = (li <= 2 || li >= N - 2) && (lj <= 2 || lj >= N - 2) && (lk <= 2 || lk >= N - 2);
-	bool B = (ri <= 2 || ri >= N - 2) && (rj <= 2 || rj >= N - 2) && (rk <= 2 || rk >= N - 2);
-
-	return A || B;
-}
-
-int main(void) {
-	freopen("combo.in", "r", stdin);
-	freopen("combo.out", "w", stdout);
-
-	cin >> N;
-	
-    for (int i = 0; i < 3; i++) {
-        cin >> F[i];
-    }
-    for (int i = 0; i < 3; i++) {
-        cin >> M[i];
-    }
-
-    int ans = 0;
-
-    for (int i = 1; i <= N; i++) {
-        for (int j = 1; j <= N; j++) {
-            for (int k = 1; k <= N; k++) {
-                if (check(i, j, k)) {
-					ans += 1;
-				}
-            }
+    for(int i = 3L; i <= m; i += 2L) {
+        if(n % i == 0) {
+            return false;
         }
     }
+    return true;
+}
 
-	cout << ans << endl;
+void func(int d, int len) {
+	if (len == N) {
+		prime.insert(d);
+	} else {
+		for (int i = 1; i <= 9; i++) {
+			int nd = d * 10 + i;
+			if (isPrime(nd)) {
+				func(nd, len + 1);
+			}
+		}
+	}
+}
+int main(void) {
+	freopen("sprime.in", "r", stdin);
+	freopen("sprime.out", "w", stdout);
+
+	cin >> N;
+
+	func(0, 0);
+
+	for (set<int>::iterator it = prime.begin(); it != prime.end(); it++) {
+		cout << *it << endl;
+	}
 
     return 0;
 }

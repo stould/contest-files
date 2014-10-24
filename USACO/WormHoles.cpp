@@ -1,3 +1,9 @@
+/*
+ID: jeferso1
+LANG: C++
+TASK: wormhole
+*/
+
 #include <iostream>
 #include <string>
 #include <sstream>
