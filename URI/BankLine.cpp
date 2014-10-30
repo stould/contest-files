@@ -17,20 +17,17 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 100003;
+int N;
 const Int MOD = 1000000009LL;
 
-int N;
-Int P[MAXN];
-
 int main(void) {
-	P[3] = 1LL;
+	for ( ; cin >> N; ) {
+		Int ans = 1LL;
 
-	for (int i = 4; i <= 100000; i++) {		
-		P[i] = (P[i - 1] * i) % MOD;
-	}
-	for ( ; scanf("%d", &N) == 1 && N != 0; ) {
-		printf("%lld\n", P[N]);
+		for (int i = 4; i <= N; i++) {
+			ans = ((ans % MOD) * (i % MOD)) % MOD;
+		}
+		printf("%lld\n", (ans % MOD));		
 	}
     return 0;
 }

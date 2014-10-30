@@ -26,7 +26,7 @@ bool win(char a, char b) {
 	} else if (a == 'P') {
 		return b == 'R';
 	} else if (a == 'S') {
-		return b == 'R';
+		return b == 'P';
 	}
 	return false;
 }

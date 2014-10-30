@@ -47,7 +47,7 @@ typedef unsigned uint;
 
 const int MAXN = 107;
 int N, R, C, K;
-int field[MAXN][MAXN], next[MAXN][MAXN];
+int field[MAXN][MAXN], nx[MAXN][MAXN];
 
 int dx[4] = {-1, 1, 0, 0};
 int dy[4] = {0, 0, -1, 1};
@@ -55,7 +55,7 @@ int dy[4] = {0, 0, -1, 1};
 void func (void) {
     int i, j, k;
 
-    memset(next, -1, sizeof(next));
+    memset(nx, -1, sizeof(nx));
 
     for (i = 0; i < R; i++) {
         for (j = 0; j < C; j++) {
@@ -67,7 +67,7 @@ void func (void) {
 
                 if (ni >= 0 && nj >= 0 && ni < R && nj < C) {
                     if (field[ni][nj] == enemy) {
-                        next[ni][nj] = field[i][j];
+                        nx[ni][nj] = field[i][j];
                     }
                 }
             }
@@ -76,7 +76,7 @@ void func (void) {
 
     for (i = 0; i < R; i++) {
         for (j = 0; j < C; j++) {
-            if (next[i][j] != -1) field[i][j] = next[i][j];
+            if (nx[i][j] != -1) field[i][j] = nx[i][j];
         }
     }
 }
