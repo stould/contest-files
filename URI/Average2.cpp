@@ -46,10 +46,10 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int A, B, C;
+double A, B, C;
 
 int main(void) {
-    A = in(), B = in(), C = in();
+	cin >> A >> B >> C;
 
     cout << setprecision(1) << fixed << "MEDIA = " << (A * 2.0 + B * 3.0 + C * 5.0) / 10.0 << "\n";
     return 0;

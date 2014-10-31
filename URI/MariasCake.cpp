@@ -23,39 +23,8 @@ const int INF = INT_MAX / 3;
 int T, D, I, B;
 int P[MAXN], Qi[MAXN];
 int C[MAXN][MAXN][2];
+Int whole_cost[MAXN];
 
-unordered_map<int, int> dp[MAXN];
-unordered_map<int, bool> mark[MAXN];
-
-int func(int id, int cost) {
-	if (cost > D) return -INF;
-	if (id == B) {
-		return 0;
-	} else {
-		int& ans = dp[id][cost];
-
-		if (!mark[id][cost]) {
-			mark[id][cost] = true;
-			ans = func(id + 1, cost);
-
-			int cs = 0;
-			
-			for (int j = 0; j < Qi[id]; j++) {
-				cs += P[C[id][j][0]] * C[id][j][1];
-			}
-
-			for (int us = 1; ; us++) {
-				int ns = cs * us;
-				if (ns + cost > D) break;
-				chmax(ans, us + func(id + 1, cost + ns));
-				
-			}
-		}
-
-		return ans;
-	}
-}
-					 
 int main(void) {
 	cin >> T;
 	
@@ -66,18 +35,35 @@ int main(void) {
 			cin >> P[i];
 		}
 		
+		Int ans = 0;
+		
 		for (int i = 0; i < B; i++) {			
 			cin >> Qi[i];
+
+			whole_cost[i] = 0LL;
+
 			for (int j = 0; j < Qi[i]; j++) {
 				cin >> C[i][j][0] >> C[i][j][1];
+				whole_cost[i] += P[C[i][j][0]] * C[i][j][1];
+			}
+
+			Int l = 1, h = 1000000000LL, m;
+
+			for ( ; l <= h; ) {
+				m = (l + h) / 2;
+
+				Int cs = whole_cost[i] * m;
+
+				if (cs <= D) {
+					ans = max(ans, m);
+					l = m + 1;
+				} else {
+					h = m - 1;
+				}
 			}
 		}
 
-		for (int i = 0; i < MAXN; i++) {
-			mark[i].clear();
-		}
-		
-		cout << func(0, 0) << "\n";
+		cout << ans << "\n";
 	}
     return 0;
 }

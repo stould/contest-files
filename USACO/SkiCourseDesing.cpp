@@ -1,3 +1,9 @@
+/*
+ID: jeferso1
+LANG: C++
+TASK: skidesign
+*/
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -44,44 +50,39 @@ int H[MAXN];
 int main(void) {
 	freopen("skidesign.in", "r", stdin);
 	freopen("skidesign.out", "w", stdout);
+	
 	N = in();
 
 	for (int i = 0; i < N; i++) {
 		H[i] = in();
 	}
 	
-	int ans = 0;
+	long long ans = 101010010101001LL;
+	
+	for (int i = 1; i <= 1000; i++) {
+		for (int j = i; j <= 1000; j++) {
+			if (j - i > 17) break;
+			long long df = 0LL;
 
-	for ( ; ; ) {
-		int l = 110, l_id = 0;
-		int h = 0, h_id = 0;
+			for (int k = 0; k < N; k++) {
+				long long ds = 0LL;
+				
+				if (H[k] < i) {
+					ds = H[k] - i;
+				} else if (H[k] > j) {
+					ds = j - H[k];
+				}
 
-		for (int i = 0; i < N; i++) {
-			if (H[i] < l) {
-				l = H[i];
-				l_id = i;
+				df += ds * ds;
 			}
-			if (H[i] > h) {
-				h = H[i];
-				h_id = i;
+			if (df < ans) {
+				ans = df;
 			}
-		}
-		if (h - l <= 17) break;
-
-		int df = h - l - 17;
-
-		if (df % 2 == 0) {
-			ans += 2 * (df / 2) * (df / 2);
-			H[h_id] -= df / 2;
-			H[l_id] += df / 2;			
-		} else {
-			ans += (df / 2) * (df / 2) + (df / 2 + 1) * (df / 2 + 1);
-			H[h_id] -= df / 2 + 1;
-			H[l_id] += df / 2;
 		}
 	}
 
-	printf("%d\n", ans);
+
+	printf("%lld\n", ans);
 
     return 0;
 }

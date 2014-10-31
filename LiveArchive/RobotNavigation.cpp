@@ -17,7 +17,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 5010;
+const int MAXN = 1010;
 const Int INF = 1001001010100101001LL;
 
 int N, M;
@@ -56,16 +56,19 @@ void build(void) {
 }
 
 int main(void) {
+	cin.tie(0);
+	ios_base::sync_with_stdio(false);
 	build();
 
 	int t = 1;
 
 	for ( ; cin >> N >> M >> MOD; ) {
-		if (N == 0 && M == 0 && MOD == 0) break;
+		if (MOD == 0) break;
 
 		for (int i = 0; i < N; i++) {
 			cin >> S[i];
 		}
+
 		cin >> r1 >> c1 >> r2 >> c2 >> d;		
 		
 		for (int i = 0; i < N; i++) {

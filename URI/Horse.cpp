@@ -7,7 +7,7 @@ const int INF = INT_MAX / 3;
 
 int N, M, K;
 string str[MAXN];
-map<pair<int, int>, int> hash;
+map<pair<int, int>, int> hs;
 int point, source;
 
 int vis[MAXN][MAXN];
@@ -19,8 +19,8 @@ int dy[8] = {+2,-2,+2,-2,+1,-1,+1,-1};
 void fix(int x, int y) {
     pair<int, int> p = make_pair(x, y);
    
-    if (hash[p] == 0) {
-        hash[p] = point++;
+    if (hs[p] == 0) {
+        hs[p] = point++;
     }
 }
 
@@ -36,14 +36,10 @@ void bfs(int x, int y) {
     memset(vis, 63, sizeof(vis));
     vis[x][y] = 0;
 
-	//	cout << "from = " << x << " " << y << "\n";
-   
     for ( ; !q.empty(); ) {
         pair<int, int> p = q.front();
         q.pop();
 
-		//		cout << p.first << " " << p.second << " " << vis[p.first][p.second] << "\n";
-       
         for (int i = 0; i < 8; i++) {
             int px = p.first + dx[i];
             int py = p.second + dy[i];
@@ -59,12 +55,11 @@ void bfs(int x, int y) {
                          int curr = vis[px][py];             
                          fix(px, py);                   
                         
-                         int p1 = hash[root];
-                         int p2 = hash[np];
+                         int p1 = hs[root];
+                         int p2 = hs[np];
 
                          dst[p1][p2] = min(curr, dst[p1][p2]);
                          dst[p2][p1] = min(curr, dst[p2][p1]);
-							 //						 cout << x << " " << y  << " - " << px << " " << py << " = " << dst[p1][p2] << "\n";
                     }
                 }
             }
@@ -72,13 +67,13 @@ void bfs(int x, int y) {
     }   
 }
 
-int dp[(1 << 17)];
+int dp[17][(1 << 17)];
 
 int func(int id, int mask) {
     if (mask == (1 << point) - 2) {
         return dst[id][source];
     } else {
-        int& ans = dp[mask];
+        int& ans = dp[id][mask];
        
         if (ans == -1) {
             ans = INF;
@@ -99,24 +94,26 @@ int func(int id, int mask) {
 int main(void) {
     for ( ; cin >> N >> M >> K && (N + M + K != 0); ) {
         point = 1;
-        hash.clear();
+        hs.clear();
        
         memset(dst, 63, sizeof(dst));
        
         for (int i = 0; i < N; i++) {
             cin >> str[i];
         }
+
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (str[i][j] == 'P' || str[i][j] == 'C') {
                     bfs(i, j);
 
                     if (str[i][j] == 'C') {
-                        source = hash[make_pair(i, j)];
+                        source = hs[make_pair(i, j)];
                     }
                 }
             }
         }
+
         memset(dp, -1, sizeof(dp));     
        
         cout << func(source, (1 << source)) << "\n";
