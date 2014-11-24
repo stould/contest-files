@@ -17,27 +17,13 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MOD = 1000000007;
+const Int MOD = 1000000007;
 const int MAXN = 100005;
 
 int T, N;
 string S;
 
-struct MyCmp {
-	bool operator()(pair<int, int> x, pair<int, int> y) {
-		int dx = abs(x.first - N / 2);
-		int dy = abs(y.first - N / 2);
-
-		if (dx != dy) {
-			return dx < dy;
-		} else {
-			return x.second > y.second;
-		}
-	}
-};
-
 int main(void) {
-	//	cin.tie(0);
 	ios_base::sync_with_stdio(false);
 
 	cin >> T;
@@ -45,35 +31,42 @@ int main(void) {
 	for (int t = 1; t <= T; t++) {
 		cin >> S;
 		N = (int) S.size();
+		int L = N;
 
-		Int ans = 0LL, b = 1LL;
-		int p1 = N / 2, p2 = N / 2;
-		bool odd = true;
-
-		if (N % 2 == 0) {
-			p1 -= 1;
-			odd = false;
-		}
+		Int ans = 0LL, base = 1LL;
+		int cnt = 0;		
 		
+		string sans = "";
+
+		int p = S.size() / 2;
+		int q = S.size() / 2;		
+
 		for (int i = 0; i < N; i++) {
-			if (odd) {
-				odd = false;
-				if (p1 >= 0) {
-					cout << p1 << "\n";
-					ans = (ans + (b * (S[p1] - '0')) % MOD) % MOD;
-					b = (b * 2LL) % MOD;					
-					p1 -= 1;
-				}
+			if (L % 2 == 1) {
+				sans += S[p];
+				p++;
+				q--;
+				//S = S.substr(0, p) + S.substr(p + 1, S.size() - p);
 			} else {
-				odd = true;
-				if (p2 < N) {
-					cout << p2 << "\n";
-					ans = (ans + (b * (S[p2] - '0')) % MOD) % MOD;
-					b = (b * 2LL) % MOD;
-					p2 += 1;
+				q -= 1;
+
+				if (S[p] >= S[q]) {
+					sans += S[p];
+					p++;
+					//S = S.substr(0, p) + S.substr(p + 1, S.size() - p);
+				} else {
+					sans += S[q];
+					//S = S.substr(0, q) + S.substr(q + 1, S.size() - q);
 				}
 			}
+			L -= 1;
 		}
+		/*
+		for (int i = sans.size() - 1; i >= 0; i--) {
+			ans = (ans + base * (sans[i] - '0')) % MOD;
+			base = (base * 2LL) % MOD;
+		}
+		*/
 
 		cout << "Case #" << t << ": " << ans << "\n";
 	}
