@@ -18,8 +18,8 @@ typedef long long Int;
 typedef unsigned uint;
 
 int N, M;
-string S[12], B[1010];
-int cnt[12];
+string S[120], B[1010];
+int cnt[120];
 
 struct data {
 	int id, votes;
@@ -41,6 +41,11 @@ struct data {
 	}
 };
 
+int fix(int value, int total) {
+	int a = value * 10000;	
+	return (a / total) + ((2 * (a % total)) >= total);
+}
+
 int main(void) {
 	cin >> N >> M;
 
@@ -49,7 +54,6 @@ int main(void) {
 	}
 	
 	int invalid = 0;
-	int perc;
 
 	for (int i = 0; i < M; i++) {
 		cin >> B[i];
@@ -73,21 +77,14 @@ int main(void) {
 	}
 
 	sort(vs.begin(), vs.end());
-
-	for (int i = 0; i < N; i++) {
-		perc = ((int) ((int) 100 * (vs[i].votes * 100.0 / (double) M)));
-		cout << vs[i].name << " " << perc / 100 << "." << perc % 100;
-		if (perc % 100 == 0) {
-			cout << "0";
-		}
-		cout << "%\n";
-	}
 	
-	perc = (int) ((int) 100 * (invalid * 100.0 / (double) M));
-	cout << "Invalid " << perc / 100 << "." << perc % 100;
-	if (perc % 100 == 0) {
-		cout << "0";
+	for (int i = 0; i < N; i++) {
+		int p = fix(vs[i].votes, M);
+		printf("%s %d.%d%d%%\n", vs[i].name.c_str(), p / 100, (p / 10) % 10, p % 10);
 	}
-	cout << "%\n";
+
+	int p = fix(invalid, M);
+	printf("%s %d.%d%d%%\n", "Invalid", p / 100, (p / 10) % 10, p % 10);
+
 	return 0;
 }
