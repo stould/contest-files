@@ -182,21 +182,56 @@ int merge(int arr[], int temp[], int left, int mid, int right) {
 	return inv_count;
 }
 //**********************************************
+//Median in O(1)
+
+int median_retrieve(void) {
+	if (minHeap.empty() && maxHeap.empty()) return 0;
+
+	if (minHeap.size() == maxHeap.size()) {
+		return min(minHeap.top(), maxHeap.top());
+	} else {
+		if (minHeap.size() > maxHeap.size()) {
+			return minHeap.top();
+		} else {
+			return maxHeap.top();
+		}
+	}
+}
+
+void median_insert(int x) {
+	if (x > median_retrieve()) {
+		minHeap.push(x);
+	} else {
+		maxHeap.push(x);
+	}
+	
+	while (abs((int) (minHeap.size() - maxHeap.size())) > 1) {
+		if (minHeap.size() > maxHeap.size()) {
+			int tmp = minHeap.top();
+			minHeap.pop();
+			maxHeap.push(tmp);
+		} else {
+			int tmp = maxHeap.top();
+			maxHeap.pop();
+			minHeap.push(tmp);
+		}
+	}
+}
 //**********************************************
-Kadade 2D simplificaco
+//Kadade 2D simplificaco
 int best = 0;
 for(int i = 1; i <= n; i++){
-  for(int j = i; j <= n; j++){
-    int tmp = 0;
-    for(int k = 1; k <= n; k++){
-      tmp += (freq[j][k] - freq[i-1][k]);
-      best = max(tmp, best);
-      if(tmp < 0){
-       tmp = 0;
-      }
-    }
-  }
-}
+	for(int j = i; j <= n; j++){
+		int tmp = 0;
+		for(int k = 1; k <= n; k++){
+			tmp += (freq[j][k] - freq[i-1][k]);
+			best = max(tmp, best);
+			if(tmp < 0){
+				tmp = 0;
+			}
+		}
+	}
+ }
 //////////////////////////////////////////////////////////
 //Kadane 2D
 for (int i = 1; i <= N; i++) {
