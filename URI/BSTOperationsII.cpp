@@ -77,6 +77,10 @@ struct BST {
 		}
 		return false;
 	}
+	
+	bool erase(T value) {
+
+	}
 	void _prefix(node* node, vector<T>& v_ans) {
 		if (node != NULL) {
 			v_ans.push_back(node->value);
