@@ -24,15 +24,28 @@ inline void rd(int &x) {
     }
 }
 //**********************************************
+//Java next_permutation
+boolean next_permutation(int[] p) {
+  for (int a = p.length - 2; a >= 0; --a)
+    if (p[a] < p[a + 1])
+      for (int b = p.length - 1;; --b)
+        if (p[b] > p[a]) {
+          int t = p[a];
+          p[a] = p[b];
+          p[b] = t;
+          for (++a, b = p.length - 1; a < b; ++a, --b) {
+            t = p[a];
+            p[a] = p[b];
+            p[b] = t;
+          }
+          return true;
+        }
+  return false;
+}
+//**********************************************
 //QuickSort O(N log N) worst case O(n^2)
-#include <iostream>
-#include <vector>
-
-using namespace std;
-
-#define MAXN 10000
-
 int n, a[MAXN];
+
 void quicksort(int lo, int hi) {
     int i=lo, j=hi, h;
 
@@ -94,13 +107,6 @@ vector<int> mergeSort(vector<int>& a) {
 }
 //**********************************************
 //Heapsort O(N log N)
-#include <iostream>
-#include <vector>
-
-using namespace std;
-
-#define MAXN 10000
-
 int n, a[MAXN];
 
 void downheap(int v) {
