@@ -17,28 +17,37 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int INF = 10100101010010100LL;
-
-int A, B, N;
-string S, G;
+int N;
+Int F[100];
 
 int main(void) {
-	for ( ; cin >> A >> B >> S; ) {
-		N = S.size();
-
-		Int ans = 0;
-		int last = -1;
-
-		for (int i = 0; i < N; i++) {
-			if (S[i] == 'B') {
-				if (last != i - 1) {
-					ans += min(A, B * (i - last + 1));
-				}
-				last = i;
+	F[0] = 0;
+	F[1] = 1;
+	
+	for (int i = 2; i < 100; i++) {
+		F[i] = F[i - 1] + F[i - 2];
+		cout << F[i] << endl;
+	}
+	int cnt = 0;
+	
+	for (int i = 0; i < 100; i++) {
+		if (F[i] % 3 == 0) {
+			Int cp = F[i];
+			bool ok = false;
+			
+			while (cp > 0) {
+				int d = cp % 10;
+				if (d == 3) ok = true;
+				cp /= 10;
+			}
+			if (ok) {
+				cout << cnt++ << " " << F[i] << endl;
 			}
 		}
+
+	}
+	for ( ; cin >> N; ) {
 		
-		cout << ans << "\n";
 	}
     return 0;
 }

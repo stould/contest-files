@@ -17,28 +17,32 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int INF = 10100101010010100LL;
+const int MAXN = 100005;
 
-int A, B, N;
-string S, G;
+int N;
+int P[MAXN], S[MAXN];
 
 int main(void) {
-	for ( ; cin >> A >> B >> S; ) {
-		N = S.size();
+	freopen("cowjog.in", "r", stdin);
+	freopen("cowjog.out", "w", stdout);
+	
+	cin >> N;
 
-		Int ans = 0;
-		int last = -1;
-
-		for (int i = 0; i < N; i++) {
-			if (S[i] == 'B') {
-				if (last != i - 1) {
-					ans += min(A, B * (i - last + 1));
-				}
-				last = i;
-			}
-		}
-		
-		cout << ans << "\n";
+	for (int i = 0; i < N; i++) {
+		cin >> P[i] >> S[i];
 	}
+
+	int ans = 0;
+	int curr = INT_MAX;
+	
+	for (int i = N - 1; i >= 0; i--) {
+		if (S[i] <= curr) {
+			ans += 1;
+			curr = S[i];
+		}
+	}
+
+	cout << ans << "\n";
+	
     return 0;
 }
