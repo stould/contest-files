@@ -17,43 +17,37 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int C, N;
-int T[100005];
+int N;
+string A, B;
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
-		bool ok = false;
-
-		int p = C / N;
-
+	while (cin >> N >> A >> B) {
+		string ans = "";
+		
+		int cntA = 0;
+		int cntB = 0;
+		
 		for (int i = 0; i < N; i++) {
-			cin >> T[i];
-		}
-
-		T[N] = C + T[0];
-
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
-			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
+			if (cntB == N / 2) {
+				ans += A[i];
+			} else if (cntA == N / 2) {
+				ans += B[i];
+			} else {
+				if (A[i] != B[i]) {
+					if (A[i] < B[i]) {
+						ans += A[i];
+						cntA += 1;
+					} else {
+						ans += B[i];
+						cntB += 1;
+					}
 				} else {
-					fine = false;
+					ans += A[i];				
 				}
 			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
 		}
 
-		if (ok) {
-			cout << "S\n";
-		} else {
-			cout << "N\n";
-		}
+		cout << ans << "\n";
 	}
 	
     return 0;

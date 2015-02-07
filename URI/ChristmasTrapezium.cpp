@@ -17,44 +17,19 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int C, N;
-int T[100005];
+int N;
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
-		bool ok = false;
-
-		int p = C / N;
-
+	for ( ; cin >> N && N != 0; ) {
+		int C;
+		double A, B;
+		
 		for (int i = 0; i < N; i++) {
-			cin >> T[i];
+			cout << "Size #" << i + 1 << ":" << endl;
+			cin >> C >> A >> B;
+			cout << fixed << setprecision(2) << "Ice Cream Used: " << C * (A + B) / 2.0 * 5 << " cm2" << endl;
 		}
-
-		T[N] = C + T[0];
-
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
-			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
-				} else {
-					fine = false;
-				}
-			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
-		}
-
-		if (ok) {
-			cout << "S\n";
-		} else {
-			cout << "N\n";
-		}
+		cout << endl;
 	}
-	
     return 0;
 }

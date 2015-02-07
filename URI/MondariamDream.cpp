@@ -18,41 +18,32 @@ typedef long long Int;
 typedef unsigned uint;
 
 int N, M;
-int dp[12][(1 << 12)];
+int dp[12][12][(1 << 12)];
 
-bool match(int up, int now) {
-	int i = 0; 
-
-	for ( ; i < M; ) {
-		if (up & (1 << i)) {
-			if (now & (1 << i)) {
-				return false;
-			} else {
-				i += 1;
-			}
-		} else {
-			i += 2;
-		}
-	}
-
-	return true;
+int new_mask(int old_mask) {
+	
 }
 
-int func(int row, int mask) {
-	if (row == N) {
+int func(int row, int col, int mask) {
+	if (row >= N) {
 		return 1;
+	} else if (col >= M) {
+		return func(row + 1, 0, mask);
 	} else {
-		int& ans = dp[row][mask];
+		int& ans = dp[row][col][mask];
 
 		if (ans == -1) {
-			ans = 0;
+			if (mask & (1 << col)) {
+				//stuck by (row - 1) stick, move on
+				ans += func(row, col + 1, mask);
+			} else {
+				//use vertical stick
+				ans += func(row, col + 1, mask);
 
-			for (int i = 0; i < (1 << M); i++) {
-				if (match(mask, i)) {
-					ans += func(row + 1, i);
+				if (col + 1 < M && !(mask & (1 << (col + 1)))) {
+					ans += func(row, col + 2, mask);
 				}
 			}
-
 		}
 
 		return ans;
@@ -64,7 +55,7 @@ int main(void) {
 	for ( ; scanf("%d%d", &N, &M) == 2 && N + M != 0; ) {
 		memset(dp, -1, sizeof(dp));
 
-		printf("%lld\n", func(0, 0));
+		printf("%d\n", func(0, 0, 0, 0));
 	}
     return 0;
 }
