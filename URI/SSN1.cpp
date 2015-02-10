@@ -17,44 +17,37 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int C, N;
-int T[100005];
+string S;
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
-		bool ok = false;
+	for ( ; cin >> S; ) {
+		int b1 = 0;
+		int b2 = 0;
+		int mul = 1;
 
-		int p = C / N;
-
-		for (int i = 0; i < N; i++) {
-			cin >> T[i];
-		}
-
-		T[N] = C + T[0];
-
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
-			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
-				} else {
-					fine = false;
-				}
+		for (int i = 0; i < S.size() - 3; i++) {
+			if (S[i] != '.') {
+				b1 += (S[i] - '0') * mul;
+				b2 += (S[i] - '0') * (10 - mul);
+				mul++;
 			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
+		}
+		
+		b1 %= 11;
+		b2 %= 11;
+
+		if (b1 == 10) {
+			b1 = 0;
+		}
+		if (b2 == 10) {
+			b2 = 0;
 		}
 
-		if (ok) {
-			cout << "S\n";
+		if ((S[S.size() - 2] - '0') == b1 && (S[S.size() - 1] - '0') == b2) {
+			cout << "CPF valido" << endl;
 		} else {
-			cout << "N\n";
+			cout << "CPF invalido" << endl;
 		}
 	}
-	
     return 0;
 }

@@ -801,12 +801,9 @@ void dfs(int x) {
 }
 
 //**********************************************
-//Componentes fortemente conectados: [CFC] - Stongly Connected Components
-Matrix ga -> Matrix original
-Matrix gb -> Matrix transposta:
-
-Primeiro Ordena-se topologicamente os vertices, depois faz-se a checagem da quantidade e componentes em um
-componente fortemente conectado em um grafo direcionado:
+//[CFC] - Stongly Connected Components
+ga -> Regular Adjacency List
+gb -> Transposed Adjacency List
 
 void dfs1(int x) {
     used[x] = 1;
@@ -2329,44 +2326,68 @@ if(det == 0){
 //*******************************************************
 //Binomial Coefficient
 //C(N, K) = N!/(K!(N - K)!)
+//Dynamic Programming
 int bin[N][K];
+
 bin[0][0] = 1;
-for(n = 1; n < MAXN; n++) {
+
+for (int n = 1; n < MAXN; n++) {
     bin[n][0] = 1;
     bin[n][n] = 1;
-    for (k = 1; k < n; k++) {
-		bin [n][k] = bin [n - 1][k] + bin [n - 1][k - 1];
+	
+    for (int k = 1; k < n; k++) {
+		bin[n][k] = bin[n - 1][k] + bin[n - 1][k - 1];
 		if (bin[n][k] >= MOD) {
 			bin[n][k] -= MOD;
 		}
     }
  }
+//
+Int nCr(Int n, Int k) {
+	Int res = 1;
+	
+	if (k > (n >> 1LL)) {
+		k = n-k;
+	}
+	for (Int i = 1; i <= k; i++, n--) {
+		res = (res * n) / i;
+	}
+	
+	return res;
+}
+
+//*******************************************************
+
+
 //*******************************************************
 //String distance
 int dist(string& s1, string& s2) {
     int N1 = s1.size(), N2 = s2.size();
 
-    REP(i, N1+1) dp[i][0] = i;
-    REP(i, N2+1) dp[0][i] = i;
+    for (int i = 0; i <= N1; i++) dp[i][0] = i;
+    for (int i = 0; i <= N2; i++) dp[0][i] = i;
 
-    FOR(i, 1, N1+1) FOR(j, 1, N2+1) {
-        if(s1[i-1] == s2[j-1]) {
-            dp[i][j] = dp[i-1][j-1];
-        } else {
-            dp[i][j] = 1 + min(min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]);
-        }
-    }
-    return dp[N1][N2];
+    for (int i = 1; i <= N1; i++) {
+		for (int j = 1; j <= N2; j++) {
+			if(s1[i-1] == s2[j-1]) {
+				dp[i][j] = dp[i-1][j-1];
+			} else {
+				dp[i][j] = 1 + min(min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]);
+			}
+		}
+	}
+	return dp[N1][N2];
 }
 //*******************************************************
 //Coin Change
 int dp[1001];
 int coins[] = {1, 5, 10, 25, 50};
+
 dp[0] = 0;
 
-for(int i = 1; i <= 74; i++) {
+for(int i = 1; i <= N; i++) {
 	int min = 1000001;
-    for(int j = 0; j < 5; j++) {
+    for(int j = 0; j < M; j++) {
 		if(coins[j] <= i) {
 			int m = dp[i - coins[j]] + 1;
             if(m < min) min = m;
@@ -2377,6 +2398,7 @@ for(int i = 1; i <= 74; i++) {
 //*******************************************************
 //Counting ways to sum value 'x' using coins in set 'coins'
 memo[0] = 1;
+
 for(int i = 0; i < 5; i++) {
     int c = coins[i];
     for(int j = c; j <= x; j++) {
@@ -2386,11 +2408,11 @@ for(int i = 0; i < 5; i++) {
 //*******************************************************
 //Longest Increasing Subsequence - (LIS) O(Nlog(N))
 void funcA(void) {
-    int i, top = 0;
+    int top = 0;
 
     stk[0] = INT_MIN;
 
-    for (i = 0; i < N; ++i) {
+    for (int i = 0; i < N; ++i) {
         if (v[i] > stk[top]) {
             stk[++top] = v[i];
         } else {
@@ -2430,7 +2452,7 @@ int lis(int array[], int n) {
 }
 //*******************************************************
 //Longest Commom Subsequence - (LCS) O(N^2)
-int lgs(string a, string b) {
+int lcs(string a, string b) {
 	int n = a.size(), m = b.size();
 	int[][] dp = new dp[n+1][m+1];
 
@@ -2503,12 +2525,12 @@ bool subsetSum(int n, int g) {
 int T, N, dp[MAXN][MAXN];
 char str[MAXN];
 
-REP(i, N) {
+for (int i = 0; i < N; i++) {
     dp[i][i] = 1;
     if(i + 1 < N) dp[i][i + 1] = str[i] == str[i + 1];
 }
 for(int k = 2; k < N; k++) {
-    REP(i, N - k) {
+    for (int i = 0; i < N - k; i++) {
         dp[i][i + k] = dp[i + 1][i + k - 1] && str[i] == str[i + k];
     }
 }

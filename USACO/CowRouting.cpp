@@ -17,44 +17,44 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int C, N;
-int T[100005];
+int N, A, B, C, M;
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
+	freopen("cowroute.in", "r", stdin);
+	freopen("cowroute.out", "w", stdout);
+	
+	cin >> A >> B >> N;
+
+	int ans = INT_MAX;
+	
+	for (int i = 0; i < N; i++) {
+		cin >> C >> M;
+
+		int Ci;
+
+		bool seenA = false;
 		bool ok = false;
+		
+		for (int j = 0; j < M; j++) {
+			cin >> Ci;
 
-		int p = C / N;
-
-		for (int i = 0; i < N; i++) {
-			cin >> T[i];
-		}
-
-		T[N] = C + T[0];
-
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
-			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
-				} else {
-					fine = false;
+			if (Ci == A) {
+				seenA = true;
+			} else if (Ci == B) {
+				if (seenA) {
+					ok = true;
 				}
 			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
 		}
 
-		if (ok) {
-			cout << "S\n";
-		} else {
-			cout << "N\n";
-		}
+		if (ok) ans = min(ans, C);
 	}
+
+	if (ans == INT_MAX) {
+		ans = -1;
+	}
+
+	cout << ans << endl;
 	
     return 0;
 }

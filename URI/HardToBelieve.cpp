@@ -17,42 +17,31 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-int C, N;
-int T[100005];
+char A[10], B[10], C[10];
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
-		bool ok = false;
+	for ( ; scanf("%[^+]%*c%[^=]%*c%s", A, B, C); ) {
+		//		printf("%s %s %s\n", A, B, C);
+		int LA = strlen(A);
+		int LB = strlen(B);
+		int LC = strlen(C);
+		
+		reverse(A, A + LA);
+		reverse(B, B + LB);
+		reverse(C, C + LC);
 
-		int p = C / N;
-
-		for (int i = 0; i < N; i++) {
-			cin >> T[i];
-		}
-
-		T[N] = C + T[0];
-
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
-			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
-				} else {
-					fine = false;
-				}
-			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
-		}
-
-		if (ok) {
-			cout << "S\n";
+		int as = atoi(A);
+		int bs = atoi(B);
+		int cs = atoi(C);
+		
+		if (as + bs == cs) {
+			puts("True");
 		} else {
-			cout << "N\n";
+			puts("False");
+		}
+		
+		if (as == 0 && bs == 0 && cs == 0) {
+			break;
 		}
 	}
 	
