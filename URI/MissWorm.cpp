@@ -24,36 +24,38 @@ int N, M, Q;
 vector<pair<int, int> > graph[MAXN];
 int stk[MAXN], stk_pointer;
 int cycle_len[MAXN];
-int dist[MAXN];
-bool vis[MAXN];
+int dist[MAXN], cle[MAXN];
+bool done, vis[MAXN];
 
-void dfs(int node, int parent, int len) {
-	vis[node] = true;
-
-	cout << node << "\n";
-	//cout << node << " " << parent << " " << len << "\n";
+void dfs(int node, int parent, int len, int root) {
+	if (done) return;
 	
-	//stk[stk_pointer++] = node;
+	vis[node] = true;
+	cle[node] = len;
+	
+	stk[stk_pointer++] = node;
 	
 	for (int i = 0; i < (int) graph[node].size(); i++) {
 		int next = graph[node][i].first;
 		int cost = graph[node][i].second;
 		
 		if (next == parent) continue;
-
+		
 		if (!vis[next]) {
-			dfs(next, node, len + cost);
+			dfs(next, node, len + cost, root);
 		} else {
-			continue;
-			int curr;
-
-			while (stk_pointer > 0) {
-				curr = stk[stk_pointer--];
-				//cout << curr << "\n";
-				cycle_len[curr] = len;
-				if (curr == next) break;
+			if (next == root) {
+				int curr;
+				int real_len = len + cost - cle[next];
+				
+				while (stk_pointer > 0) {
+					curr = stk[--stk_pointer];
+					cycle_len[curr] = real_len;
+					if (curr == next) break;
+				}
+				
+				done = true;
 			}
-			//cout << "\n";
 		}
 	}
 
@@ -91,7 +93,7 @@ void dijkstra(int node) {
 }
 
 int main(void) {
-	for ( ; scanf("%d%d", &N, &M); ) {
+	for ( ; scanf("%d%d", &N, &M) == 2; ) {
 		for (int i = 0; i <= N; i++) {
 			vis[i] = false;
 			cycle_len[i] = -1;
@@ -106,14 +108,17 @@ int main(void) {
 			graph[B].push_back(make_pair(A, C));
 		}
 		
+		
 		for (int i = 1; i <= N; i++) {
-			memset(vis, false, sizeof(vis));
-			stk_pointer = 0;
-			dfs(i, -1, 0);			
+			if (graph[i].size() > 1 && cycle_len[i] == -1) {
+				memset(vis, false, sizeof(vis));
+				stk_pointer = done = 0;
+				dfs(i, -1, 0, i);
+			}
 		}
 
 		scanf("%d", &Q);
-
+		
 		for (int i = 0; i < Q; i++) {
 			int V, L;
 			scanf("%d%d", &V, &L);
@@ -121,9 +126,9 @@ int main(void) {
 			dijkstra(V);
 
 			int ans = INT_MAX;
-
-			for (int i = 0; i < V; i++) {
-				if (cycle_len[i] != -1) {
+		
+			for (int i = 1; i <= N; i++) {
+				if (cycle_len[i] >= L) {
 					chmin(ans, 2 * dist[i] + cycle_len[i]);
 				}
 			}
