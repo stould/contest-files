@@ -26,21 +26,21 @@ inline void rd(int &x) {
 //**********************************************
 //Java next_permutation
 boolean next_permutation(int[] p) {
-  for (int a = p.length - 2; a >= 0; --a)
-    if (p[a] < p[a + 1])
-      for (int b = p.length - 1;; --b)
-        if (p[b] > p[a]) {
-          int t = p[a];
-          p[a] = p[b];
-          p[b] = t;
-          for (++a, b = p.length - 1; a < b; ++a, --b) {
-            t = p[a];
-            p[a] = p[b];
-            p[b] = t;
-          }
-          return true;
-        }
-  return false;
+	for (int a = p.length - 2; a >= 0; --a)
+		if (p[a] < p[a + 1])
+			for (int b = p.length - 1;; --b)
+				if (p[b] > p[a]) {
+					int t = p[a];
+					p[a] = p[b];
+					p[b] = t;
+					for (++a, b = p.length - 1; a < b; ++a, --b) {
+						t = p[a];
+						p[a] = p[b];
+						p[b] = t;
+					}
+					return true;
+				}
+	return false;
 }
 //**********************************************
 //QuickSort O(N log N) worst case O(n^2)
@@ -48,7 +48,7 @@ int n, a[MAXN];
 
 void quicksort(int lo, int hi) {
     int i=lo, j=hi, h;
-
+	
     int x=a[(lo+hi)/2];
 
     do {
@@ -192,7 +192,7 @@ int merge(int arr[], int temp[], int left, int mid, int right) {
 
 int median_retrieve(void) {
 	if (minHeap.empty() && maxHeap.empty()) return 0;
-
+	
 	if (minHeap.size() == maxHeap.size()) {
 		return min(minHeap.top(), maxHeap.top());
 	} else {
@@ -378,12 +378,16 @@ vector<int> z_function (string s) {
 	int n = (int) s.length();
 	vector<int> z (n);
 	for (int i=1, l=0, r=0; i<n; ++i) {
-		if (i <= r)
+		if (i <= r) {
 			z[i] = min (r-i+1, z[i-l]);
-		while (i+z[i] < n && s[z[i]] == s[i+z[i]])
+		}
+		while (i+z[i] < n && s[z[i]] == s[i+z[i]]) {
 			++z[i];
-		if (i+z[i]-1 > r)
-			l = i,  r = i+z[i]-1;
+		}
+		if (i+z[i]-1 > r) {
+			l = i;
+			r = i+z[i]-1;
+		}
 	}
 	return z;
 }
@@ -509,6 +513,7 @@ getLcp(N);
 
 //**********************************************
 //Suffix Array
+//Easier implementation
 #define max 100010
 
 int delta, len, SA[max], iSA[max], val[max], tval[max];
@@ -749,6 +754,8 @@ void bfs(int x) {
 }
 //**********************************************
 //Topological Sort (Recursive)
+vector<int> order;
+
 void dfs(int x) {
     used[x] = 1;
     for(int b = 0; b < g[x].size(); b++) {
@@ -756,6 +763,10 @@ void dfs(int x) {
     }
     order.push_back(x);
 }
+
+reverse(order.begin(), order.end());
+
+
 //**********************************************
 //Topological Sort (Iterative) 
 for (int i = 0; i < M; i++) {
@@ -822,10 +833,10 @@ void dfs2(int x) {
 }
 
 //Ordenando Topologicamente
-for(i = 1; i <= n; i++) if(!used[i]) dfs1(i);
+for (int i = 1; i <= n; i++) if(!used[i]) dfs1(i);
 
 //Procura pelos componentes:
-for(i = 0; i < order.size(); i++) {
+for(int i = 0; i < order.size(); i++) {
     int v = order[i];
 	if(!used[v]) {
 		dfs2(v);
@@ -886,6 +897,56 @@ bool dfs(int node, int c) {
 dfs(1, 1);
 //othewise
 dfs(0, 1);
+
+//******************************************
+//Return all cycles in a graph without compound cycles.
+//cycle_len[i] is the length of the cycle i belongs to (for weighted graphs)
+bool inq[MAXN], vis[MAXN];
+
+void dfs(int node, int parent, int len) {
+	vis[node] = true;
+	cle[node] = len;
+	
+	stk[stk_pointer++] = node;
+	inq[node] = true;
+
+	for (int i = 0; i < (int) graph[node].size(); i++) {
+		int next = graph[node][i].first;
+		int cost = graph[node][i].second;
+		
+		if (next == parent) continue;
+		
+		if (!vis[next]) {
+			dfs(next, node, len + cost);
+		} else {
+			if (inq[next]) {
+				int curr;
+				int real_len = len + cost - cle[next];
+				
+				while (stk_pointer > 0) {
+					curr = stk[--stk_pointer];
+					inq[curr] = false;
+					cycle_len[curr] = real_len;
+					if (curr == next) break;				
+				}
+			}
+		}
+	}
+
+	if (inq[node]) {
+		while (stk_pointer > 0) {
+			inq[stk[stk_pointer-1]] = false;
+			if (stk[stk_pointer-1] == node) {
+				stk_pointer--;
+				break;
+			}
+			stk_pointer--;
+		}
+	}
+}
+
+stk_pointer = 0;
+dfs(1, -1, 0);		
 
 //******************************************
 //Matrix Multiplication
