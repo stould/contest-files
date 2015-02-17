@@ -46,8 +46,53 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+const int MAXN = 1010;
+
+int M;
+string has;
+
+int stp[MAXN];
+
+bool dp[MAXN][15][15];
+
+bool func(int id, int last, int bal) {
+    if (id > 0 && (bal <= 0 || bal > 10)) return false;
+    if (id == M) return true;
+
+    if (!dp[id][last][bal]) {
+        dp[id][last][bal] = true;
+
+        for (int i = 1; i <= 10; i++) if (i != last && has[i - 1] == '1') {
+            stp[id] = i;
+
+            bool curr = func(id + 1, i, i - bal);
+
+            if (curr) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 int main(void) {
+    //freopen("i.in", "r", stdin);
+    cin >> has >> M;
+
+    bool f = func(0, 0, 0);
+
+    memset(dp, false, sizeof(dp));
+
+    if (f) {
+        cout << "YES\n";
+        for (int i = 0; i < M; i++) {
+            cout << stp[i] << " ";
+        }
+        cout << "\n";
+    } else {
+        cout << "NO\n";
+    }
 
     return 0;
 }
-
