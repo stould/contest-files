@@ -40,13 +40,17 @@ int func(int a, int b) {
 
     FOR(i, a, b+1) {
         int x = i, len = 0;
-        set<int> s;
+		int mask = 0, ok = 1;
         while(x > 0) {
-            s.insert(x%10);
+			int d = (1 << (x % 10));
+			if (mask & d) {
+				ok = 0;
+				break;
+			}
+			mask |= d;
             x /= 10;
-            len += 1;
         }
-        if((int)s.size()==len) ans += 1;
+        if(ok) ans += 1;
     }
 
     return ans;

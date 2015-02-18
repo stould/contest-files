@@ -45,38 +45,26 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 100007;
-int B, P, L, N, I, V;
-int f[MAXN];
+const int MAXN = 100010;
+
+int L, N;
+Int B, P, F[MAXN];
 Int power[MAXN];
 char opt;
 
-Int modpow(int a, int n) {
+Int modpow(Int a, Int n) {
 	Int ans = 1LL;
     while (n > 0) {
         if (n & 1) {
-            ans = (ans * (Int) a) % P;
+            ans = (((ans * a) % P) + P) % P;
         }
-        a = (a * 1LL * a) % P;
+        a = (((a * a) % P) + P) % P;
         n >>= 1;
     }
-    return (Int) (ans % P);
+    return (ans % P);
 }
 
-Int func(int l, int h) {
-    Int ans = 0LL;
-
-    int k;
-
-    for (k = 0; k <= h - l; k++) {
-        //printf ("%lld * %d\n", modpow(B, k), f[h-k]);
-        ans = (Int) (((ans % P) + ((power[k] * (f[h-k])) % P)) % P);
-    }
-
-    return (Int) (ans % P);
-}
-
-template<typename T = int>
+template<typename T>
 struct FenwickTree {
     int N;
     T *values;
@@ -84,13 +72,16 @@ struct FenwickTree {
     FenwickTree(int N) {
         this->N = N;
         values = new T[N+5];
-
-        for(int i = 1; i <= N; i++) values[i] = 0;
+		
+        for(int i = 1; i <= N; i++) {
+			values[i] = 0LL;
+		}
     }
 
     void increase(int index, T add) {
         while(index <= N) {
             values[index] += add;
+			values[index] = ((values[index] % P) + P) % P;
             index += (index & -index);
         }
     }
@@ -128,35 +119,32 @@ struct FenwickTree {
     }
 };
 
-
 int main(void) {
-    freopen("i.in", "r", stdin);
-        //freopen("o.ot", "w", stdout);
-
-    int i;
-
     power[0] = 1LL;
 
-    for ( ; scanf("%d%d%d%d", &B, &P, &L, &N) == 4 && (B + P + L + N != 0); ) {
-        for (i = 0; i <= L; i++) {
-            f[i] = 0;
-            if (i > 0) power[i] = (power[i - 1] * B) % P;
-        }
+    for ( ; scanf("%lld%lld%d%d", &B, &P, &L, &N) == 4 && (B + P + L + N != 0); ) {
+        FenwickTree<Int> tree(L + 1);
 
-        FenwickTree<Int> fw(L);
+        for (int i = 1; i <= L + 1; i++) {
+            power[i] = (power[i - 1] * B) % P;
+		}
 
-        for (i = 0; i < N; i++) {
-            scanf(" %c%d%d", &opt, &I, &V);
-
+        for (int i = 0; i < N; i++) {
+            scanf(" %c", &opt);
+			
             if (opt == 'E') {
-                fw.update(I, V);
+				int I;
+				Int V;
+				scanf("%d%lld", &I, &V);
+				Int value = (((V * power[L - I]) % P) + P) % P;
+				tree.update(I, value);
             } else {
-                printf("%lld\n", fw.read(I, V));
+				int I, V;
+				scanf("%d%d", &I, &V);
+				Int ans = (tree.read(I, V) * modpow(power[L - V], P - 2));
+				ans = ((ans % P) + P) % P;
+                printf("%lld\n", ans);
             }
-            for (int j = 1; j <= L; j++) {
-                printf("%lld ", fw.read(j, j));
-            }
-            printf("\n");
         }
         printf("-\n");
     }

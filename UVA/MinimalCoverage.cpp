@@ -25,16 +25,8 @@ int N;
 pair<int, int> p[MAXN];
 bool used[MAXN];
 
-bool comp(const pair<int, int> a, const pair<int, int> b) {
-    if (a.first != b.first) return a.first < b.first;
-    return a.second > b.second;
-}
-
 int main(void) {
-    freopen("i.in", "r", stdin);
     T = in();
-
-    int i;
     int A, B;
 
     for ( ; T--; ) {
@@ -45,49 +37,45 @@ int main(void) {
         for ( ; scanf("%d%d", &A, &B) == 2 && (A + B != 0); ) {
             if (B < 0) continue;
             p[N] = make_pair(A, B);
-            used[N] = false;
             N++;
         }
 
-        sort(p, p + N, comp);
-
-        int cnt = 0;
+        sort(p, p + N);
+		
         int l = 0;
         int r = 0;
+		vector<pair<int, int> > ans;
 
-        bool ok = true;
-
-        for (i = 0; i < N && r < M; ) {
-            int pos = i;
-            bool done = false;
-            while (i < N && p[i].first <= l) {
-                if (p[i].second) {
-                    pos = i;
-                    r = p[i].second;
-                }
-                i++;
-                done = true;
-            }
-            //printf("%d %d\n", p[pos].first, p[pos].second);
-            if (!done) {
-                ok = false;
-                break;
-            }
-            cnt += 1;
-            used[pos] = 1;
+        for (int i = 0; i < N; i++) {
+			if (r >= M) break;
+			if (p[i].first <= l) {
+				int pos = i;
+				
+				r = p[i].second;
+				
+				while (i < N && p[i].first <= l) {
+					if (p[i].second > r) {
+						pos = i;
+						r = p[i].second;
+					}
+					i++;					
+				}
+				ans.push_back(p[pos]);
+				l = r;
+				i--;
+			}
         }
 
-        if (!ok) {
-            puts("0");
-        } else {
-            printf("%d\n", cnt);
+		if (r < M) ans.clear();
 
-            for (i = 0; i < N; i++) if (used[i]) {
-                printf("%d %d\n", p[i].first, p[i].second);
-            }
-        }
+		printf("%d\n", (int) ans.size());
+
+		for (int i = 0; i < (int) ans.size(); i++) {
+			printf("%d %d\n", ans[i].first, ans[i].second);
+		}
+		
         printf("\n");
-    }
+	}
 
     return 0;
 }

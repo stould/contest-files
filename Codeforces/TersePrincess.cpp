@@ -43,15 +43,43 @@ typedef long double ld;
 
 const double EPS = 1e-9;
 
-int i, n, a, b, v[110] = {0};
+int N, A, B, V[110];
 
 int main(void) {
-    scanf("%d%d%d", &n, &a, &b);
-    v[0] = 1;
-    all = 1;
-    for(i = 1; i < n && a > 0; i++, a--) { v[i] = v[i - 1] + 1; all += v[i]; }
-    for(; i < n; i < n && b > 0; i++, b--) { v[i] = all + 1; all *= 2; }
-    for(i = 0; i < n; i++) if(v[i] == 0) v[i] = n - i;
-    REP(i, )
+    scanf("%d%d%d", &N, &A, &B);
+
+	int i = 1;
+	int sum = 2;
+
+    V[0] = 2;
+
+	if (B == 0) {		
+		V[1] = 2;
+		sum += V[1];
+		i++;		
+	}
+	
+	for ( ; i < N; i++) {
+		if (B > 0) {
+			V[i] = sum + 1;
+			B -= 1;
+			sum += V[i];
+		} else {
+			if (A > 0) {
+				V[i] = V[i - 1] + 2;			
+				A -= 1;
+			} else {
+				V[i] = 1;
+			}
+		}
+	}
+	if (A > 0 || B > 0) {
+		cout << "-1\n";
+	} else {
+		for (i = 0; i < N; i++) {
+			cout << V[i] << " ";
+		}
+		cout << "\n";
+	}
     return 0;
 }

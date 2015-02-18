@@ -49,21 +49,33 @@ typedef unsigned uint;
 double N;
 
 int main(void) {
-    cin >> N;
-
-    cout << "R$ ";
-
     cout << fixed << setprecision(2);
 
-    if (N <= 2000.0) {
-        cout << 0.0 << "\n";
-    } else if (N > 2000.0 && N <= 3000.0) {
-        cout << N * 0.08 << "\n";
-    } else if (N > 3000.0 && N <= 4500.0) {
-        cout << N * 0.18 << "\n";
-    } else {
-        cout << N * 0.28 << "\n";
-    }
+	for ( ; cin >> N; ) {
+		if (N <= 2000.00) {
+			cout << "Isento" << "\n";
+		} else {
+			double ans = 0.0;
 
+			double a = 0.0;
+			double b = 0.0;
+			double c = 0.0;
+
+
+			a = min(1000.0, N - 2000.0);
+			b = min(1500.0, N - 3000.0);
+			c = max(0.0, N - 4500.0);
+
+			a = max(a, 0.0);
+			b = max(b, 0.0);
+			
+			ans += a * 0.08;
+			ans += b * 0.18;
+			ans += c * 0.28;
+
+			cout << "R$ " << ans << "\n";
+		}
+	}
+	
     return 0;
 }

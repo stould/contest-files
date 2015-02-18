@@ -46,60 +46,92 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 17;
+const int MAXN = 15;
 
 int T, N;
 int X[MAXN], Y[MAXN], Z[MAXN];
+int a[2];
+int dp[(1 << 15)][15][3];
 
-//0 = X, Y; 1 = X, Z; 2 = Y, Z
-int dp[MAXN][MAXN][5];
+pair<int, int> block(int id, int pos) {
+	if (pos == 0) {
+		a[0] = X[id];
+		a[1] = Y[id];
+	} else if (pos == 1) {
+		a[0] = X[id];
+		a[1] = Z[id];
+	} else {
+		a[0] = Y[id];
+		a[1] = Z[id];
+	}
+	
+	return make_pair(a[0], a[1]);
+}
 
-int rec(int index, int last, int kind) {
-    if (index == N) return 0;
+int getHeight(int id, int pos) {
+	if (pos == 0) {
+		return Z[id];
+	} else if (pos == 1) {
+		return Y[id];	
+	} else {
+		return X[id];	
+	}
+}
 
-    int& ret = dp[index][last][kind];
+bool fit(int aid, int apos, int bid, int bpos) {
+	pair<int, int> getA = block(aid, apos);
+	pair<int, int> getB = block(bid, bpos);
 
-    if (ret != -1) return ret;
+	int la = getA.first;
+	int ra = getA.second;
+	
+	int lb = getB.first;
+	int rb = getB.second;
 
-    ret = rec(index + 1, last, kind);
+	return ((la >= lb && ra >= rb) || (la >= rb && ra >= lb));
+}
 
-    if (kind == -1) {
-        chmmax(ret, Z[index] + rec(index + 1, index, 0));
-        chmmax(ret, Y[index] + rec(index + 1, index, 1));
-        chmmax(ret, X[index] + rec(index + 1, index, 2));
-    } else {
-        if (kind == 0) {
-            if ((X[index] <= X[last] && Y[index] <= Y[last]) || (X[index] <= X[last] && Y[index] <= Y[last])) {
-                chmmax(ret, Z[index] + rec(index + 1, index, 0));
-            }
-            if (X[index] <= X[last] && Y[index] <= Y[last]) {
-                chmmax(ret, Z[index] + rec(index + 1, index, 0));
-            }
-        } else if (kind == 1) {
+int func(int mask, int id, int pos) {
+	int& ans = dp[mask][id][pos];
 
-        } else {
-
-        }
-    }
-
-    return ret;
+	if (ans == -1) {
+		ans = 0;
+		
+		for (int i = 0; i < N; i++) {
+			if (!(mask & (1 << i))) {
+				for (int j = 0; j < 3; j++) {
+					if (fit(id, pos, i, j)) {
+						chmax(ans, getHeight(i, j) + func(mask | (1 << i), i, j));
+					}
+				}
+			}
+		}
+	}		
+	
+	return ans;
 }
 
 int main(void) {
-    T = in();
+    scanf("%d", &T);
 
-    int i;
+	for ( ; T--; ) {
+        scanf("%d", &N);
 
-    for ( ; T--; ) {
-        N = in();
-
-        for (i = 0; i < N; i++) {
-            X[i] = in();
-            Y[i] = in();
-            Z[i] = in();
+        for (int i = 0; i < N; i++) {
+            scanf("%d%d%d", &X[i], &Y[i], &Z[i]);
         }
+		
+		memset(dp, -1, sizeof(dp));
 
-        printf("%d\n", rec(0, -1, -1));
+		int ans = 0;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < 3; j++) {
+				chmax(ans, func((1 << i), i, j) + getHeight(i, j));
+			}
+		}
+
+        printf("%d\n", ans);
     }
     return 0;
 }

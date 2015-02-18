@@ -49,80 +49,97 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 211;
-const int INF = 1000000000;
+const int MAXN = 611;
+const int INF = 10000;
 
 int X, N, P, V, T = 1;
 
-int c[MAXN][MAXN], f[MAXN][MAXN], s, t, d[MAXN], ptr[MAXN], q[MAXN];
 
-void add_edge (int a, int b, int f) {
-    c[a][b] = f;
+struct edge {
+    int to,rev;
+    Int cap;
+    edge(int to, Int cap, int rev): to(to), cap(cap), rev(rev) {}
+};
+
+vector<edge> G[MAXN];
+Int level[MAXN];
+int iter[MAXN];
+
+void init(int N) {
+    for (int i = 0; i < N; i++) {
+        G[i].clear();
+    }
 }
 
-bool bfs() {
-	int qh=0, qt=0;
-	q[qt++] = s;
-	memset (d, -1, MAXN * sizeof d[0]);
-	d[s] = 0;
-	while (qh < qt) {
-		int v = q[qh++];
-		for (int to=0; to<MAXN; ++to)
-			if (d[to] == -1 && f[v][to] < c[v][to]) {
-				q[qt++] = to;
-				d[to] = d[v] + 1;
-			}
-	}
-	return d[t] != -1;
+void add_edge(int from,int to,Int cap) {
+    G[from].push_back(edge(to, cap, G[to].size()));
+    G[to].push_back(edge(from, 0, G[from].size()-1));
 }
 
-int dfs (int v, int flow) {
-	if (!flow)  return 0;
-	if (v == t)  return flow;
-	for (int & to=ptr[v]; to<MAXN; ++to) {
-		if (d[to] != d[v] + 1)  continue;
-		int pushed = dfs (to, min (flow, c[v][to] - f[v][to]));
-		if (pushed) {
-			f[v][to] += pushed;
-			f[to][v] -= pushed;
-			return pushed;
-		}
-	}
-	return 0;
+void bfs(int s) {
+    memset(level, -1, sizeof(level));
+    queue<int> que;
+    level[s] = 0;
+    que.push(s);
+
+    while(!que.empty()) {
+        int v = que.front();
+        que.pop();
+        for (int i = 0; i < G[v].size(); i++) {
+            edge& e = G[v][i];
+            if(e.cap > 0 && level[e.to] < 0) {
+                level[e.to] = level[v] + 1;
+                que.push(e.to);
+            }
+        }
+    }
 }
 
-int dinic() {
-	int flow = 0;
-	for (;;) {
-		if (!bfs())  break;
-		memset (ptr, 0, MAXN * sizeof ptr[0]);
-		while (int pushed = dfs (s, INF)) {
-			flow += pushed;
-		}
-	}
-	return flow;
+Int dfs(int v, int t, Int f) {
+    if(v == t) return f;
+    for(int& i = iter[v]; i < (int) G[v].size(); i++) {
+        edge &e = G[v][i];
+        if(e.cap > 0 && level[v] < level[e.to]) {
+            Int d = dfs(e.to, t, min(f, e.cap));
+            if (d > 0) {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+int max_flow(int s, int t) {
+    Int flow = 0;
+    for ( ; ; ) {
+        bfs(s);
+        if (level[t] < 0) {
+            return flow;
+        }
+        memset(iter, 0, sizeof(iter));
+        int f;
+        while ((f=dfs(s,t,INF*INF)) > 0) {
+            flow += f;
+        }
+    }
 }
 
 int main(void) {
-    //freopen("i.in", "r", stdin);
-    //freopen("o.ot", "w", stdout);
     scanf("%d", &X);
 
     int i, j;
 
     for ( ; X--; ) {
-        for (i = 0; i < MAXN; i++) {
-            d[i] = ptr[i] = q[i] = 0;
-            for (j = 0; j < MAXN; j++) {
-                c[i][j] = f[i][j] = 0;
-            }
-        }
         scanf("%d", &N);
 
-        s = 0, t = 2*N+1;
+		init(N + N + 2);
+
+        int s = 0, t = 2*N+1;
 
         for (i = 1; i <= N; i++) {
-            add_edge(s, i, INF);
+            add_edge(s, i, 1);
             add_edge(i+N, t, 1);
         }
 
@@ -134,7 +151,7 @@ int main(void) {
             }
         }
 
-        int f = dinic();
+        int f = max_flow(s, t);
 
         printf("Instance %d\n", T++);
 

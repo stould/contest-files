@@ -7,25 +7,30 @@
 
 using namespace std;
 
-char ok[100005];
+string S;
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    scanf("%s", ok);
+	cin >> S;
+	int N = (int) S.size();
     string ans = "";
-    int j, last = 0;
-    for(char c = 'z'; c >= 'a'; c--) {
-        int id = -1;
-        for(j = last; j < strlen(ok); j++) {
-            if(ok[j] == c) {
-                ans += c;
-                id = j;
-            }
-        }
-        if(id != -1) {
-            last = id;
-        }
+
+    for (char c = 'z'; c >= 'a'; c--) {
+		if (S.find(c) != string::npos) {
+			int id = 0;
+
+			for (char b = c; b >= 'a'; b--) {
+				for (int i = id; i < N; i++) {
+					if (S[i] == b) {
+						ans += b;
+						id = i;
+					}
+				}
+			}					
+			break;
+		}
     }
+
     cout << ans << endl;
+
     return 0;
 }

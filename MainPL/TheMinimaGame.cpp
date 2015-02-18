@@ -1,4 +1,25 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <list>
+#include <queue>
+#include <stack>
+#include <memory>
+#include <iomanip>
+#include <numeric>
+#include <functional>
+#include <new>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <climits>
+#include <cctype>
+#include <ctime>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -17,28 +38,29 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 10000007;
-
+const int MAXN = 1000007;
 int N;
+
 int X[MAXN];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    cin >> N;
+	N = in();
 
-    for (int i = 0; i < N; i++) {
-        cin >> X[i];
+	int i;
+
+	for (i = 0; i < N; i++) {
+		X[i] = in();
+	}
+
+	sort(X, X + N);
+
+	int best = 0;
+
+	for (int i = 0; i < N; i++) {
+        best = max(best, X[i] - best);
     }
 
-    sort(X, X + N);
-
-    int best = X[0];
-
-    for (int i = 1; i < N; i++) {
-        chmax(best, X[i] - X[0]);
-    }
-
-    cout << best << "\n";
+	printf("%d\n", best);
 
     return 0;
 }

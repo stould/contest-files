@@ -46,7 +46,7 @@ typedef long long ll;
 typedef long double ld;
 
 const int INF = 1000101010;
-int N, G[15], P[15], dp[107];
+int N, G[15], P[15], dp[1007];
 
 int bfs(int x) {
     queue<int> q; q.push(x);
@@ -85,8 +85,6 @@ int bfs(int x) {
 }
 
 int main(void) {
-    freopen("dragao.in", "r", stdin);
-    freopen("o.out", "w", stdout);
     int i;
 
     for ( ; scanf("%d", &N) == 1 && N != 0; ) {
@@ -94,7 +92,6 @@ int main(void) {
         for (i = 0; i < N; i++) scanf("%d", &P[i]);
 
         int ans = bfs(100);
-
         if (ans == INF) {
             printf("cavaleiro morreu\n");
         } else {

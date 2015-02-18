@@ -23,22 +23,30 @@ int T, Z;
 int N, M;
 
 int arr[MAXN][MAXN];
-int vis[MAXN][MAXN];
+bool vis[MAXN][MAXN];
 
 int dx[4] = {0, 0, -1, 1};
 int dy[4] = {1, -1, 0, 0};
 
-void dfs(int x, int y, int curr) {
-	vis[x][y] = 1;
+void bfs(int x, int y, int curr) {
+	vis[x][y] = true;
+	queue<pair<int, int> > q;
+	q.push(make_pair(x, y));
 
-	int k;
-
-	for (k = 0; k < 4; k++) {
-		int xx = x + dx[k];
-		int yy = y + dy[k];
-
-		if (xx >= 0 && yy >= 0 && xx < N && yy < M && !vis[xx][yy] && arr[xx][yy] > curr) {
-			dfs(xx, yy, curr);
+	for ( ; !q.empty(); ) {
+		int px = q.front().first;
+		int py = q.front().second;
+		q.pop();
+		int k;
+		
+		for (k = 0; k < 4; k++) {
+			int xx = px + dx[k];
+			int yy = py + dy[k];
+			
+			if (xx >= 0 && yy >= 0 && xx < N && yy < M && !vis[xx][yy] && arr[xx][yy] > curr) {
+				vis[xx][yy] = true;
+				q.push(make_pair(xx, yy));
+			}
 		}
 	}
 }
@@ -46,33 +54,32 @@ void dfs(int x, int y, int curr) {
 int main(void) {
 	Z = in();
 
-	int i, j, x;
 	int curr;
 
 	for ( ; Z--; ) {
 		N = in();
 		M = in();
 
-		for (i = 0; i < N; i++) {
-			for (j = 0; j < M; j++) {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
 				arr[i][j] = in();
 			}
 		}
 
 		T = in();
 
-		for (x = 0; x < T; x++) {
+		for (int x = 0; x < T; x++) {
 			int ans = 0;
 
 			curr = in();
 
-			memset(vis, 0, sizeof(vis));
+			memset(vis, false, sizeof(vis));
 
-			for (i = 0; i < N; i++) {
-				for (j = 0; j < M; j++) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < M; j++) {
 					if (arr[i][j] > curr && !vis[i][j]) {
 						ans += 1;
-						dfs(i, j, curr);
+						bfs(i, j, curr);
 					}
 				}
 			}

@@ -1,42 +1,47 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 using namespace std;
+  
+char numero[1000000], numero2[10000000];
+  
+int busca (char x, char *v, int inicio, int fim) {
+    int meio;
+  
+    while (inicio <= fim) {
+        meio = (inicio+fim)/2;
+        if (v[meio] < x) fim = meio-1;
+        else inicio = meio+1;
+    }
+    return inicio;
+}
+  
+int main (int argc, char **argv) {
+    int n, d, nfinal;
+    int i, j, k, p;
+  
+    scanf ("%d%d", &n, &d);
+    while (n > 0 || d > 0) {
+        scanf("%s", numero);
+		memset(numero2, '\0', sizeof(numero2));
+        nfinal = n-d;
+        numero2[0] = numero[0];
+        j = 0;
+        for (i = 1; i < n; i++) {
+            if (i <= d) p = busca (numero[i], numero2, 0, j);
+            else p = busca (numero[i], numero2, i-d, j);
 
-int d, v;
-char str[1000000000];
-vector<int> n;
-
-int main(void) {
-    freopen("i.in", "r", stdin);
-    freopen("i.out", "w", stdout);
-    while(scanf("%d%d", &d, &v) && !(d == 0 && v == 0)) {
-        n.clear();
-        scanf("%s", str);
-        for(int i = 0; i < d; i++) {
-            n.push_back(str[i] - '0');
-        }
-        while(v > 0 && n.size() > 0) {
-            int less = 11, index = -1;
-            for(int i = 0; i < n.size(); i++) {
-                if(n[i] < less) {
-                    less = n[i];
-                    index = i;
-                }
+            if (p < nfinal) {
+                numero2[p] = numero[i];
+			cout << i << " " << p << " " << numero[i] << " " << numero2 << "\n";
+                j = p;
             }
-            n.erase(n.begin() + index);
-            v -= 1;
         }
-        if(n.size() == 0) {
-            printf("0\n");
-        } else {
-            for(int i = 0; i < n.size(); i++) {
-                printf("%d",n[i]);
-            }
-            printf("\n");
-        }
+        numero2[nfinal] = '\0';
+        printf ("%s\n", numero2);
+        scanf ("%d%d", &n, &d);
     }
     return 0;
 }

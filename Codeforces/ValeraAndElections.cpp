@@ -24,31 +24,21 @@ int N;
 vector<pair<int, int> > graph[MAXN];
 vector<int> ans;
 
-int vis[MAXN];
-int parent[MAXN];
+int fix[MAXN];
 int mark[MAXN];
 
-vector<int> leaf;
-
-void dfs(int x, int p, int kind) {
-	vis[x] = 1;
-
+void dfs(int x, int p) {
 	int i;
+
+	mark[x] = fix[x];
 
 	for (i = 0; i < (int) graph[x].size(); i++) {
 		int u = graph[x][i].first;
 		int t = graph[x][i].second;
 
-		if (!vis[u]) {
-			mark[u] = mark[x];
-
-			if (t == 2) mark[u] += 1;
-
-			if (kind == 2) {
-				dfs(u, x, 2);
-			} else {
-				dfs(u, x, kind);
-			}
+		if (u != p) {
+			dfs(u, x);
+			mark[x] += mark[u];
 		}
 	}
 }
@@ -60,26 +50,26 @@ int main(void) {
 
 	int i;
 
+	memset(fix, 0, sizeof(fix));
+
 	for (i = 0; i < N - 1; i++) {
 		A = in();
 		B = in();
 		C = in();
 
-		graph[A].push_back(make_pair(B, C));
-		graph[B].push_back(make_pair(A, C));
+		graph[A].push_back(make_pair(B, C));		
+		graph[B].push_back(make_pair(A, C));		
+
+		if (C == 2) {
+			fix[A] = fix[B] = 1;
+		}
 	}
 
-	for (i = 1; i <= N; i++) if (graph[i].size() == 1) leaf.push_back(i);
+	dfs(1, -1);
 
-	for (i = 0; i <= N; i++) {
-		vis[i] = mark[i] = 0;		
-	}
-
-	dfs(1, -1, 0);
-
-	for (i = 0; i < (int) leaf.size(); i++) {
-		if (mark[leaf[i]] > 0) {
-			ans.push_back(leaf[i]);
+	for (i = 1; i <= N; i++) {
+		if (mark[i] == 1 && fix[i] == 1) {
+			ans.push_back(i);
 		}
 	}
 
@@ -88,6 +78,8 @@ int main(void) {
 	for (i = 0; i < (int) ans.size(); i++) {
 		printf("%d ", ans[i]);
 	}
+
+	printf("\n");
 
     return 0;
 }
