@@ -19,7 +19,7 @@ typedef unsigned uint;
 
 int T, N;
 char str[20][20];
-int x[20];
+int fat[20];
 
 int main(void) {
     freopen("i.in", "r", stdin);
@@ -28,26 +28,33 @@ int main(void) {
     int i;
     int j;
 
+    fat[1] = 1;
+
+    for (int i = 2; i < 20; i++) {
+        fat[i] = i * fat[i - 1];
+    }
+
     for ( ; T--; ) {
         N = in();
 
-        for (i = 0; i < 2 * N; i++) {
-            x[i] = i;
-            scanf("%s", str[i]);
-        }
         int ans = 0;
 
-        do {
-            bool ok = true;
-            for (i = 0; i < 2 * N && ok; i++) {
-                for (j = 0; j < i && ok; j++) {
-                    if (str[i][j] == 'Y') ok = false;
+        for (i = 0; i < 2 * N; i++) {
+            scanf("%s", str[i]);
+        }
+
+        set<int> f;
+
+        for (int i = 0; i < 2 * N; i++) {
+            for (int j = i + 1; j < 2 * N; j++) {
+                if (str[i][j] == 'Y') {
+                   f.insert(i);
+                   f.insert(j);
                 }
             }
-            if (ok) ans += 1;
-        } while (next_permutation(x, x + (2 * N)));
+        }
 
-        printf("%d\n", ans);
+        printf("\n%d\n", f.size());
     }
 
     return 0;
