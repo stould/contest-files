@@ -51,18 +51,19 @@ int main(void) {
 	Int G = L[N] / 3LL;
 	Int ans = 0;
 
-	for (int i = N; i >= 1; i--) {
-		R[i] = R[i + 1] + P[i];
-		
-		if (L[i] == G) {
-			add(i, 1);
+	if (L[N] % 3 == 0) {
+		for (int i = N; i >= 1; i--) {
+			R[i] = R[i + 1] + P[i];
+			
+			if (L[i] == G) {
+				add(i, 1);
+			}
 		}
-	}
-	
-	for (int i = N; i >= 1; i--) {
-		if (R[i] == G) {
-			cout << i << " " << i - 2 << "\n";
+		
+		for (int i = N; i >= 1; i--) {
+			if (R[i] == G) {
 			ans += sum(i - 2);
+			}
 		}
 	}
 	
