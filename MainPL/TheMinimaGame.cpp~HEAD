@@ -17,31 +17,28 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int INF = 100101010010100000LL;
+const int MAXN = 10000007;
 
-Int N, A, B;
+int N;
+int X[MAXN];
 
 int main(void) {
-	cin >> N >> A >> B;
+    freopen("i.in", "r", stdin);
+    cin >> N;
 
-	Int S = 6LL * N;
-	Int ans = INF;
-	
-	Int ansA = -1;
-	Int ansB = -1;
+    for (int i = 0; i < N; i++) {
+        cin >> X[i];
+    }
 
-	for (Int i = 1; i <= 100000000; i++) {
-		Int sa = max(A, (Int) i);
-		Int sb = max(B, (Int) (S / i));
-		
-		if (sa * sb >= S && sa * sb < ans) {
-			ans = sa * sb;
-			ansA = sa;
-			ansB = sb;		
-		}
-	}
+    sort(X, X + N);
 
-	cout << ans << "\n" << ansA << " " << ansB << "\n";
+    int best = X[0];
+
+    for (int i = 1; i < N; i++) {
+        chmax(best, X[i] - X[0]);
+    }
+
+    cout << best << "\n";
 
     return 0;
 }

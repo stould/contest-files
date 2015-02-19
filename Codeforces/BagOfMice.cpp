@@ -17,31 +17,34 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int INF = 100101010010100000LL;
+const int MAXN = 1010;
 
-Int N, A, B;
+int W, B;
+
+double dp[MAXN][MAXN][2];
+bool mm[MAXN][MAXN][2];
+
+double func(int w, int b, int pos) {
+    if (w == 0) {
+        return 0.0;
+    } else {
+        double& ans = dp[w][b][pos];
+
+        if (!mm[w][b][pos]) {
+            mm[w][b][pos] = 1;
+
+            if (pos == 0) {
+
+            }
+        }
+    }
+}
 
 int main(void) {
-	cin >> N >> A >> B;
+    W = in();
+    B = in();
 
-	Int S = 6LL * N;
-	Int ans = INF;
-	
-	Int ansA = -1;
-	Int ansB = -1;
-
-	for (Int i = 1; i <= 100000000; i++) {
-		Int sa = max(A, (Int) i);
-		Int sb = max(B, (Int) (S / i));
-		
-		if (sa * sb >= S && sa * sb < ans) {
-			ans = sa * sb;
-			ansA = sa;
-			ansB = sb;		
-		}
-	}
-
-	cout << ans << "\n" << ansA << " " << ansB << "\n";
+    memset(mm, false, sizeof(mm));
 
     return 0;
 }
