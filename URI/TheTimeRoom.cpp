@@ -17,31 +17,36 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int INF = 100101010010100000LL;
-
-Int N, A, B;
+int T;
+Int X, Y;
 
 int main(void) {
-	cin >> N >> A >> B;
+	cin >> T;
 
-	Int S = 6LL * N;
-	Int ans = INF;
-	
-	Int ansA = -1;
-	Int ansB = -1;
+	for ( ; T--; ) {
+		cin >> X >> Y;
 
-	for (Int i = 1; i <= 100000000; i++) {
-		Int sa = max(A, (Int) i);
-		Int sb = max(B, (Int) (S / i));
+		Int ans = -1;
 		
-		if (sa * sb >= S && sa * sb < ans) {
-			ans = sa * sb;
-			ansA = sa;
-			ansB = sb;		
+		if (Y >= X) {
+			ans = 2;
+		} else {
+			Int l = 1, h = 100000000000000LL, m;
+
+			for ( ; l <= h; ) {
+				m = (l + h) / 2;
+
+				Int ac = Y * m;
+
+				if (ac >= X) {
+					h = m - 1;
+				} else {
+					l = m + 1;
+				}
+			}
+			ans = l;
 		}
+		cout << ans << endl;		
 	}
-
-	cout << ans << "\n" << ansA << " " << ansB << "\n";
-
     return 0;
 }
