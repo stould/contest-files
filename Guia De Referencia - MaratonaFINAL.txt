@@ -3064,233 +3064,42 @@ int sum(int[][] t, int r1, int c1, int r2, int c2) {
 }
 //*******************************************************
 //Simple Segment Tree
-const int MAXN = 4;
-const int INF = 10000010;
-
-int a[10];
-
-template<typename T>
 struct SegmentTree {
-    int N;
-    T tree[3*MAXN];
+	int N;
+	int tree[MAXN];
+	int lazy[MAXN];
 
-    SegmentTree(int _N) {
-        N = _N;
-        for(int i = 0; i < 3*MAXN; i++) tree[i] = 0;
-    }
+	SegmentTree(int N, int base[MAXN]): N(N) {
+		build(1, 0, N - 1, base);
+	}	
 
-    void build(T a[], int v, int tl, int tr) {
-        if (tl == tr) {
-            tree[v] = a[tl];
-        } else {
-            int mid = (tl + tr) / 2;
-            build(a, v*2, tl, mid);
-            build(a, v*2+1, mid+1, tr);
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
+	void build(int node, int l, int r, int base[MAXN]) {
+		if (l == r) {
+			tree[node] = base[l];
+		} else {
+			int m = (l + r) / 2;
 
-    void build(T a[]) {
-        build(a, 1, 0, N);
-    }
+			build(2 * node, l, m, base);
+			build(2 * node + 1, m + 1, r, base);
 
-    T sum(int v, int tl, int tr, int l, int r) {
-        if (l > r) {
-            return 0;
-        }
-        if(l == tl && r == tr) {
-            return tree[v];
-        }
-        int mid = (tl + tr) / 2;
-        return sum(v*2, tl, mid, l, min(r,mid)) + sum(v*2+1, mid+1, tr, max(l,mid+1), r);
-    }
-
-    T sum(int l, int r) {
-        return sum(1, 0, N, l, r);
-    }
-
-    //Only works if you change the routine of build and update the tree
-    T prod(int v, int tl, int tr, int l, int r) {
-        if(l > r) {
-            return 1;
-        }
-        if(l == tl && r == tr) {
-            return tree[v];
-        }
-        int mid = (tl + tr) / 2;
-        return prod(v*2, tl, mid, l, min(r,mid)) * prod(v*2+1, mid+1, tr, max(l,mid+1), r);
-    }
-
-    T prod(int l, int r) {
-        return prod(1, 0, N, l, r);
-    }
-
-    void update_change(int v, int tl, int tr, int pos, T new_val) {
-        if (tl == tr) {
-            tree[v] = new_val;
-        } else {
-            int mid = (tl + tr) >> 1;
-            if(pos <= mid) {
-                update_change(v*2, tl, mid, pos, new_val);
-            } else {
-                update_change(v*2+1, mid+1, tr, pos, new_val);
-            }
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
-
-    void update_change(int pos, T new_val) {
-        update_change(1, 0, N, pos, new_val);
-    }
-
-    void update_add_single(int v, int tl, int tr, int pos, T add) {
-        if (tl == tr) {
-            tree[v] += add;
-        } else {
-            int mid = (tl + tr) >> 1;
-            if(pos <= mid) {
-                update_add_single(v*2, tl, mid, pos, add);
-            } else {
-                update_add_single(v*2+1, mid+1, tr, pos, add);
-            }
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
-
-    void update_add_single(int pos, T add) {
-        update_add_single(1, 0, N, pos, add);
-    }
-
-    void update_add_range_helper(int v, int tl, int tr, int l, int r, T add) {
-        if(l > r) {
-            return;
-        }
-        if(l == tl && tr == r) {
-            tree[v] += add;
-        } else {
-            int mid = (tl + tr) >> 1;
-            update_add_range_helper(v*2, tl, mid, l, min(r,mid), add);
-            update_add_range_helper(v*2+1, mid+1, tr, max(l,mid+1), r, add);
-            tree[v] = tree[v*2] + tree[v*2 + 1];
-        }
-    }
-
-    void update_add_range(int v, int tl, int tr, int l, int r, int add) {
-        if(tl == l && tr == r) {
-            update_add_range_helper(v, tl, tr, l + 1, r - 1, add);
-            update_add_single(v, tl, tr, l, add);
-        } else {
-            update_add_range_helper(v, tl, tr, l, r, add);
-        }
-    }
-
-    void update_add_range(int l, int r, T add) {
-        update_add_range(1, 0, N, l, r, add);
-    }
-
-};//*******************************************************
-//Segment Tree which find max and min value of an interval [l, r)
-#define MAXN 1000
-#define INF 10000000
-
-
-int a[4*MAXN];
-pair<int,int> t[4*MAXN];
-
-pair<int,int> combine (pair<int,int> a, pair<int,int> b) {
-	if (a.first > b.first)
-		return a;
-	if (b.first > a.first)
-		return b;
-	return make_pair (a.first, a.second + b.second);
-}
-
-pair<int,int> combine2(pair<int,int> a, pair<int,int> b) {
-	if (a.first < b.first)
-		return a;
-	if (b.first < a.first)
-		return b;
-	return make_pair(a.first, a.second + b.second);
-}
-
-void build (int a[], int v, int tl, int tr) {
-	if (tl == tr)
-		t[v] = make_pair (a[tl], 1);
-	else {
-		int tm = (tl + tr) / 2;
-		build (a, v*2, tl, tm);
-		build (a, v*2+1, tm+1, tr);
-		t[v] = combine (t[v*2], t[v*2+1]);
+			tree[node] = min(tree[2 * node], tree[2 * node + 1]);
+		}
 	}
-}
 
-pair<int,int> get_max (int v, int tl, int tr, int l, int r) {
-	if (l > r)
-		return make_pair (-INF, 0);
-	if (l == tl && r == tr)
-		return t[v];
-	int tm = (tl + tr) / 2;
-	return combine (
-		get_max (v*2, tl, tm, l, min(r,tm)),
-		get_max (v*2+1, tm+1, tr, max(l,tm+1), r)
-	);
-}
+	int query(int node, int l, int r, int bl, int br) {
+		if (l > r || l > br || r < bl) {
+			return INT_MAX;
+		} else if (l >= bl && r <= br) {
+			return tree[node];
+		} else {
+			int m = (l + r) / 2;
+			
+			int a = query(2 * node, l, m, bl, br);
+			int b = query(2 * node + 1, m + 1, r, bl, br);
 
-void update (int v, int tl, int tr, int pos, int new_val) {
-	if (tl == tr)
-		t[v] = make_pair (new_val, 1);
-	else {
-		int tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update (v*2, tl, tm, pos, new_val);
-		else
-			update (v*2+1, tm+1, tr, pos, new_val);
-		t[v] = combine (t[v*2], t[v*2+1]);
+			return min(a, b);
+		}
 	}
-}
-
-//*******************************************************
-//RMQ - Segment Tree
-const int MAXN = 20000;
-const int INF = 10000000;
-
-//0-Based Range Minimum Query Segment Tree
-template<typename T>
-struct SegmentTreeRMQ {
-    pair<T, T> t[MAXN*4];
-    void build(T a[], int v, int tl, int tr) {
-        if (tl == tr) t[v].first = a[tl];
-        else {
-            int tm = (tl + tr) >> 1;
-            build (a, 2*v,tl,tm);
-            build (a, 2*v+1,tm+1,tr);
-            t[v].first = min (t[2*v].first,t[2*v+1].first);
-        }
-    }
-
-    void update(int v, int tl, int tr, int l, int r, T value) {
-        if (l > r) return;
-        if (tl == l && r == tr) {
-            t[v].second += value;
-        } else {
-            int tm = (tl + tr) >> 1;
-            update (2*v,tl,tm,l,min(tm,r),value);
-            update (2*v+1,tm+1,tr,max(tm+1,l),r,value);
-            t[v].first = min (t[2*v].first + t[2*v].second,t[2*v+1].first + t[2*v+1].second);
-        }
-    }
-    T rmq (int v, int tl, int tr, int l, int r) {
-        if (l > r) {
-            return INF;
-        }
-        if (tl == l && tr == r) {
-            return t[v].first + t[v].second;
-        } else {
-            int tm = (tl + tr) >> 1;
-            t[v].first = min (t[2*v].first + t[2*v].second,t[2*v+1].first + t[2*v+1].second);
-            return min(rmq(2*v,tl,tm,l,min(tm,r)),rmq(2*v+1,tm+1,tr,max(l,tm+1),r))+t[v].second;
-        }
-    }
 };
 //*******************************************************
 // Segment Tree 2D
