@@ -19,22 +19,23 @@ typedef unsigned uint;
 
 Int MOD = 1000007LL;
 int N, T;
-
+Int dp[1000001];
 int main(void) {
 	cin >> T;
+
+	dp[1] = 3;
+	
+	for (int i = 2; i <= 1000000; i++) {
+		dp[i] = dp[i - 1] + i - 1;
+		dp[i] += i * 2;
+		dp[i] %= MOD;
+	}
 
 	for ( ; T--; ) {
 		cin >> N;
 
-		Int ans = 0LL;
-
-		for (int i = 0; i < N; i++) {
-			ans += (i + 1) * 3LL;
-			ans %= MOD;
-		}
-		ans -= N;
-		ans = (ans + MOD) % MOD;
-
+		Int ans = (dp[N] - 1 + MOD) % MOD;
+		
 		cout << ans << "\n";
 	}
     return 0;
