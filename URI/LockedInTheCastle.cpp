@@ -46,54 +46,55 @@ int main(void) {
 			key[A].push_back(i);
 		}
 
-		queue<int> q;
-		q.push(1);
-		
-		vis[1] = true;
+		set<int> keyring, seen;
 
-		int v = 0;
-		set<int> keyring;
-
-		//key collect
-		for ( ; !q.empty(); ) {
-			int now = q.front();
-			q.pop();
-
-			for (int i = 0; i < (int) key[now].size(); i++) {
-				keyring.insert(key[now][i]);
-			}
-			
-			for (int i = 0; i < (int) graph[now].size(); i++) {
-				int next = graph[now][i];
-
-				if (!vis[next] && keyring.count(next)) {
-					q.push(next);
-					vis[next] = true;
-				}
-			}
+		for (int i = 0; i < key[1].size(); i++) {
+			keyring.insert(key[1][i]);
 		}
-
-		memset(vis, false, sizeof(vis));
-		q.push(1);
 		
-		for ( ; !q.empty(); ) {
-			int now = q.front();
-			q.pop();
-			
+		for ( ; ; ) {
+			queue<int> q;
+			vector<int> nokey;
+			q.push(1);
 
-			v += 1;
-			
-			for (int i = 0; i < (int) graph[now].size(); i++) {
-				int next = graph[now][i];
+			memset(vis, false, sizeof(vis));			
+			vis[1] = true;
 
-				if (!vis[next] && keyring.count(next)) {
-					q.push(next);
-					vis[next] = true;
+			for ( ; !q.empty(); ) {
+				int now = q.front();
+				q.pop();
+				
+				seen.insert(now);
+				
+				for (int i = 0; i < (int) graph[now].size(); i++) {
+					int next = graph[now][i];
+					
+					if (!vis[next]) {
+						if (keyring.count(next)) {
+							q.push(next);
+							vis[next] = true;
+
+							for (int j = 0; j < key[next].size(); j++) {
+								keyring.insert(key[next][j]);
+							}
+						} else {
+							nokey.push_back(next);
+						}
+					}
 				}
 			}
+			bool ok = false;
+
+			for (int i = 0; i < (int) nokey.size(); i++) {
+				if (keyring.count(nokey[i])) {
+					ok = true;
+				}
+			}
+
+			if (!ok) break;
 		}
 				
-		if (v == N) {
+		if (seen.size() == N) {
 			cout << "sim\n";
 		} else {
 			cout << "nao\n";
