@@ -17,21 +17,32 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const Int MAXN = sqrt(numeric_limits<Int>::max());
-int T, N;
+int T, X, Y, K, N;
 
 int main(void) {
 	cin >> T;
 
-	cout << MAXN << "\n";
 	for (int t = 1; t <= T; t++) {
-		cin >> N;
+		cin >> X >> Y >> K >> N;
 
-		for (int i = 2; i <= N; i++) {
-			
-		}
+		int P, C;
+		bool ok = false;
 		
-		cout << "Caso #" << t << ": " << ans * ans << "\n";
+		for (int i = 0; i < N; i++) {
+			cin >> P >> C;
+
+			if (C > K) continue;
+
+			if (Y + P >= X) {
+				ok = true;
+			}
+		}
+
+		if (ok) {
+			cout << "LuckyChef" << endl;
+		} else {
+			cout << "UnluckyChef" << endl;
+		}
 	}
     return 0;
 }

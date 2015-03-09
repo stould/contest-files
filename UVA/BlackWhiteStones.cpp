@@ -20,21 +20,37 @@ typedef unsigned uint;
 const Int INF = 10100101010010100LL;
 
 int A, B, N;
-string S, G;
+string S;
 
 int main(void) {
 	for ( ; cin >> A >> B >> S; ) {
 		N = S.size();
 
+		int b = 0;
+		int w = 0;
+		
 		Int ans = 0;
-		int last = -1;
+
+		set<int> pos;
 
 		for (int i = 0; i < N; i++) {
+			if  (S[i] == 'B') {
+				b += 1;
+				pos.insert(i);
+			} else {
+				w += 1;
+			}
+		}
+		string F = S;
+		for (int i = 0; i < b; i++) {
 			if (S[i] == 'B') {
-				if (last != i - 1) {
-					ans += min(A, B * (i - last + 1));
-				}
-				last = i;
+				pos.erase(i);
+			} else {
+				int close = *pos.begin();
+
+				ans += min(A, (A - B) * (close - i));
+				
+				pos.erase(close);
 			}
 		}
 		
