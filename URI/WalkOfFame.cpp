@@ -23,6 +23,9 @@ int T, N, C, M, P;
 pair<int, int> CP[MAXN];
 
 int main(void) {
+	cin.tie(0);
+	ios_base::sync_with_stdio(false);
+	
 	cin >> T;
 
 	for (int t = 1; t <= T; t++) {

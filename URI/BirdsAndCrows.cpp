@@ -21,6 +21,30 @@ int T, N;
 int P[10], C[10];
 int dp[10][(1 << 10)];
 
+inline void fio(int &x) {
+    register int c = getchar_unlocked();
+
+    x = 0;
+
+    int neg = 0;
+
+    for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
+
+    if (c=='-') {
+        neg = 1;
+        c = getchar_unlocked();
+    }
+
+    for ( ; c>47 && c<58 ; c = getchar_unlocked()) {
+        x = (x<<1) + (x<<3) + c - 48;
+    }
+
+    if (neg) {
+        x = -x;
+    }
+}
+
+
 int func(int pos, int mask) {
 	if (pos == N) return 0;
 	
@@ -40,23 +64,23 @@ int func(int pos, int mask) {
 }
 
 int main(void) {
-	cin >> T;
+	fio(T);
 
 	for (int t = 1; t <= T; t++) {
-		cin >> N;
-
+		fio(N);
+		
 		for (int i = 0; i < N; i++) {
-			cin >> P[i];
+			fio(P[i]);
 		}
 		for (int i = 0; i < N; i++) {
-			cin >> C[i];
+			fio(C[i]);
 		}
 
 		memset(dp, -1, sizeof(dp));
 		
 		int ans = func(0, 0);
 		
-		cout << "Caso #" << t << ": " << ans <<"\n";
+		printf("Caso #%d: %d\n", t, ans);
 	}
 	
     return 0;
