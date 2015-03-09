@@ -17,26 +17,29 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-Int MOD = 1000007LL;
-int N, T;
-Int dp[1000001];
-int main(void) {
-	cin >> T;
+int N;
+string S;
+map<char, int> cnt;
 
-	dp[1] = 3;
+int main(void) {
+	cin >> N >> S;
+
+	bool ok = true;
 	
-	for (int i = 2; i <= 1000000; i++) {
-		dp[i] = dp[i - 1] + i - 1;
-		dp[i] += i * 2;
-		dp[i] %= MOD;
+	for (int i = 0; i < N; i++) {
+		cnt[tolower(S[i])] += 1;
 	}
 
-	for ( ; T--; ) {
-		cin >> N;
+	for (char c = 'a'; c <= 'z'; c++) {
+		if (!cnt[c]) {
+			ok = false;
+		}
+	}
 
-		Int ans = (dp[N] - 1 + MOD) % MOD;
-		
-		cout << ans << "\n";
+	if (ok) {
+		cout << "YES\n";
+	} else {
+		cout << "NO\n";
 	}
     return 0;
 }
