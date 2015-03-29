@@ -55,47 +55,53 @@ pair<int, int> p[MAXN];
 
 int dp[MAXN][MAXN];
 int us;
+vector<int> path;
 
 int func(int index, int last) {
     if (p[index].second == M) {
+		for (int i = 0; i < path.size(); i++) {
+			cout << path[i] << " ";
+		}
+		cout << "\n";
         return 1;
     }
-
-    int& ans = dp[index][last];
-
-    if (ans != -1) {
-        return ans;
-    }
-
-    ans = 0;
-    int i;
-
-    for (i = index + 1; i < N; i++) {
-        if (p[i].first > p[index].first && p[i].first <= p[index].second && p[i].second > p[index].second && (last == index || p[i].first > p[last].second)) {
-            ans += func(i, index);
-            if (ans >= MOD) ans -= MOD;
-        }
-    }
-
+	
+    int ans = dp[index][last];
+	
+	ans = 0;
+	
+	for (int i = index + 1; i < N; i++) {
+		if (p[i].first > p[index].first && p[i].first <= p[index].second && p[i].second > p[index].second  && (index == last || p[i].first > p[last].second)) {
+			path.push_back(i);
+			ans = (ans + func(i, index)) % MOD;
+			path.pop_back();
+		}
+	}
+	
     return ans;
 }
 
 int main(void) {
-    int i;
-
     for ( ; scanf("%d%d", &M, &N) == 2 && N + M != 0; ) {
-        for (i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
             scanf("%d%d", &p[i].first, &p[i].second);
         }
-
+		
         sort(p, p + N);
-
+		for (int i = 0; i < N; i++) {
+			printf("%d => %d - %d\n", i, p[i].first, p[i].second);
+		}
+			
         memset(dp, -1, sizeof(dp));
-
+		
         int ans = 0;
 
-        for (i = 0; i < N; i++) {
-            if (p[i].first == 0) ans += func(i, i);
+        for (int i = 0; i < N; i++) {
+            if (p[i].first == 0) {
+				path.push_back(i);
+				ans += func(i, i);
+				path.pop_back();
+			}
             if (ans >= MOD) ans -= MOD;
         }
 
