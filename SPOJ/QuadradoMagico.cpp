@@ -1,43 +1,64 @@
-#include <iostream>
-#include <set>
-#include <stdio.h>
-#include <string.h>
+#include <bits/stdc++.h>
+
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-typedef long long ll;
+typedef long long Int;
+typedef unsigned uint;
 
-ll i, j, n, tmp, linha[1800], coluna[1800], diag = 0;
+const int MAXN = 1010;
+
+int N;
+int L[MAXN], C[MAXN];
+int seen[MAXN * MAXN];
 
 int main(void) {
-    scanf("%d", &n);
-    set<ll> all;
-    set<ll> helper;
+	cin.tie(0);
+	ios_base::sync_with_stdio(false);
 
-    for(i = 1; i <= n; i++) {
-        for(j = 1; j <= n; j++) {
-            scanf("%d", &tmp);
-            coluna[j] += tmp;
-            linha[i] += tmp;
-            all.insert(tmp);
-            if(i == j) diag += tmp;
-            if(i == n) {
-                helper.insert(coluna[j]);
-            }
-        }
-        helper.insert(linha[i]);
-        if(all.size() != n*i) break;
-    }
-    helper.insert(diag);
+	cin >> N;
 
-    bool ok = true;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			int P;
+			cin >> P;
 
-    if(all.size() != n*n || helper.size() != 1) ok = false;
+			L[i] += P;
+			C[j] += P;
 
-    if(ok) {
-        cout << linha[1] << endl;
-    } else {
-        cout << 0 << endl;
-    }
+			if (P >= 1 && P <= N * N) {			
+				seen[P] = 1;
+			}
+		}
+	}
+
+	bool ok = true;
+
+	for (int i = 1; i < N; i++) {
+		if (L[i] != L[i - 1]) ok = false;
+		if (C[i] != C[i - 1]) ok = false;
+	}
+
+	for (int i = 1; i <= N * N; i++) {
+		if (!seen[i]) ok = false;
+	}
+
+	if (ok) {
+		cout << L[0] << endl;
+	} else {
+		cout << 0 << endl;
+	}
+	
     return 0;
 }
