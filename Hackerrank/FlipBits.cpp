@@ -58,11 +58,12 @@ int bitFlip(vector < int > arr) {
 
 int main(void) {
 	int N;
-	cin >> N;
-	vector<int> arr(N);
-	for (int i = 0; i < N; i++) {
-		cin >> arr[i];
+	while (cin >> N) {
+		vector<int> arr(N);
+		for (int i = 0; i < N; i++) {
+			cin >> arr[i];
+		}
+		cout << bitFlip(arr) << "\n";
 	}
-	cout << bitFlip(arr) << "\n";
-    return 0;
+	return 0;
 }
