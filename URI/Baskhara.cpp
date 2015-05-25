@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int a, b, c;
+double a, b, c;
 
 double getDelta(){
     return b*b - (4*a*c);
