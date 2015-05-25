@@ -17,34 +17,31 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+const Int MOD = 2147483647LL;
+Int N;
 
-string S;
-int N;
-
-int dp[4];
+Int modPow(Int base, int p) {
+	if (p == 0) return 1LL;
+	
+	Int ans = base;
+	
+	while (p > 1) {
+		if (p % 2 == 0) {
+			ans = (ans * ans) % MOD;
+			p /= 2;
+		} else {
+			ans = (ans * base) % MOD;
+			p -= 1;
+		}
+		ans = ((ans % MOD) + MOD) % MOD;
+	}
+	return ans;
+}
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
+	cin >> N;
 
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
-	}
-    return 0;
+	cout << modPow(3, N) << endl;
+	
+	return 0;
 }

@@ -17,34 +17,40 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+int K, C[10], P[10][10];
+vector<int> S;
 
-string S;
-int N;
-
-int dp[4];
+void rec(int id, int val) {
+	if (id == 5) {
+		S.push_back(val);
+	} else {
+		for (int i = 0; i < C[id]; i++) {
+			rec(id + 1, val + P[id][i]);
+		}
+	}
+}
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
-
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
+	for (int i = 0; i < 5; i++) {
+		cin >> C[i];
+		for (int j = 0; j < C[i]; j++) {
+			cin >> P[i][j];
+		}
 	}
-    return 0;
+	
+	rec(0, 0);
+
+	sort(S.rbegin(), S.rend());
+	
+	cin >> K;
+
+	int ans = 0;
+	
+	for (int i = 0; i < K; i++) {
+		ans += S[i];
+	}
+	
+	cout << ans << endl;
+	
+	return 0;
 }

@@ -17,34 +17,22 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
-
-string S;
 int N;
 
-int dp[4];
-
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
-
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
+	while (cin >> N) {
+		int P, C = 0;
+		for (int i = 0; i < N; i++) {
+			cin >> P;
+			if (P == 0) {
+				C += 1;
 			}
-		}		
-		cout << ans << "\n";
+		}
+		if (C > (N / 2)) {
+			cout << "Y" << endl;
+		} else {
+			cout << "N" << endl;
+		}
 	}
-    return 0;
+	return 0;
 }

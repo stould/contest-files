@@ -17,34 +17,17 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
-
-string S;
-int N;
-
-int dp[4];
+int N, LA, LB, SA, SB;
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
+	while (cin >> N) {
+		cin >> LA >> LB >> SA >> SB;
 
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
+		if (N >= LA && N <= LB && N >= SA && N <= SB) {
+			cout << "possivel" << endl;
+		} else {
+			cout << "impossivel" << endl;
+		}
 	}
-    return 0;
+	return 0;
 }
