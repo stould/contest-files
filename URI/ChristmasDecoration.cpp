@@ -17,34 +17,13 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
-
-string S;
-int N;
-
-int dp[4];
+const double PI = 3.141592654;
+double A, B, C;
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
-
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
+	while (cin >> A >> B >> C) {
+		double ans = 5.0 * (B * tan(A * PI / 180.0) + C);
+		cout << fixed << setprecision(2) << ans << endl;
 	}
-    return 0;
+	return 0;
 }

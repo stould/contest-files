@@ -17,34 +17,46 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+const int MAXN = 100005;
 
-string S;
 int N;
+int P[MAXN], bit[MAXN];
 
-int dp[4];
+int sum(int id) {
+	int ans = 0;
+
+	while (id > 0) {
+		ans += bit[id];
+		id -= (id & -id);
+	}
+	
+	return ans;
+}
+
+void inc(int id, int val) {
+	while (id <= N) {
+		bit[id] += val;
+		id += (id & -id);
+	}
+}
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
+	cin >> N;
 
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
+	for (int i = 1; i <= N; i++) {
+		cin >> P[i];
+		inc(i, P[i]);
 	}
-    return 0;
+
+	string S;
+	int I;
+
+	while (cin >> S >> I) {
+		if (S == "a") {
+			inc(I, -P[I]);
+		} else {
+			cout << sum(I-1) << endl;
+		}
+	}
+	return 0;
 }
