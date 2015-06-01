@@ -11,6 +11,8 @@ public class PathDefense {
     private int money;
     private int creepHealth;
     private int creepMoney;
+	private int usedTowers;
+	private int basesCount;
     private int[] towerType;
     private Tower[] towers;
 
@@ -18,6 +20,11 @@ public class PathDefense {
         this.board = new char[init_board.length][];
         for (int i = 0; i < board.length; i++) {
             this.board[i] = init_board[i].toCharArray();
+			for (int j = 0; j < this.board[i].length; j++) {
+				if (this.board[i][j] >= '0' && this.board[i][j] <= '9') {
+					this.basesCount += 1;
+				}
+			}
         }
         this.money = money;
         this.creepHealth = creepHealth;
@@ -80,18 +87,21 @@ public class PathDefense {
             }
        }
 
-       Collections.sort(freePlaces);
-
-       for (int j = 0; j < towers.length; j++) {
-            if (this.money >= towers[j].cost) {
-                answer.add(freePlaces.get(0).col);
-                answer.add(freePlaces.get(0).row);
-                answer.add(towers[j].id);
-                this.money -= towers[j].cost;
-                this.board[freePlaces.get(0).row][freePlaces.get(0).col] = 'X';
-                break;
-            }
-        }
+		if (this.usedTowers <= this.basesCount * 4) {		
+			Collections.sort(freePlaces);
+			
+			for (int j = 0; j < towers.length; j++) {
+				if (money >= towers[j].cost) {
+					usedTowers += 1;
+					answer.add(freePlaces.get(0).col);
+					answer.add(freePlaces.get(0).row);
+					answer.add(towers[j].id);
+					money -= towers[j].cost;
+					this.board[freePlaces.get(0).row][freePlaces.get(0).col] = 'X';
+					break;
+				}
+			}
+		}
 
         int[] answerAsArray = new int[answer.size()];
 
@@ -139,7 +149,7 @@ public class PathDefense {
             for (int i=0; i < B; i++) {
                 baseHealth[i] = Integer.parseInt(input.nextLine());
             }
-            int[] ret = pathDefense.placeTowers(creep, money, baseHealth);
+            int[] ret = pathDefense.placeTowers(creep, testCaseMoney, baseHealth);
             System.out.println(ret.length);
             for (int i=0; i < ret.length; i++) {
                 System.out.println(ret[i]);
