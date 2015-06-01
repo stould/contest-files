@@ -19,6 +19,7 @@ typedef unsigned uint;
 
 string S;
 Int N, all = 0, len;
+map<int, Int> dp[1 << 13];
 
 Int str_to_int(string arg) {
 	Int ans = 0;
@@ -32,20 +33,23 @@ Int str_to_int(string arg) {
 
 bool func(Int x) {
 	Int sq = (Int) sqrt(x + 0.5);
-
 	return sq * sq == x;
 }
 
-void rec(int id, int mask, Int val) {
-	if (id == len) {
-		if (func(val + N)) all += 1;
+Int rec(int mask, Int val) {
+	if (mask == (1 << len) - 1) {
+		return func(val + N);
 	} else {
-		for (int i = 0; i < len; i++) {
-			if (id == 0 && S[i] == '0') continue;
-			if (!(mask & (1 << i))) {
-				rec(id + 1, mask | (1 << i), val * 10 + (S[i] - '0'));
+		if (dp[mask].find(val) == dp[mask].end()) {
+			for (int i = 0; i < len; i++) {
+				if (mask == 0 && S[i] == '0') continue;
+				if (!(mask & (1 << i))) {
+					dp[mask][val] += rec(mask | (1 << i), val * 10 + (S[i] - '0'));
+				}
 			}
 		}
+		
+		return dp[mask][val];
 	}
 }
 
@@ -54,18 +58,19 @@ int main(void) {
 
 	len = (int) S.size();
 	N = str_to_int(S);
-	rec(0, 0, 0);
+	//rec(0, 0, 0);
 	
 	/*	sort(S.begin(), S.end());
-
+	int ans = 0;
 	do {
 		if (S[0] == '0') continue;
 		if (func(N + str_to_int(S))) {
 			ans += 1;
 		}
 	} while (next_permutation(S.begin(), S.end()));
+	cout << ans << "\n";
 	*/
-	cout << all << endl;
+	cout << rec(0, 0) << endl;
 				 
 	return 0;
 }
