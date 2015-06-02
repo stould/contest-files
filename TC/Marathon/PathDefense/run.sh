@@ -5,3 +5,4 @@ run() {
 	java -jar tester.jar -seed 2 -delay 2 -exec "java PathDefense"
 }
 run;
+
