@@ -2661,6 +2661,15 @@ vector<int> manacher(string s, int id) {
   return P;
 }
 //*******************************************************
+//Find string period
+vector<int> prefix = KMP(S); //KMP Prefix function array
+for (int i = 0; i < (int) prefix.size(); i++) {
+	if (prefix[i] >= (int)  S.size() / 2) {
+		period_len = i - prefix[i];		
+	}
+ }
+
+//*******************************************************
 //Domino perfect matching - recursive
 int a, b, i, j, k, n, ok, teste = 1, mem[7][7];
 
