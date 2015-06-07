@@ -7,17 +7,18 @@ import java.util.*;
  */
 public class PathDefense {
     private char[][] board;
-    private boolean[][] forbidden;
-    private int money;
+    public int baseMoney;
     private int creepHealth;
     private int creepMoney;
     private int[] towerType;
     private List<Tower> towers;
     private int[] seen;
+    public boolean isDense;
     public List<Point> availableSpots;
     public List<Base> bases;
     public int[][] distanceFromPath;
     public int[][] pathNeighbours;
+    public int[][] reachableEntrances;
     public List<List<Point>> closestFreePoints;
 
     private int[] dx = {0, 0, -1, 1};
@@ -28,20 +29,19 @@ public class PathDefense {
      */
 
     public int init(String[] init_board, int money, int creepHealth, int creepMoney, int[] towerType) {
-        //Init
         this.board = new char[init_board.length][];
-        this.forbidden = new boolean[init_board.length][];
         this.distanceFromPath = new int[init_board.length][];
         this.pathNeighbours = new int[init_board.length][];
+        this.reachableEntrances = new int[init_board.length][];
         this.bases = new ArrayList<Base>();
         this.closestFreePoints = new ArrayList<List<Point>>();
         this.availableSpots = new ArrayList<Point>();
 
         for (int i = 0; i < board.length; i++) {
             this.board[i] = init_board[i].toCharArray();
-            this.forbidden[i] = new boolean[this.board[i].length];
             this.distanceFromPath[i] = new int[this.board[i].length];
             this.pathNeighbours[i] = new int[this.board[i].length];
+            this.reachableEntrances[i] = new int[this.board[i].length];
 
             for (int j = 0; j < this.board[i].length; j++) {
                 int free = 0;
@@ -58,9 +58,7 @@ public class PathDefense {
                 }
                 this.pathNeighbours[i][j] = free;
                 if (this.board[i][j] >= '0' && this.board[i][j] <= '9') {
-                    if (free == 0) {
-                        this.forbidden[i][j] = true;
-                    } else {
+                    if (free != 0) {
                         this.bases.add(new Base(this.board[i][j] - '0', i, j));
                     }
                 } else if (this.board[i][j] == '#') {
@@ -73,11 +71,15 @@ public class PathDefense {
             for (int j = 0; j < this.board[i].length; j++) {
                 if (this.board[i][j] == '.') {
                     shortestPathFromAvailableTowerToPath(i, j);
+                } else {
+                    if (this.board[i][j] >= '0' && this.board[i][j] <= '9') {
+                        this.reachableEntrances[i][j] = numberOfEntrancesReachableBy(i, j);
+                    }
                 }
             }
         }
 
-        this.seen = new int[this.bases.size()];
+        this.seen = new int[this.bases.size()+1];
 
         for (int i = 0; i < this.bases.size(); i++) {
             this.closestFreePoints.add(new ArrayList<Point>());
@@ -95,12 +97,12 @@ public class PathDefense {
                     return +1;
                 }
             });
-            for (int j = 0; j < Math.min(50, availableSpots.size()); j++) {
+            for (int j = 0; j < Math.min(60, availableSpots.size()); j++) {
                 this.closestFreePoints.get(this.closestFreePoints.size() - 1).add(availableSpots.get(j));
             }
         }
 
-        this.money = money;
+        this.baseMoney = money;
         this.creepHealth = creepHealth;
         this.creepMoney = creepMoney;
         this.towerType = towerType;
@@ -112,10 +114,22 @@ public class PathDefense {
             int i_power = towerType[i * 3 + 1];
             int i_cost = towerType[i * 3 + 2];
 
+            //System.err.println(i_power + " " + i_range + " " + i_cost);
+
             towers.add(new Tower(i, i_range, i_power, i_cost));
         }
 
         Collections.sort(towers);
+
+        this.isDense = isDense();
+
+        if (this.isDense) {
+            //System.err.println("Dense");
+        }
+
+        for (int i = 0; i < this.towers.size(); i++) {
+            //System.err.println("Tower order = " + this.towers.get(i).power + " " + this.towers.get(i).range + " " + this.towers.get(i).cost);
+        }
 
         return 0;
     }
@@ -125,7 +139,6 @@ public class PathDefense {
         Sort available places to put a tower by their proximity to bases, then, put the che
      */
     public int[] placeTowers(int[] creep, int money, int[] baseHealth) {
-        //System.err.println("Running: real money = " + this.money + " method money: " + money);
         Collections.sort(this.availableSpots, new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
@@ -136,7 +149,6 @@ public class PathDefense {
                 } else {
                     return +1;
                 }
-
             }
         });
         List<Integer> answer = new ArrayList<Integer>();
@@ -151,53 +163,32 @@ public class PathDefense {
 
             creep_array[i] = new Creeper(i_id, i_row, i_col, i_health);
         }
-/*
-        Collections.sort(availableSpots, (p1, p2) -> {
-            if (this.pathNeighbours[p1.x][p1.y] > this.pathNeighbours[p2.x][p2.y]) {
-                return -1;
-            } else {
-                return +1;
-            }
-        });
-*/
 
-        boolean added = false;
-
-        for (int i = 0; i < this.bases.size(); i++) {
-            if (this.seen[i] >= 7 && baseHealth[this.bases.get(i).id] == 1000) continue;
-            added = true;
-
-            for (int j = 0; j < this.closestFreePoints.get(i).size(); j++) {
-                int pi = (int) this.closestFreePoints.get(i).get(j).getX();
-                int pj = (int) this.closestFreePoints.get(i).get(j).getY();
-
-                if (this.board[pi][pj] != '#') continue;;
-
-                boolean new_tower = false;
-
-                for (int k = 0; k < 1; k++) {
-                    if (this.towers.get(k).cost <= money) {
-                        this.seen[i] += 1;
-                        answer.add(pj);
-                        answer.add(pi);
-                        answer.add(this.towers.get(k).id);
-                        money -= this.towers.get(k).cost;
-                        this.board[pi][pj] = 'X';
-                        new_tower = true;
-                        break;
-                    }
-                }
-
-                if (new_tower) {
-                    break;
-                }
-            }
+        if (isDense) {
+            answer = dense(money, baseHealth);
+        } else {
+            answer = sparse(money);
         }
 
+        int[] answerAsArray = new int[answer.size()];
 
-        for (int i = 0; i < Math.min(this.bases.size() * 10, this.availableSpots.size()); i++) {
+        for (int i = 0; i < answer.size(); i++) {
+            answerAsArray[i] = (int) answer.get(i);
+        }
+
+        return answerAsArray;
+    }
+
+    public List<Integer> sparse(int money) {
+        List<Integer> answer = new ArrayList<>();
+
+        for (int i = 0; i < Math.min(this.bases.size() * 25, this.availableSpots.size()); i++) {
             int pi = this.availableSpots.get(i).x;
             int pj = this.availableSpots.get(i).y;
+
+            if (this.pathNeighbours[pi][pj] == 0) {
+                break;
+            }
 
             if (this.board[pi][pj] != '#') continue;
 
@@ -212,15 +203,85 @@ public class PathDefense {
                 }
             }
         }
+        return answer;
+    }
 
+    public List<Integer> dense(int money, int[] baseHealth) {
+        List<Integer> answer = new ArrayList<>();
 
-        int[] answerAsArray = new int[answer.size()];
+        for (int i = 0; i < this.bases.size(); i++) {
+            int multFactor = this.reachableEntrances[this.bases.get(i).row][this.bases.get(i).col];
+            if (this.seen[this.bases.get(i).id] >= 5 * multFactor && baseHealth[this.bases.get(i).id] == 1000) continue;
+            if (this.seen[this.bases.get(i).id] > 35) continue;
+            for (int j = 0; j < this.closestFreePoints.get(i).size(); j++) {
+                int pi = (int) this.closestFreePoints.get(i).get(j).getX();
+                int pj = (int) this.closestFreePoints.get(i).get(j).getY();
 
-        for (int i = 0; i < answer.size(); i++) {
-            answerAsArray[i] = (int) answer.get(i);
+                if (this.board[pi][pj] != '#') continue;;
+
+                boolean new_tower = false;
+
+                for (int k = 0; k < 1; k++) {
+                    if (this.towers.get(k).cost <= money) {
+                        this.seen[this.bases.get(i).id] += 1;
+                        answer.add(pj);
+                        answer.add(pi);
+                        answer.add(this.towers.get(k).id);
+                        money -= this.towers.get(k).cost;
+                        this.board[pi][pj] = 'X';
+                        new_tower = true;
+                        break;
+                    }
+                }
+                if (new_tower) {
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+
+    public boolean isDense() {
+        double mean = (this.board.length * this.board.length - this.availableSpots.size()) * 100.0 / (this.board.length * this.board.length);
+        return mean <= 40.0;
+    }
+
+    public int numberOfEntrancesReachableBy(int row, int col) {
+        Queue<Point> queue = new LinkedList<>();
+        queue.offer(new Point(row, col));
+
+        int[][] currDist = new int[this.board.length][this.board[0].length];
+
+        for (int i = 0; i < this.board.length; i++) {
+            Arrays.fill(currDist[i], Integer.MAX_VALUE);
         }
 
-        return answerAsArray;
+        currDist[row][col] = 0;
+
+        int ans = 0;
+
+        while (!queue.isEmpty()) {
+            int curr_row = queue.peek().x;
+            int curr_col = queue.peek().y;
+            queue.poll();
+
+            for (int i = 0; i < 4; i++) {
+                int ni = curr_row + dx[i];
+                int nj = curr_col + dy[i];
+
+                if (insideBoard(ni, nj)) {
+                    if (this.board[ni][nj] == '.') {
+                        if (currDist[ni][nj] > currDist[curr_row][curr_col] + 1) {
+                            currDist[ni][nj] = currDist[curr_row][curr_col] + 1;
+                            queue.offer(new Point(ni, nj));
+                        }
+                    }
+                } else {
+                    ans += 1;
+                }
+            }
+        }
+        return ans;
     }
 
     public boolean insideBoard(int row, int col) {
@@ -248,7 +309,7 @@ public class PathDefense {
 
             for (int i = 0; i < 4; i++) {
                 int ni = curr_row + dx[i];
-                int nj = curr_row + dy[i];
+                int nj = curr_col + dy[i];
 
                 if (insideBoard(ni, nj)) {
                     if (this.board[ni][nj] == '#') {
@@ -318,10 +379,6 @@ public class PathDefense {
         public int col;
         public int health;
 
-        public Creeper() {
-
-        }
-
         public Creeper(int id, int row, int col, int health) {
             this.id = id;
             this.row = row;
@@ -347,10 +404,10 @@ public class PathDefense {
         public int compareTo(Object o) {
             Tower other = (Tower) o;
 
-            long coef = this.power * this.range;
-            long o_coef = other.power * other.range;
+            double coef = this.power * this.range / (double) this.cost;
+            double o_coef = other.power * other.range / (double) other.cost;
 
-            if (coef > o_coef) {
+            if (coef >= o_coef) {
                 return -1;
             } else if (coef == o_coef) {
                 if (this.cost <= other.cost) {
