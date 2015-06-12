@@ -182,7 +182,7 @@ public class PathDefense {
     public List<Integer> sparse(int money) {
         List<Integer> answer = new ArrayList<>();
 
-        for (int i = 0; i < Math.min(this.bases.size() * 20, this.availableSpots.size()); i++) {
+        for (int i = 0; i < Math.min(this.bases.size() * 25, this.availableSpots.size()); i++) {
             int pi = this.availableSpots.get(i).x;
             int pj = this.availableSpots.get(i).y;
 
