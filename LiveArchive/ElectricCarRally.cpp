@@ -17,9 +17,9 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 555;
-const int MAXL = 601*481 + 10;
-const int INF = 10101011;
+const int MAXN = 705;
+const int MAXL = MAXN*481 + 10;
+const int INF = 20101011;
 
 int N, M;
 vector<int> graph[MAXN];
@@ -52,6 +52,8 @@ struct state {
  */
 
 int main(void) {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);	
 	while (cin >> N >> M && !(N == 0 && M == 0)) {
 		int A, B, X, Y, Z;
 		
@@ -59,7 +61,7 @@ int main(void) {
 			graph[i].clear();
 			for (int j = 0; j < MAXN; j++) {
 				info[i][j].clear();
-			}
+			}			
 		}
 		for (int i = 0; i < M; i++) {
 			cin >> A >> B;
@@ -87,7 +89,7 @@ int main(void) {
 		memset(stim, 63, sizeof(stim));
 		
 		dist[base.code] = 0;
-		stim[base.code] = 0;
+		stim[base.code] = 720;
 		
 		for ( ; !q.empty(); ) {
 			state now = q.top();
@@ -99,6 +101,7 @@ int main(void) {
 			
 			if (now.id == N - 1) {
 				chmin(ans, dist[now.code]);
+				continue;
 			}
 			
 			for (int i = 0; i < (int) graph[now.id].size(); i++) {
