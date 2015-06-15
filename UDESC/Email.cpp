@@ -21,7 +21,7 @@ const int MAXN = 60;
 
 int T, N, S;
 string NM[MAXN];
-bool vis[MAXN];
+bool vis[MAXN], fromRoot[MAXN];
 vector<int> graph[MAXN];
 
 set<int> ans;
@@ -80,13 +80,16 @@ int main(void) {
 
 		for (int i = 1; i <= N; i++) {
 			if (i != S) {
-				bool s = find(S, i);
-				bool d = find(i, S);
-
-				if (s && d) {
-					ans.insert(i);
+				fromRoot[i] = find(S, i);
+				
+				if (fromRoot[i]) {
+					for (int j = 1; j <= N; j++) {
+						if (j != S && i != j && find(i, j) && find(j, i)) {
+							ans.insert(j);
+						}
+					}
 				}
-			}			
+			}
 		}
 		
 		if (ans.empty()) {
