@@ -1,66 +1,102 @@
 #include <bits/stdc++.h>
 
-template<typename T> T gcd(T a, T b) {
-    if(!b) return a;
-    return gcd(b, a % b);
-}
-template<typename T> T lcm(T a, T b) {
-    return a * b / gcd(a, b);
-}
-
-template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
-template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
-int in() { int x; scanf("%d", &x); return x; }
-
 using namespace std;
 
-typedef long long Int;
-typedef unsigned uint;
+int T, M, S, P;
 
-int T, P;
-string S;
+string inToS(int s) {
+	string ans = "";
 
-
-pair<int, int> secToMin(int s) {
-	return make_pair(s / 3600, (s / 60) % 60);
-}
-
-int calc(int s) {
-	int ans = 0;
-	pair<int, int> in = secToMin(s);
-
-	
+	while(s > 0) {
+		ans = char('0' + (s % 10)) + ans;
+		s /= 10;
+	}
 
 	return ans;
 }
 
+pair<int, int> toR(int s) {
+	return make_pair((s / 60) % 60, s % 60);
+}
+
+pair<int, string> cost(pair<int, int> as) {
+	string asS = inToS(as.first) + inToS(as.second);
+
+	if (as.second == 0) {
+		asS = asS + "00";
+	} else if (as.second < 10) {
+		asS = asS + "0";
+	}
+
+	char last = '-';
+	int ans = 0;
+  
+	for (int i = 0; i < (int) asS.size(); i++) {
+		if (i > 0 && asS[i] != last) {
+			ans += 1;
+		}
+		last = asS[i];
+	}
+	//cout << asS << " " << ans + (int) asS.size() << "\n";
+	return make_pair(ans + (int) asS.size(), asS);
+}
+
 int main(void) {
-	cin >> T;
+	scanf("%d", &T);
 
 	for (int t = 1; t <= T; t++) {
-		cin >> S >> P;
+		scanf("%d:%d", &M, &S);
+		scanf("%d", &P);
+    
+		int inS = S + M * 60; 
+		int R = P * inS / 100;
 
-		int in_sec = 3600 * (S[4] - '0') + (10 * (S[3] - '0')) + 60 * (S[1] - '0' + 10 * (S[0] - '0'));
-		int range = P * in_sec / 100;
+		int best = INT_MAX;
+		string ans = "";
 
-		int best = -1, ans = 0;
+		for (int i = 0; i <= R; i++) {
+			int now = inS + i;
+			pair<int, int> curr;
+      
+			curr = toR(now);
+      
+			while (1) {
+				if (curr.first < 0 || curr.second >= 100) break;
 		
-		for (int i = -range; i <= range; i++) {
-			int curr = calc(in_sec + range);
-
-			if (curr < best) {
-				best = curr;
-				ans = in_sec + range;
-			} else if (curr == best) {
-				if (abs(in_sec - curr) < abs(in_sec - ans)) {
-					ans = curr;
-				}
+				int nowCost = cost(curr).first;
+				string rep = cost(curr).second;
+	
+				if (best > nowCost) {
+					best = nowCost;
+					ans = rep;
+				} 
+	
+				curr.first -= 1;
+				curr.second += 60;
 			}
-		}
 
-		cout << "CASO #" << t << ": ";
-
+			now = inS - i;
+      
+			curr = toR(now);
+      
+			while (1) {
+				if (curr.first < 0 || curr.second >= 100) break;
 		
+				int nowCost = cost(curr).first;
+				string rep = cost(curr).second;
+	
+				if (best > nowCost) {
+					best = nowCost;
+					ans = rep;
+				} 
+	
+				curr.first -= 1;
+				curr.second += 60;
+			}      
+		}    
+    
+		cout << "CASO #" << t << ": ";
+		cout << ans << "\n";
 	}
 	return 0;
 }
