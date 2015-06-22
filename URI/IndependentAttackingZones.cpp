@@ -23,7 +23,6 @@ char str[50];
 int dp[50][50];
 
 int func(int pos, int used) {
-	if (used > N) return 0;
 	if (used == N) {
 		return 1;
 	} else {
@@ -32,14 +31,12 @@ int func(int pos, int used) {
 		if (ans == -1) {
 			ans = 0;
 			int r = 0;
-			for (int i = 0, cnt = 1; cnt + used <= N; i++, cnt++) {
+			for (int i = 0; i < 3; i++) {
 				int p = (pos + i) % N;
 				if (str[p] == 'R') r += 1;
-				if (r > 1) break;
-				if (cnt >= 3) {
-					printf("%d %d %d\n", pos, p, used);
-					ans += func((p + 1) % N, used + cnt);
-				}
+			}
+			if (r <= 1) {
+				ans += func((pos + 3) % N, used + 3);
 			}
 		}
 
@@ -53,7 +50,7 @@ int main(void) {
 		scanf("%d%s", &N, str);
 		memset(dp, -1, sizeof(dp));
 		int ans = 0;
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < N; i++) {
 			ans += func(i, 0);
 		}
 		printf("Case %d: %d\n", t, ans);
