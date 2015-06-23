@@ -2,7 +2,7 @@ run() {
 	rm *.class
 	cp src/PathDefense.java ../PathDefense
 	javac PathDefense.java
-	java -jar tester.jar -seed 41221232 -delay 1 -exec "java PathDefense"
+	java -jar tester.jar -seed 958294478 -delay 1 -exec "java PathDefense"
 }
 
 simul() {

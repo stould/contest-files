@@ -18,9 +18,10 @@ typedef long long Int;
 typedef unsigned uint;
 
 const int MAXN = 300005;
+const Int INF = 1001010100101000LL;
 
 int N, M, U;
-vector<pair<int, pair<int, int> > > graph[MAXN];
+vector<pair<int, pair<Int, int> > > graph[MAXN];
 Int dist[MAXN];
 Int W[MAXN];
 pair<int, int> prv[MAXN];
@@ -33,38 +34,54 @@ struct MyLess {
 
 void dijsktra(int source) {
 	for(int i = 0; i < MAXN; i++) {
-		dist[i] = INT_MAX;
+		dist[i] = INF;
 	}
-	priority_queue<pair<int, int> > q;
+	
+	priority_queue<pair<Int, int> > q;
 	dist[source] = 0;
  	q.push(make_pair(0, source));
 	prv[source] = make_pair(-1, -1);
 
 	while(!q.empty()) {
-		int tmp = q.top().second;
-		int val= q.top().first;
+		int tmp =  q.top().second;
+		Int val = -q.top().first;
 		q.pop();
 
-		if (dist[tmp] > val) continue;
+		if (dist[tmp] < val) continue;
 
 		for(int i = 0; i < (int) graph[tmp].size(); i++) {
-            int aux_dist = dist[tmp] + graph[tmp][i].second.first;
-            int actual_dist = dist[graph[tmp][i].first];
-            if(aux_dist < actual_dist) {
-                dist[graph[tmp][i].first] = aux_dist;
-                q.push(make_pair(-aux_dist, graph[tmp][i].first));
-				//				cout << "pr " << graph[tmp][i].first << " " << tmp << " " << graph[tmp][i].second.second << " done\n";
-				prv[graph[tmp][i].first] = make_pair(tmp, graph[tmp][i].second.second);
-            }
+			int next_id = graph[tmp][i].first;
+			int edge_id = graph[tmp][i].second.second;
+			Int edge_dist = graph[tmp][i].second.first;
+
+			//cout << edge_id << "\n";
+			
+            Int aux_dist = dist[tmp] + edge_dist;
+            Int actual_dist = dist[next_id];			
+			
+            if (aux_dist < actual_dist) {
+                dist[next_id] = aux_dist;
+                q.push(make_pair(-aux_dist, next_id));
+				//cout << "pr " << graph[tmp][i].first << " " << tmp << " " << graph[tmp][i].second.second << " done\n";
+				prv[next_id] = make_pair(tmp, edge_id);
+            } else if (aux_dist == actual_dist) {
+				if (W[prv[next_id].second] > edge_dist) {
+					prv[next_id].second = edge_id;					
+				}
+			}
         }
     }
 }
 
 
 int main(void) {
+	cin.tie(0);
+	ios_base::sync_with_stdio(false);
+	
 	cin >> N >> M;
 
-	int A, B, C;
+	int A, B;
+	Int C;
 	
 	for (int i = 0; i < M; i++) {
 		cin >> A >> B >> C;
@@ -83,12 +100,7 @@ int main(void) {
 
 	for (int i = 1; i <= N; i++) {
 		if (i != U) {
-			int curr = i;
-
-			while (curr != -1) {
-				vs.insert(prv[curr].second);
-				curr = prv[curr].first;
-			}
+			vs.insert(prv[i].second);			
 		}
 	}
 
