@@ -42,8 +42,8 @@ int currPos(int i) {
 }
 
 int main(void) {
-	//freopen("sort3.in", "r", stdin);
-	//freopen("sort3.out", "w", stdout);
+	freopen("sort3.in", "r", stdin);
+	freopen("sort3.out", "w", stdout);
 	
 	scanf("%d", &N);
 
@@ -54,52 +54,36 @@ int main(void) {
 		cnt[P[i]] += 1;
 	}
 	
-	for (int i = 0; i < N; i++) {
+	for (int i = cnt[1]; i < N; i++) {
 		if (P[i] == 1) {
-			for (int j = 0; j < N; j++) {
+			int pos = -1;
+			for (int j = 0; j < cnt[1]; j++) {
 				if (P[j] == 2) {
-					cout << i << " " << j << " => " << currPos(i) << " " << currPos(j) << " " << P[i] << " " << P[j] << "\n";
-					if (currPos(i) == 2 && currPos(j) == 1) {
-						swap(P[i], P[j]);
-						ans += 1;
-						break;
-					}
+					swap(P[i], P[j]);
+					ans += 1;
+					pos = -1;
+					break;
+				} else if (P[j] == 3) {
+					pos = j;
 				}
+			}
+			if (pos != -1) {
+				swap(P[i], P[pos]);
+				ans += 1;
 			}
 		}
 	}
-	for (int i = 0; i < N; i++) {
+	for (int i = cnt[1] + cnt[2]; i < N; i++) {
 		if (P[i] == 2) {
-			for (int j = 0; j < N; j++) {
+			for (int j = cnt[i]; j < i; j++) {
 				if (P[j] == 3) {
-					cout << i << " " << j << " => " << currPos(i) << " " << currPos(j) << " " << P[i] << " " << P[j] << "\n";
-					if (currPos(i) == 3 && currPos(j) == 2) {
-						swap(P[i], P[j]);
-						ans += 1;
-						break;
-					}
+					ans += 1;
+					swap(P[i], P[j]);
+					break;
 				}
 			}
 		}
-		}
-	for (int i = 0; i < N; i++) {
-		if (P[i] == 1) {
-			for (int j = 0; j < N; j++) {
-				if (P[j] == 3) {
-					cout << i << " " << j << " => " << currPos(i) << " " << currPos(j) << " " << P[i] << " " << P[j] << "\n";
-					if (currPos(i) == 3 && currPos(j) == 1) {
-						swap(P[i], P[j]);
-						ans += 1;
-						break;
-					}
-				}
-			}
-		}
-		}	
-	for (int i = 0; i < N; i++) {
-		printf("%d ", P[i]);
 	}
-	printf("\n");
 
 	printf("%d\n", ans);
 			 
