@@ -2,10 +2,8 @@
 //**********************************************
 //Fast IO Read
 inline void rd(int &x) {
-    register int c = getchar_unlocked();
-
+    register int c = getchar_unlocked();	
     x = 0;
-
     int neg = 0;
 
     for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
@@ -138,7 +136,7 @@ void heapsort() {
 }
 
 //**********************************************
-//Merge contando inversões
+//Merge Sort counting inversions (it's better to use Fenwick Tree to count inversions)
 int merge(int arr[], int temp[], int left, int mid, int right);
  
 int _mergeSort(int arr[], int temp[], int left, int right) {
@@ -189,7 +187,6 @@ int merge(int arr[], int temp[], int left, int mid, int right) {
 }
 //**********************************************
 //Median in O(1)
-
 int median_retrieve(void) {
 	if (minHeap.empty() && maxHeap.empty()) return 0;
 	
@@ -373,6 +370,7 @@ vector<int> manacher(string s) {
   // P[i] is the length of the largest palindrome centered at i
   return P;
 }
+//**********************************************
 //Z-Function O(n) => Z[i] = biggest prefix of a substring starting from i which is as a prefix of s
 vector<int> z_function (string s) {
 	int n = (int) s.length();
@@ -2532,6 +2530,23 @@ int lcs(string a, string b) {
 	return dp[n][m];
 }
 //*******************************************************
+//Longest Commom Subsequence - (LCS) O(n^2) - O(n) in space
+int m[2][1000]; // instead of [1000][1000]
+for (i = M; i >= 0; i--) {
+	int ii = i&1; 
+	for (int j = N; j >= 0; j--) {
+		if (i == M || j == N) {
+			m[ii][j]=0; continue;
+		}
+		if (s1[i] == s2[j]) {
+			m[ii][j] = 1 + m[1-ii][j+1];
+		} else {
+			m[ii][j] = max(m[ii][j+1], m[1-ii][j]);
+		}
+	}
+ }
+cout<<m[0][0];
+//*******************************************************	
 //Menor string que contem duas strings S1 e S2 como subsequencia
 
 char S1[MAXS], S2[MAXS];
@@ -3070,6 +3085,67 @@ void update(int x, int y, int new_value) {
 // sum[(r1, c1), (r2, c2)]
 int sum(int[][] t, int r1, int c1, int r2, int c2) {
 	return sum(t, r2, c2) - sum(t, r1 - 1, c2) - sum(t, r2, c1 - 1) + sum(t, r1 - 1, c1 - 1);
+}
+//*******************************************************
+//Segment Tree with Lazy Propagation
+void goDown(int node, int l, int r) {    
+    if (lazy[node]) {
+        tree[node] += lazy[node];
+        
+        if (l != r) {
+            lazy[2 * node] += lazy[node];
+            lazy[2 * node + 1] += lazy[node];
+        } 
+    }
+    lazy[node] = 0;
+}
+
+void build(int node, int l, int r) {
+    if (l == r) {
+        tree[node] = A[l];
+    } else {
+        int m = (l + r) / 2;
+        
+        build(2 * node, l, m);
+        build(2 * node + 1, m + 1, r);
+        
+        tree[node] = max(tree[2 * node], tree[2 * node + 1]);
+    }
+}
+
+Int query(int node, int l, int r, int bl, int br) {
+    goDown(node, l, r);
+    if (l >= bl && r <= br) {
+        return tree[node];
+    } else if (l > br || r < bl) { 
+        return -INF;
+    } else {
+        int m = (l + r) / 2;
+        
+        Int a = query(2 * node, l, m, bl, br);
+        Int b = query(2 * node + 1, m + 1, r, bl, br);
+        
+        return max(a, b);
+    }
+}
+
+void update(int node, int l, int r, int bl, int br, Int value) {    
+    goDown(node, l, r);
+    if (l > r) {
+        return;
+    } else if (l > br || r < bl) {
+        return;
+    } else if (l >= bl && r <= br) {
+        lazy[node] = value;    
+        goDown(node, l, r);
+    } else {
+        int m = (l + r) / 2;       
+        
+        update(2 * node, l, m, bl, br, value);
+        update(2 * node + 1, m + 1, r, bl, br, value);
+        
+        tree[node] = max(tree[2 * node], tree[2 * node + 1]);
+    }    
 }
 //*******************************************************
 //Simple Segment Tree
