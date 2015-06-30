@@ -20,34 +20,20 @@ typedef unsigned uint;
 int N;
 string S;
 
-int func(string arg, int p) {
-	int cnt = 0;
-	for (int i = 0; i < (int) arg.size() - 1; i++) {
-		if (arg[i] != arg[i + 1]) {
-			cnt += 1;
-
-			if (cnt == p) {
-				int x = i, y = i + 1;
-				int len = (int) arg.size();
-				
-				while (x >= 0 && y < (int) arg.size()) {
-					if (arg[x] == arg[y]) {
-						break;
-					}
-					len -= 2;
-					x -= 1;
-					y += 1;
-				}
-				return len;
-			}
-		}
-	}
-	return INT_MAX;
-}
-
 int main(void) {	
 	cin >> N >> S;
 
-	cout << min(func(S, 0), func(S, 1)) << endl;
+	int ans = 0;
+
+	for (int i = 0; i < N; i++) {
+		if (S[i] == '0') {
+			ans += 1;
+		} else {
+			ans -= 1;
+		}
+	}
+	
+	cout << abs(ans) << endl;
+	
 	return 0;
 }
