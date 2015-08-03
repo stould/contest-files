@@ -39,15 +39,12 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 110;
+const int MAXN = 105;
 const int INF = 1001000010;
 
 int T, N, M;
-int goal;
-bool best, eq;
-
-vector<int> graph[MAXN];
-int dist[MAXN][MAXN];
+vector<pair<int, int> > graph[MAXN];
+int dp[MAXN][MAXN];
 /*
 bool vis[MAXN];
 
@@ -77,14 +74,17 @@ void dfs(int x, int root, int len, int seen) {
 }
 */
 
-
-int dp[110][110];
-
 //shortest cycle starting with root with lenght = len
 
-int func(int id, int len, int root) {
-	if (len >= 3 && len % 2 == 1 && id == root) {
-		return 0;
+int func(int id, int len, int root, int goal_len) {
+	if (len > goal_len) {
+		return INF;
+	} else if (len == goal_len) {
+		if (id == root) {
+			return 0;
+		} else {
+			return INF;
+		}
 	} else {
 		int& ans = dp[id][len];
 
@@ -92,13 +92,10 @@ int func(int id, int len, int root) {
 			ans = INF;
 
 			for (int i = 0; i < (int) graph[id].size(); i++) {
-				int u = graph[id][i];
+				int u = graph[id][i].first;
+				int f = graph[id][i].second;
 
-				if (u == root) {
-					chmin(ans, dist[id][u] + func(u, len, root));
-				} else {
-					chmin(ans, dist[id][u] + func(u, len + 1, root));
-				}
+				chmin(ans, f + func(u, len + 1, root, goal_len));
 			}
 		}
 
@@ -114,9 +111,6 @@ int main(void) {
 
 		for (int i = 1; i <= N; i++) {
 			graph[i].clear();
-			for (int j = 1; j <= N; j++) {
-				dist[i][j] = INT_MAX / 3;
-			}
 		}
 
         for(int i = 0; i < M; i++) {			
@@ -124,11 +118,8 @@ int main(void) {
 			int b = in();
 			int c = in();
 
-			graph[a].push_back(b);
-			graph[b].push_back(a);
-
-            chmin(dist[a][b], c);
-            chmin(dist[b][a], c);
+			graph[a].push_back(make_pair(b, c));
+			graph[b].push_back(make_pair(a, c));
         }
 		/*
 		int ans = INF;
@@ -167,14 +158,14 @@ int main(void) {
 		
 		int ans = INF;
 
-		for (int i = 1; i <= N; i++) {
-			memset(dp, -1, sizeof(dp));
-
-			int curr = func(i, 1, i);
-
-			printf("%d %d\n", i, curr);
-
-			if (curr < ans) ans = curr;
+		for (int j = 3; j <= N; j++) {
+			if (j % 2 == 1) {
+				memset(dp, -1, sizeof(dp));
+				int now = func(1, 0, 1, j);
+				if (now < INF) {
+					chmin(ans, now);
+				}					
+			}
 		}
 
         if (ans == INF) {

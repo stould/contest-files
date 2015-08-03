@@ -1,72 +1,97 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <set>
-#include <map>
-#include <list>
-#include <queue>
-#include <stack>
-#include <memory>
-#include <iomanip>
-#include <functional>
-#include <new>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <climits>
-#include <cctype>
-#include <ctime>
-
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
-
-template<typename T> T gcd(T a, T b) {
-    if(!b) return a;
-    return gcd(b, a % b);
-}
-template<typename T> T lcm(T a, T b) {
-    return a * b / gcd(a, b);
-}
-
+#include <bits/stdc++.h>
+     
 using namespace std;
-
-typedef long long ll;
-typedef long double ld;
-
+     
 const int MAXN = 1010;
-const int MOD = 1000000;
-int N, v[MAXN][MAXN], dp[MAXN][MAXN];
+const int INF = 1000101000;
+     
+int N;
+int P[MAXN][MAXN];
+pair<int, int> C[MAXN][MAXN];
+pair<int, int> dp[MAXN][MAXN];
+     
+pair<int, int> countZ(int x) {
+	if (x == 0) return make_pair(0, 0);
+    	
+	int c2 = 0;
+	int c5 = 0;
+    	
+	while (x % 2 == 0) {
+		c2 += 1;
+		x /= 2;
+	}
 
-int cost(int a, int b) {
-    ll tmp = (ll) a * b;
-    int ans = 0;
-    while(tmp % 10 == 0) {
-        ans += 1;
-        tmp /= 10LL;
-    }
-    return ans;
+	while (x % 5 == 0) {
+		c5 += 1;
+		x /= 5;
+	}
+    	
+	return make_pair(c2, c5);
 }
-
-int main(void) {
-    scanf("%d", &N);
-    REP(i, N) REP(j, N) scanf("%d", &v[i][j]);
-
-    REP(i, N) REP(j, N) {
-        if(j - 1 >= 0) {
-            dp[i][j] = min()
-        }
-
-    }
-
-    return 0;
+     
+pair<int, int> func(int r, int c) {
+	if (r == N - 1 && c == N - 1) {
+		return C[r][c];
+	} else {
+		pair<int, int>& ans = dp[r][c];
+    		
+		if (ans.first == -1) {
+			ans.first = ans.second = INF;
+    			
+			if (r + 1 < N && P[r + 1][c] != 0) {
+				pair<int, int> nx = func(r + 1, c);
+    				
+				nx.first += C[r][c].first;
+				nx.second += C[r][c].second;
+    				
+				/*if (min(nx.first, nx.second) <= min(ans.first, ans.second)) {
+				  ans = nx;
+				  }
+				*/
+				if (nx.first < ans.first) {
+					ans.first = nx.first;
+				}
+				if (nx.second < ans.second) {
+					ans.second = nx.second;
+				}
+			}
+			if (c + 1 < N && P[r][c + 1] != 0) {
+				pair<int, int> nx = func(r, c + 1);
+    				
+				nx.first += C[r][c].first;
+				nx.second += C[r][c].second;
+    				
+				if (nx.first < ans.first) {
+					ans.first = nx.first;
+				}
+				if (nx.second < ans.second) {
+					ans.second = nx.second;
+				}
+				/*				if (min(nx.first, nx.second) <= min(ans.first, ans.second)) {
+								ans = nx;
+								}
+				*/
+			}
+		}
+    		
+		return ans;
+	}
 }
-
-
+     
+int main() {
+	cin >> N;
+    	
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> P[i][j];
+			C[i][j] = countZ(P[i][j]);
+			dp[i][j].first = dp[i][j].second = -1;
+		}		
+	}
+     
+	pair<int, int> ans = func(0, 0);	
+     
+	cout << min(ans.first, ans.second) << "\n";
+    	
+	return 0;
+} 
