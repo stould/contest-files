@@ -35,6 +35,16 @@ Int modpow(Int a, Int n, Int mod) {
 	return res % MOD;
 }
 
+Int catalan(int N) {
+	Int ans = fat[2 * N];
+	Int p = ((fat[N] * fat[N + 1]) % MOD) % MOD;
+	ans *= modpow(p, MOD - 2, MOD);
+	
+	ans = ((ans % MOD) + MOD) % MOD;
+	
+	return ans;
+}
+
 
 int main(void) {
 	cin >> N;
