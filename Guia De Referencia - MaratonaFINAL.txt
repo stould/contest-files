@@ -3595,6 +3595,38 @@ Int maxSlidingWindow(Int A[], int n, int w, Int B[]) {
 	return ans;
 }
 /**************************** NUMBER THEORY ***************************/
+//******************************************************
+//Counting number of ones in numbers from 1 to N
+Int func(Int x) {
+    Int ans = 0LL;
+    Int bits = 1LL;
+    Int range = 2LL;
+ 
+    int i;
+    Int len = (Int) floor(log10(x) / log10(2)) + 1;
+ 
+    for (i = 0; i < len; i++) {
+        if (x >= range) {
+            if (x % range == 0) {
+                ans += (Int) (x / range) * bits;
+            } else {
+                Int md = x % range + 1;
+                Int div = floor(x / range);
+ 
+                ans += div * bits + max(0LL, md - range / 2LL);
+            }
+        } else {
+                Int c_range = range - (range - x) + 1;
+                ans += max(0LL, c_range - range / 2LL);
+        }
+ 
+        bits *= 2LL;
+        range *= 2LL;
+    }
+ 
+    return ans;
+}
+//******************************************************
 //Return the N-th palindromic number
  
 std::string number_palindrome(int N) {
@@ -3631,7 +3663,8 @@ std::string number_palindrome(int N) {
     }
     return ans;
 }
-	//Generate Highly Composite Numbers
+//******************************************************
+//Generate Highly Composite Numbers
 // for each HCN i, no number less than or equal i has more divisors than i.
 bool p[MAXN];
 vector<int> primes;
