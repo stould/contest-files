@@ -358,6 +358,28 @@ void split(vector<string>& v, const string& s) {
     }
 }
 //**********************************************
+//String minimal lexicografical rotaton in O(n)
+string min_lex (string s){
+	n = s.size();
+	s = s + s;
+	int mini = 0, p = 1, l = 0;
+	while(p < n && mini + l + 1 < n)
+		if(s[mini + l] == s[p + l])
+			l++;
+		else if(s[mini + l] < s[p + l]){
+			p = p + l + 1;
+			l = 0;
+		}
+		else if(s[mini + l] > s[p + l]){
+			mini = max(mini + l + 1, p);
+			p = mini + 1;
+			l = 0;
+		}
+	s = s.substr(mini, n);
+	return s;
+}
+
+//**********************************************
 //Knuth-Morris-Pratt O(n)
 vector<int> KMP(string S, string K) {
     vector<int> T(K.size() + 1, -1);
@@ -2784,6 +2806,35 @@ for(int i = 0; i < 5; i++) {
     }
 }
 //*******************************************************
+//Longest Increasing Subsequence - (LIS) O(n*log(n)) retrieving path
+void find_lis() {
+	topo = 1;
+	quem[0] = a[0];
+    pos[0] = 0;
+	pai[0] = -1;
+
+	for (int i = 1; i < n; i++){
+        if (quem[topo-1] <= a[i]){
+            quem[topo] = a[i]; pos[topo++] = i;
+            pai[i] = pos[topo-2];
+            continue;
+        }
+        int x = upper_bound (quem, quem+topo, a[i])-quem;
+        quem[x] = a[i]; pos[x] = i;
+        if (x == 0) pai[i] = -1;
+        else pai[i] = pos[x-1];
+	}
+}
+
+find_lis();
+vector <int> ret;
+printf("Max hits: %d\n", topo);
+
+for (int i = pos[topo-1]; i != -1; i = pai[i]) ret.push_back(a[i]);
+for (int i = ret.size()-1; i >=0; i--) printf("%d\n", ret[i]);
+
+
+//*******************************************************
 //Longest Increasing Subsequence - (LIS) O(Nlog(N))
 void funcA(void) {
     int top = 0;
@@ -3356,6 +3407,37 @@ void update(int x, int y, int new_value) {
 int sum(int[][] t, int r1, int c1, int r2, int c2) {
 	return sum(t, r2, c2) - sum(t, r1 - 1, c2) - sum(t, r2, c1 - 1) + sum(t, r1 - 1, c1 - 1);
 }
+//*******************************************************
+//Sparse Table for RMQ
+int sparse_min[22][MAXN];
+int pw[MAXN];
+
+void build_sparse() {
+	pw[1] = 0;
+	
+	for (int i = 0; i < N; i++) {
+		sparse_min[0][i] = P[i];
+
+		if (i > 1) {
+			pw[i] = pw[i - 1] + ((i & (-i)) == i);
+		}
+	}
+	
+	for (int i = 1; (1<<i) <= N; i++) {
+		for (int j = 0; j + (1 << i) <= N; j++) {			
+			sparse_min[i][j] = min(sparse_min[i - 1][j], sparse_min[i - 1][j + (1 << (i - 1))]);
+		}
+	} 
+}
+
+bool query(int l, int r) {
+	int lg = pw[r - l];
+
+	int s_min = min(sparse_min[lg][l], sparse_min[lg][r - (1 << lg) + 1]);
+
+	return s_min;
+}
+
 //*******************************************************
 //Segment Tree with Lazy Propagation
 void goDown(int node, int l, int r) {    

@@ -46,8 +46,14 @@ void build_sparse() {
 	} 
 }
 
-bool query(int l, int r) {
-	int lg = pw[r - l + 1];
+bool query(int l, int r) {	
+	int lg = 1;
+
+	while (lg <= l - r) {
+		lg *= 2;
+	}
+	lg /= 2;
+	
 
 	int s_min = min(sparse_min[lg][l], sparse_min[lg][r - (1 << lg) + 1]);
 	int s_gcd = gcd(sparse_gcd[lg][l], sparse_gcd[lg][r - (1 << lg) + 1]);	
@@ -73,7 +79,7 @@ int main(void) {
 	int best = -1;
 	
 	while (l <= h) {
-		m = (l + h) / 2;
+		m = l + (h - l) / 2;
 		
 		bool found = false;
 		
