@@ -17,7 +17,7 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 10010006;
+const int MAXN = 10001006;
 
 Int N;
 Int ans;
@@ -65,10 +65,8 @@ void func(Int x) {
     vector<pair<Int, int> > vp;
 
     for (int i = 0; i < (int) primes.size(); i++) {
-		if (i == 1) continue;
-
+		if (x == 1) break;
         if (x % primes[i] == 0) {
-
             vp.push_back(make_pair(primes[i], 0));
 			
             for ( ; x % primes[i] == 0; ) {
@@ -81,7 +79,7 @@ void func(Int x) {
     if (x != 1) {
         vp.push_back(make_pair(x, 1));
     }
-	
+
     gen(vp, 0, 1LL);
 }
 
@@ -92,7 +90,9 @@ int main(void) {
 		if (N != 1) {
 			ans = 0;
 			func(N);
-		}		
+		} else {
+			ans = 0;
+		}
 		printf("%lld %lld\n", N, ans);
 	}
 	return 0;
