@@ -15,6 +15,7 @@ int in() { int x; scanf("%d", &x); return x; }
 using namespace std;
 
 typedef long long Int;
+typedef unsigned long long uInt;
 typedef unsigned uint;
 
 #ifdef ONLINE_JUDGE
