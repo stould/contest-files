@@ -18,11 +18,9 @@ typedef long long Int;
 typedef unsigned uint;
  
 const int MAXN = 21;
-const int MAX_BITS = 4;
+const int MAX_BITS = 20;
 const int INF = INT_MAX / 3;;
-//1 = 2, 2 = 3, 3 = 5, 4 = 8
-//1 2 3 4 5 6 7  8  9  10
-//1 1 2 3 5 8 13 21 34 55 
+ 
 int T, N, M;
 int P[MAXN][MAXN];
 int dp[MAXN][MAXN][17715];
@@ -51,7 +49,7 @@ int func(int row, int col, int mask) {
  
 		if (ans == -1) {
 			int pass_mask = mask_id[valid_mask[mask] & ~(1 << col)];
-
+			//assert(pass_mask != -1);
 			ans = func(row, col + 1, pass_mask);
 			
 			if (!(valid_mask[mask] & (1 << col))) {				
@@ -59,6 +57,8 @@ int func(int row, int col, int mask) {
 				if (col + 1 < M) {
 					next_mask &= ~(1 << (col + 1));
 				}
+				//cout << row << " " << col << " check = "<< (valid_mask[mask] & (1 << col)) << " " << bin(valid_mask[mask]) << " " << bin(valid_mask[mask] | (1 << col)) << "\n";
+				//assert(next_mask != -1);
 				chmax(ans, P[row][col] + func(row, col + 2, mask_id[next_mask]));				
 			}
 		}
@@ -87,12 +87,13 @@ int main(void) {
 		}
 		
 		if (ok) {
+			//cout << cnt << " " << i << "\n";
 			valid_mask[cnt] = i;
 			mask_id[i] = cnt;
 			cnt++;
 		}
 	}
-	cout << cnt << endl;
+ 
 	for (int test = 1; test <= T; test++) {
 		scanf("%d%d", &M, &N);
  

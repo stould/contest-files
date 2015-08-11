@@ -21,7 +21,7 @@ const int MAXN = 100005;
 const int MOD = 1000000007LL;
 
 int N, X;
-int P[MAXN];
+Int P[MAXN];
 
 Int modpow(Int a, Int n) {
 	Int res(1);
@@ -40,29 +40,42 @@ int main(void) {
 	cin >> N >> X;
 
 	Int denom_exp = 0;
-	Int numer_value = 0LL;
+	Int ans = 0;
 	
 	for (int i = 0; i < N; i++) {
 		cin >> P[i];
-
 		denom_exp += P[i];
 	}
 
+	vector<Int> pw;
+
 	for (int i = 0; i < N; i++) {
-		numer_value += modpow(X, denom_exp - P[i]);
-		numer_value %= MOD;
+		pw.push_back(denom_exp - P[i]);
 	}
-	
-	Int denom_value = modpow(X, denom_exp);
-	Int val_gcd = gcd(numer_value, denom_value);
-	
-	//cout << numer_value << " " << denom_value << endl;
-	cout << gcd(1, gcd(3, 5)) << endl;
-	if (val_gcd == 1) {
-		cout << min(numer_value, denom_value) << "\n";
-	} else {		
-		cout << val_gcd << "\n";
+
+	sort(pw.rbegin(), pw.rend());
+
+	while (true) {
+		Int smallest_power = pw.back();
+		int cnt = 0;
+
+		while (!pw.empty() && pw.back() == smallest_power) {
+			cnt += 1;
+			pw.pop_back();
+		}
+
+		ans = smallest_power;
+		
+		if (cnt % X != 0) break;
+		
+		cnt /= X;
+		
+		for (int i = 0; i < cnt; i++) {
+			pw.push_back(smallest_power + 1);
+		}
 	}
+
+	cout << modpow(X, min(ans, denom_exp)) << "\n";
 	
 	return 0;
 }

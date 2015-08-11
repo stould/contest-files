@@ -1,4 +1,7 @@
 /*******Guia de Referencia - UNITAU **********//
+
+Numbero de Divisores de um numero: p1^x1 * p2^x2 * ... pn^xn = for i 1..n ans *= (xi + 1);
+
 //**********************************************
 //Solver for mathematical expressions
 void doOp(stack<double> &num, stack<char> &op){

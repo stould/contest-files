@@ -1,4 +1,13 @@
+2
+abcdefghABCDEFGH
+2
+abc
+abAB
+xyz
 1
+<<<<<<< HEAD
+xyz
+=======
 <<<<<<< HEAD
 10 10
 1 1
@@ -14,3 +23,4 @@
 1 19
 0 0
 >>>>>>> 1aa849b55413f90bde9edc4cd8a457766ba4b6f1
+>>>>>>> 2e4df38c27e446c9357562cd065a408ea5762b76
