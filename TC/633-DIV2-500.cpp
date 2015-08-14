@@ -17,37 +17,23 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 200005;
+class ABBA {
+public:
+	string canObtain(string, string);
+};
 
-string S;
-int N, M;
-int P[MAXN];
+string ABBA::canObtain(string initial, string target) {
+	while (target.size() > initial.size()) {
+		char last = target.back();
 
-int main(void) {
-	cin >> S >> N;
-
-	int L = S.size();
-
-	for (int i = 0; i < N; i++) {
-		cin >> M;
-
-		M -= 1;
-
-		P[M] += 1;
-		P[L - M - 1] -= 1;
-	}
-
-	int sum = 0;
-	
-	for (int i = 0; i < L / 2; i++) {
-		sum += P[i];
-
-		if (sum % 2 == 1) {
-			swap(S[i], S[L - i - 1]);
+		target = target.substr(0, target.size() - 1);
+		
+		if (last == 'B') {
+			reverse(target.begin(), target.end());
 		}
+
 	}
-	
-	cout << S << endl;
-	
-    return 0;
+	return initial == target ? "Possible" : "Impossible";
 }
+
+//Powered by [KawigiEdit] 2.0!

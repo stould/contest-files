@@ -17,37 +17,26 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 200005;
-
+int N;
 string S;
-int N, M;
-int P[MAXN];
+int keys[50];
 
 int main(void) {
-	cin >> S >> N;
+	cin >> N >> S;
 
-	int L = S.size();
-
-	for (int i = 0; i < N; i++) {
-		cin >> M;
-
-		M -= 1;
-
-		P[M] += 1;
-		P[L - M - 1] -= 1;
-	}
-
-	int sum = 0;
+	int ans = 0;
 	
-	for (int i = 0; i < L / 2; i++) {
-		sum += P[i];
+	for (int i = 0; i < 2 * N - 2; i += 2) {
+		keys[S[i] - 'a'] += 1;
 
-		if (sum % 2 == 1) {
-			swap(S[i], S[L - i - 1]);
+		if (keys[S[i + 1] - 'A'] == 0) {
+			ans += 1;
+		} else {
+			keys[S[i + 1] - 'A'] -= 1;
 		}
 	}
+
+	cout << ans << endl;
 	
-	cout << S << endl;
-	
-    return 0;
+	return 0;
 }
