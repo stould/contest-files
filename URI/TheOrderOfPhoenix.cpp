@@ -123,15 +123,18 @@ int main(void) {
 			pos = i - 1;
 		}
 	}
-
-	for (int i = 0; i < N; i++) {
-		if (rnk[i] == pos) {
-			if (curr < 3) {
-				cout << "*" << endl;
-			} else {
-				cout << S.substr(i, curr) << endl;
+	if (N <= 3) {
+		cout << "*" << endl;
+	} else {
+		for (int i = 0; i < N; i++) {
+			if (rnk[i] == pos) {
+				if (curr < 3) {
+					cout << "*" << endl;
+				} else {
+					cout << S.substr(i, curr) << endl;
+				}
+				break;
 			}
-			break;
 		}
 	}
 	
