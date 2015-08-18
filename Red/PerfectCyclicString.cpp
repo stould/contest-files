@@ -31,22 +31,28 @@ vector<int> KMP(string K) {
 	return T;
 }
 
+int stringPeriod(string arg) {
+	int ori_len = (int) arg.size();
+	arg = arg + arg;
+	
+	vector<int> prefix = KMP(arg);
+	int ans = (int) arg.size();
+	
+	for (int i = 0; i < (int) prefix.size(); i++) {
+		if (prefix[i] >= ori_len) {
+			ans = i - prefix[i];
+			break;
+		}
+	}
+	return ans;
+}
+
 int main(void) {
 	cin >> T;
 
 	for ( ; T--; ) {
 		cin >> S;
-		S = S + S;
-		vector<int> prefix = KMP(S);
-		int ans = (int) S.size();
-		
-		for (int i = 0; i < (int) prefix.size(); i++) {
-			if (prefix[i] >= (int)  S.size() / 2) {
-				ans = i - prefix[i];
-				break;
-			}
-		}
-		cout << ans << "\n";
+		cout << stringPeriod(S) << "\n";
 	}
 	return 0;
 }
