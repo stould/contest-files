@@ -51,18 +51,21 @@ struct UnionFind {
     int unite(int p, int q) {
         int i = root(p);
         int j = root(q);
+
         if(i == j) return 0;
-        if(sz[i] < sz[j]) {
+
+		if(sz[i] < sz[j]) {
             id[i] = j; sz[j] += sz[i];
         } else {
             id[j] = i; sz[i] += sz[j];
         }
+		
 		return 1;
     }
 };
 
 int conv(int i, int j) {
-	return i * N + j;
+	return i * M + j;
 }
 
 int main(void) {
@@ -91,37 +94,40 @@ int main(void) {
 		for (int x = 0; x < T; x++) {
 			cin >> h[x];
 		}
-
-		UnionFind uf(N * M + 1);
+		
+		UnionFind uf(N * M);
 		vector<int> ans;
 		
 		int biggest_reached = INT_MAX;
-		int component = N * M - 1;
+		int component = 0;
 
 		for (int i = T - 1; i >= 0; i--) {			
-			int curr_h = h[i];			
-			it = lower_bound(val.begin(), val.end(), make_pair(curr_h, make_pair(0, 0)));
-
-			if (it != val.end() && it->first < curr_h) it++;
-
+			int curr_h = h[i];
+			it = lower_bound(val.begin(), val.end(), make_pair(curr_h + 1, make_pair(0, 0)));
+			//cout << curr_h << " " << it->first << "\n";
+			//if (it != val.end() && it->first < curr_h) it++;
 			for ( ; it != val.end() && it->first < biggest_reached; it++) {
+				component += 1;
+							
 				for (int k = 0; k < 4; k++) {
-					int pi = it->second.first + dx[k];
+					int pi = it->second.first  + dx[k];
 					int pj = it->second.second + dy[k];
-
+					
 					if (pi >= 0 && pj >= 0 && pi < N && pj < M) {
-						if (arr[pi][pj] >= curr_h) {
-							component -= uf.unite(conv(it->second.first, it->second.second), conv(pi, pj));
+						if (arr[pi][pj] > curr_h) {
+							if (uf.unite(conv(it->second.first, it->second.second), conv(pi, pj))) {
+								component -= 1;
+							}
 						}
 					}
 				}
 			}
-
 			ans.push_back(component);
-			biggest_reached = curr_h;
+			biggest_reached = curr_h + 1;
 		}
+		
 		for (int i = 0; i < T; i++) {
-			printf("%d ", N * M - ans[T - i - 1] - 1);
+			printf("%d ", ans[T - i - 1]);
 		}
 		printf("\n");
 	}
