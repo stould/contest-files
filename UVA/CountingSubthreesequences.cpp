@@ -31,7 +31,7 @@ int main(void) {
 		for (int i = 0; i < (int) S.size(); i++) {
 			if (S[i] >= '0' && S[i] <= '9') {
 				curr = curr * 10 + (S[i] - '0');
-				curr = curr % 3;
+				curr = ((curr % 3) + 3) % 3;
 
 				if (curr == 0) {
 					ans += 1;
