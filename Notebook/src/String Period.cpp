@@ -1,8 +1,16 @@
 //Find string period
-vector<int> prefix = KMP(S); //KMP Prefix function array
-for (int i = 0; i < (int) prefix.size(); i++) {
-	if (prefix[i] >= (int)  S.size() / 2) {
-		period_len = i - prefix[i];		
+int stringPeriod(string arg) {
+	int ori_len = (int) arg.size();
+	arg = arg + arg;
+	
+	vector<int> prefix = KMP(arg);
+	int ans = (int) arg.size();
+	
+	for (int i = 0; i < (int) prefix.size(); i++) {
+		if (prefix[i] >= ori_len) {
+			ans = i - prefix[i];
+			break;
+		}
 	}
- }
-
+	return ans;
+}
