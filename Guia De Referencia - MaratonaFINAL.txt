@@ -2941,7 +2941,7 @@ for (int i = 0; i < (int) prefix.size(); i++) {
 	}
  }
 
-//*******************************************************
+2//*******************************************************
 //Domino perfect matching - recursive
 int a, b, i, j, k, n, ok, teste = 1, mem[7][7];
 
@@ -3794,14 +3794,15 @@ public static int sum(int a, int b) {
 //*******************************************************
 //modpow(a, n, mod) - calcula a^n % mod de maneira eficiente
 int modpow(int a, int n, int mod) {
-	int res(1);
-        while (n) {
-                if (n&1)
-                        res=(res*a)%mod;
-                a=(a*1ll*a)%mod;
-                n>>=1;
-        }
-        return res;
+	int res = 1;
+	while (n) {
+		if (n&1) {
+			res=(res*a)%mod;
+		}
+		a=(a*1ll*a)%mod;
+		n>>=1;
+	}
+	return res;
 }
 //*******************************************************
 //Calculando n-th numero de fibonnaci em O(n) (Deve ser Evitado)
