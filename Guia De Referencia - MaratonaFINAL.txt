@@ -4250,7 +4250,7 @@ public String decToOthers(int value, int toBase) {
 		} else {
 			ans = (char) (aux + '0') + ans;
 		}
-		value /= toBase;
+ 		value /= toBase;
 	}
 	return ans;
 }
