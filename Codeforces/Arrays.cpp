@@ -14,37 +14,38 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
+#ifdef ONLINE_JUDGE
+#define debug(args...)
+#else
+#define debug(args...) fprintf(stderr,args)
+#endif
+
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+const int MAXN = 100005;
 
-string S;
-int N;
-
-int dp[4];
+int NA, NB, K, M;
+Int PA[MAXN], PB[MAXN];
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		Int ans = 0, curr = 0;
-		
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				curr = curr * 10 + (S[i] - '0');
-				curr = ((curr % 3) + 3) % 3;
+	cin >> NA >> NB >> K >> M;
 
-				if (curr == 0) {
-					ans += 1;
-				}
-				
-				ans += dp[curr];			
-				dp[curr] += 1;
-			} else {
-				memset(dp, 0, sizeof(dp));
-				curr = 0;
-			}
-		}		
-		cout << ans << "\n";
+	for (int i = 0; i < NA; i++) {
+		cin >> PA[i];
 	}
-    return 0;
+	for (int i = 0; i < NB; i++) {
+		cin >> PB[i];
+	}
+	K -= 1;
+	M -= 1;
+
+	if (PA[K] < PB[NB - 1 - M]) {
+		cout << "YES\n";
+	} else {
+		cout << "NO\n";
+	}
+	
+	
+	return 0;
 }
