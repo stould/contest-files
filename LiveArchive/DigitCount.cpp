@@ -39,7 +39,7 @@ int func(int pos, int cnt, int prefix, int goal, int seen_non_zero, int last) {
 				}
 								
 				int add = i == goal;
-
+				
 				if (i == 0 && goal == 0) {
 					if (!seen_non_zero) {
 						add = 0;
