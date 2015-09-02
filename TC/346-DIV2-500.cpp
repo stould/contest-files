@@ -14,38 +14,23 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define debug(args...)
-#else
-#define debug(args...) fprintf(stderr,args)
-#endif
-
 typedef long long Int;
 typedef unsigned uint;
 
-int N, M;
+class CommonMultiples {
+public:
+	int countCommMult(vector <int>, int, int);
+};
 
-int main(void) {
-	cin >> N >> M;
-
-	if (N == 1) {
-		cout << 1 << "\n";
-		return 0;
-	}
-
-	if (M - 1 >= N - M) {
-		if (M - 1 >= 1) {
-			cout << M - 1 << "\n";
-		} else {
-			cout << M + 1 << "\n";
-		}
-	} else {
-		if (M + 1 <= N) {
-			cout << M + 1 << "\n";
-		} else {
-			cout << M - 1 << "\n";
-		}
-	}
+int CommonMultiples::countCommMult(vector <int> a, int lower, int upper) {
+	int N = a.size();
+	long long val = a[0];
 	
-	return 0;
+	for (int i = 1; i < N; i++) {
+		val = lcm(val, (long long) a[i]);
+	}
+
+	return upper / val - (lower - 1) / val;
 }
+
+//Powered by [KawigiEdit] 2.0!

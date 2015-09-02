@@ -27,51 +27,24 @@ const int MAXN = 300005;
 
 int N, M;
 string S;
-int tree[MAXN];
-void increase(int index, int add) {
-	while (index <= N) {
-            tree[index] += add;
-            index += (index & -index);
-        }
-    }
 
-	void decrease(int index, int add) {
-        while(index <= N) {
-            tree[index] -= add;
-            index += (index & -index);
-        }
-    }
-
-
-int read(int index) {
-	int sum = 0;
-
-        while(index > 0) {
-            sum += tree[index];
-            index -= (index & -index);
-        }
-
-        return sum;
-    }
 int main(void) {
-	cin.tie(0);
-	ios_base::sync_with_stdio(false);
-	
 	cin >> N >> M >> S;
 
 	S = 'a' + S + 'z';
 
 	N += 2;
 
-	set<int> val_pos;
-	set<int>::iterator it;
+	set<int> val_beg;
+	set<int> val_end;
 	
-	for (int i = 0; i < N; i++) {
-		if (S[i] == '.') {
-			increase(i, 1);
-		}
-		if (i > 0 && S[i] != '.' && S[i - 1] == '.') {
-			val_pos.insert(i);
+	set<int>::iterator il, ir;
+	
+	int ans = 0;
+
+	for (int i = 0; i < N - 1; i++) {
+		if (S[i] == S[i + 1] && S[i] == '.') {
+			ans += 1;
 		}
 	}
 
@@ -81,36 +54,24 @@ int main(void) {
 		
 		cin >> pos >> value;
 
+		if (S[pos] != '.' && value == '.') {
+			if (S[pos - 1] == '.') {
+				ans += 1;
+			}
+			if (S[pos + 1] == '.') {
+				ans += 1;
+			}
+		}
 		if (S[pos] == '.' && value != '.') {
-			decrease(pos, 1);
-
-			if (pos - 1 >= 0 && S[pos - 1] == '.') {
-				val_pos.insert(pos);
+			if (S[pos - 1] == '.') {
+				ans -= 1;
 			}
-			if (val_pos.count(pos + 1)) {
-				val_pos.erase(pos + 1);
-			}
-		} else if (S[pos] != '.' && value == '.') {
-			increase(pos, 1);
-
-			if (pos - 1 >= 0 && S[pos - 1] == '.') {
-				val_pos.erase(pos);
-			}
-			if (pos + 1 < N && S[pos + 1] != '.') {
-				val_pos.insert(pos + 1);
+			if (S[pos + 1] == '.') {
+				ans -= 1;
 			}
 		}
 
 		S[pos] = value;
-
-		int ans = 0, seen = 0;
-		
-		for (it = val_pos.begin(); it != val_pos.end(); it++) {
-			int now = read(*it);
-			
-			ans += max(0, now - seen - 1);
-			seen += now;
-		}
 		cout << ans << "\n";
 	}
 	return 0;
