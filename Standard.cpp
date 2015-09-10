@@ -21,6 +21,7 @@ using namespace std;
 #endif
 
 typedef long long Int;
+typedef unsigned long long uInt;
 typedef unsigned uint;
 
 int main(void) {

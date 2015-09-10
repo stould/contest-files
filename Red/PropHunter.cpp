@@ -19,13 +19,13 @@ typedef unsigned uint;
 
 int P, H, O;
 
-int main(void) {
-	cin >> P >> H >> O;
-
-	if (P <= O - H) {
-		cout << "Props win!\n";
-	} else {
-		cout << "Hunters win!\n";
+int main(void) { 
+	while (cin >> P >> H >> O) {
+		if (P <= O - H) {
+			cout << "Props win!\n";
+		} else {
+			cout << "Hunters win!\n";
+		}
 	}
 	
 	return 0;
