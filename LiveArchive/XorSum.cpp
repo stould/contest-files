@@ -24,7 +24,7 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 2100005;                 
+const int MAXN = 3200005;                 
 const int MAX_LEN = 3;
 
 int T, N;
@@ -34,7 +34,7 @@ int child[MAXN][2];
 int n;
 	
 void resetTrie() {
-	n = 0;
+	n = 1;
 	memset(child, 0, sizeof(child));
 }
 
@@ -54,7 +54,7 @@ void addWord(int x) {
 int query(int x) {
 	int value = 0;
 		
-	int now = 0LL;
+	int now = 0;
 
 	for (int i = 31; i >= 0; i--) {
 		int wish = (x & (1 << i)) != 0;
@@ -64,7 +64,7 @@ int query(int x) {
 		if (child[now][wish]) {
 			value += (1 << i);
 			now = child[now][wish];
-		} else {
+		} else if (child[now][wish ^ 1]) {
 			now = child[now][wish ^ 1];
 		}
 	}
