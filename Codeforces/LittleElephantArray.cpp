@@ -1,30 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <list>
-#include <deque>
-#include <stack>
-#include <queue>
-#include <set>
-#include <map>
-#include <bitset>
-#include <algorithm>
-#include <utility>
-#include <functional>
-#include <valarray>
-#include <cmath>
-#include <ctime>
-#include <cstdlib>
-#include <cstdio>
-#include <cctype>
-#include <cstring>
-#include <climits>
-
-using namespace std;
-
-#define REP(i, n) for(i = 0; i < (n); i++)
-#define FOR(i, a, n) for(i = a; i < n; i++)
-#define REV(i, a, n) for(i = a; i > n; i--)
+#include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -34,25 +8,78 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
-typedef long long ll;
-typedef long double ld;
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
-int n, m, v[100000], dp[100000][100000];
+using namespace std;
+
+#ifdef ONLINE_JUDGE
+#define debug(args...)
+#else
+#define debug(args...) fprintf(stderr,args)
+#endif
+
+typedef long long Int;
+typedef unsigned uint;
+
+const int MAXN = 100005;
+
+int N, M;
+int P[MAXN], cnt[MAXN];
+int L[MAXN], R[MAXN];
+int ans[MAXN];
 
 int main(void) {
-    scanf("%d%d", &n, &m);
-    memset(dp, 0, sizeof(dp));
-    REP(i, n) {
-        scanf("%d", &v[i]);
-        if(i > 0) dp[i] += dp[i - 1];
-        if(v[i] == m) {
-            dp[i] += 1;
-        }
-    }
+	ios_base::sync_with_stdio(false);
+	
+	cin >> N >> M;
 
-    else puts("NO");
-    return 0;
+	set<int> ps;
+	
+	for (int i = 0; i < N; i++) {
+		cin >> P[i];
+		if (P[i] > 0 && P[i] <= 100000) {
+			cnt[P[i]] += 1;
+
+			if (cnt[P[i]] >= P[i]) {
+				ps.insert(P[i]);
+			}
+		}
+	}
+
+	vector<int> poss(ps.begin(), ps.end());
+	
+	for (int i = 0; i < M; i++) {
+		cin >> L[i] >> R[i];
+		L[i] -= 1;
+		R[i] -= 1;
+	}
+
+	for (int i = 0; i < (int) poss.size(); i++) {
+		for (int j = 0; j < N; j++) {
+			cnt[j] = 0;
+
+			if (P[j] == poss[i]) {
+				cnt[j] = 1;
+			}
+			if (j > 0) {
+				cnt[j] += cnt[j - 1];
+			}
+		}
+		for (int j = 0; j < M; j++) {
+			int seen = cnt[R[j]];
+
+			if (L[j] != 0) {
+				seen -= cnt[L[j] - 1];
+			}
+
+			ans[j] += seen == poss[i];
+		}
+	}
+
+	for (int i = 0; i < M; i++) {
+		cout << ans[i] << endl;
+	}
+	return 0;
 }
-
-
-

@@ -28,22 +28,22 @@ int N, M;
 int main(void) {
 	cin >> N >> M;
 
-	if (N == 1 && M == 1) {
+	if (N == 1) {
 		cout << 1 << "\n";
 		return 0;
 	}
 
-	if (M - 1 >= N - M + 1) {
-		if (M - 1 <= 0) {
-			cout << M + 1 << "\n";
-		} else {
+	if (M - 1 >= N - M) {
+		if (M - 1 >= 1) {
 			cout << M - 1 << "\n";
+		} else {
+			cout << M + 1 << "\n";
 		}
 	} else {
-		if (M + 1 > N) {
-			cout << M - 1 << "\n";
-		} else {
+		if (M + 1 <= N) {
 			cout << M + 1 << "\n";
+		} else {
+			cout << M - 1 << "\n";
 		}
 	}
 	
