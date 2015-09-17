@@ -52,6 +52,7 @@ Int func(int pos, int last, int pref) {
 		}
 		
 		return ans;
+		
 	}
 }
 
