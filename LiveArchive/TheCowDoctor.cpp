@@ -17,17 +17,16 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 310;
+const int MAXN = 600;
 
 int N, M;
-bool contain[MAXN][MAXN];
 bool mark[MAXN][MAXN];
-bool vis[MAXN];
+bool contains[MAXN][MAXN];
 
 int main(void) {
 	for ( ; cin >> N >> M && N + M != 0; ) {
-		memset(contain, false, sizeof(contain));
 		memset(mark, false, sizeof(mark));
+		memset(contains, false, sizeof(contains));
 		
 		for (int i = 0; i < M; i++) {
 			int K, P;
@@ -40,40 +39,52 @@ int main(void) {
 			}
 		}
 
-		int ans = 0;
-		
 		for (int i = 0; i < M; i++) {
 			for (int j = 0; j < M; j++) {
-				if (i == j) continue;
+				bool is_sub = true;
 				
-				contain[i][j] = true;
-				
-				for (int k = 0; k < N; k++) {
-					if (!mark[i][k] && mark[j][k]) contain[i][j] = false;
-				}
-			}			
-		}
-
-		for (int i = 0; i < M; i++) {
-			for (int j = 0; j < N; j++) {
-				if (mark[i][j]) {
-					bool ok = true;
-
-					for (int k = 0; k < M; k++) {
-						if (i != k && !vis[k] && contain[i][k] && mark[k][j]) {
-							ok = false;
-						}
-					}
-
-					if (!ok) {
-						vis[i] = false;						
-						ans += 1;
+				for (int k = 0; k < N; k++) {					
+					if ((mark[j][k] && !mark[i][k])) {
+						is_sub = false;
 						break;
 					}
 				}
+				contains[i][j] = is_sub;
 			}
 		}
 
+		int ans = 0;
+		
+		for (int i = 0; i < M; i++) {
+			vector<bool> seen(N, false);
+			
+			for (int j = 0; j < M; j++) {
+				if (i != j && contains[i][j]) {
+					for (int k = 0; k < N; k++) {				
+						if (mark[j][k]) {
+							seen[k] = true;
+						}
+					}
+				}
+			}
+			
+			bool ok = true;
+			
+			for (int j = 0; j < N; j++) {
+				if (mark[i][j]) {
+					if (!seen[j]) {
+						ok = false;
+					}
+				}
+			}
+			if (ok) {
+				ans += 1;
+			}
+		}
+		if (ans == M) {
+			ans -= 1;
+		}
+		
 		cout << ans << endl;
 	}
 	return 0;

@@ -66,6 +66,8 @@ int query(int x) {
 			now = child[now][wish];
 		} else if (child[now][wish ^ 1]) {
 			now = child[now][wish ^ 1];
+		} else {
+			break;
 		}
 	}
 
