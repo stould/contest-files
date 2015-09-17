@@ -226,7 +226,7 @@ int main(void) {
 			}
 		}
 		
-		max_flow(s, t);
+		int flow = max_flow(s, t);
 
 		vector<pair<int, int> > ans;
 		
@@ -239,7 +239,7 @@ int main(void) {
 			}
 		}
 
-		if(ans.empty()) {
+		if(flow != id_club_cnt - 1) {
 			cout << "Impossible.\n";
 		} else {
 			for (int i = 0; i < (int) ans.size(); i++) {
