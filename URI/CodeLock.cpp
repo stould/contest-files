@@ -83,7 +83,7 @@ int func(int pos, int fm) {
 				int f = forward(curr, S[pos]);
 				int b = backward(curr, S[pos]);
 
-				chmin(ans, f + func(pos + 1, f));
+				chmin(ans, f + func(pos + 1, b));
 				chmin(ans, b + func(pos + 1, b));
 			}
 		}
