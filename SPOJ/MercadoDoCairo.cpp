@@ -25,8 +25,8 @@ int tree[MAXN][MAXN];
 int get_max(int x, int y) {
     int result = 0;
 	
-    for (int i = x; i >= 0; i = (i & (i +1)) - 1) {
-        for (int j = y; j >= 0; j = (j & (j +1)) - 1) {
+    for (int i = x; i > 0; i -= i & -i) {
+        for (int j = y; j > 0; j -= j & -j) {
             chmax(result, tree[i][j]);
         }
     }
@@ -36,32 +36,31 @@ int get_max(int x, int y) {
 
 
 void update(int x, int y, int new_value) {
-    for (int i = x; i >= 0; i = (i & (i +1)) - 1) {
-        for (int j = y; j >= 0; j = (j & (j +1)) - 1) {
-            tree[i][j] += new_value;
+    for (int i = x; i < MAXN; i += i & -i) {
+        for (int j = y; j < MAXN; j += j & -j) {
+            chmax(tree[i][j], new_value);
         }
     }
 }
 
 
 int main(void) {
-	cin >> T;
+	scanf("%d", &T);
 	
 	for (int t = 1; t <= T; t++) {
-		cin >> N;
+		scanf("%d", &N);
 
 		memset(tree, 0, sizeof(tree));
 		
 		int X, Y;
+		int ans = 0;
 		
 		for (int i = 0; i < N; i++) {
-			cin >> X >> Y;
-			
+			scanf("%d%d", &X, &Y);
 			update(X, Y, get_max(X, Y) + 1);
-			cout << get_max(X, Y) << endl;
+			chmax(ans, get_max(X, Y));
 		}
-		cout << "\n";
-		//cout << get_max(1000, 1000) << endl;
+		printf("%d\n", ans);
 	}
 	
     return 0;
