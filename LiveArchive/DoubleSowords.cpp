@@ -20,34 +20,64 @@ int main() {
     
 		set<int> in;
 		vector<pair<int, pair<int, char> > > E;
-		map<int, int> cnt;
+		vector<pair<int, int> > rep_search;
+
+		int ans = 0;
 		
 		for (int i = 0; i < N; i++) {      
-			cin >> A[i] >> B[i] >> C[i];
-			
-			cnt[A[i]] += 1;
+			cin >> A[i] >> B[i] >> C[i];			
+
 			in.insert(A[i]);
+			rep_search.push_back(make_pair(A[i], i));
 		}
+
+		sort(rep_search.begin(), rep_search.end());
 		
 		for (int i = 0; i < N; i++) {   
-			set<int>::iterator bound = in.lower_bound(B[i] - 1);
-
-			if (bound == in.end()) {
-				bound--;
+			int l = 0, h = N - 1, m;
+			int leastA = N, leastB = -1;
+			
+			while (l <= h) {
+				m = (l + h) / 2;
+				
+				if (rep_search[m].first >= B[i]) {
+					leastA = min(leastA, m);
+					h = m - 1;
+				} else {
+					l = m + 1;
+				}
 			}
-			//cerr << *bound << " " << B[i] << " " << C[i] << endl;
-			//cout << *bound << endl;
-			if (bound == in.end() or !(*bound >= B[i] && *bound <= C[i])) {
-				//cerr << B[i] << " " << C[i] << endl;
+			l = 0, h = N - 1;
+			
+			while (l <= h) {
+				m = (l + h) / 2;
+				
+				if (rep_search[m].first <= C[i]) {
+					leastB = max(leastB, m);
+					l = m + 1;
+				} else {
+					h = m - 1;
+				}
+			}
+			//cerr << leastA << " " << leastB << " => " << B[i] << " " << C[i] << endl;							
+			if (leastA == N or leastB == -1) {
+				//cerr << B[i] << " " << C[i] << endl;							
+				//cerr << rep_search[least].first << " " << B[i] << " " << C[i] << endl;							
 				E.push_back(make_pair(B[i], make_pair(i, 'I')));
-				E.push_back(make_pair(C[i], make_pair(i, 'O')));
+				E.push_back(make_pair(C[i], make_pair(i, 'O')));			
+			} else {
+				//cout << "in " << i << " " << leastA << " = " << leastB << " => " << rep_search[leastA].first << " " << rep_search[leastB].first << endl;
+				if ((rep_search[leastA].second == i && leastA == leastB) or (rep_search[leastA].second == i && rep_search[leastA].first == A[i])) {
+					//cerr << B[i] << " " << C[i] << endl;							
+					E.push_back(make_pair(B[i], make_pair(i, 'I')));
+					E.push_back(make_pair(C[i], make_pair(i, 'O')));			
+				}			
 			}
 		}
 
 		sort(E.begin(), E.end());
     
 		set<int> buff, clear;
-		int ans = 0;
 
 		for (int i = 0; i < (int) E.size(); i++) {
 			if (clear.count(E[i].second.first)) continue;
