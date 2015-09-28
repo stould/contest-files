@@ -29,6 +29,34 @@ const Int MOD = 1000000007LL;
 int T, N, K, P;
 Int bin[MAXN][MAXN];
 Int fat[MAXN];
+Int dp[MAXN][MAXN];
+
+Int func(int pos, int last) {
+	if (pos == N) {
+		return 0;
+	} else {
+		Int& ans = dp[pos][last];
+
+		if (ans == -1LL) {
+			ans = 0LL;
+
+			if ((P < last && pos >= K) or pos == N - 1) {
+				ans += fat[N - (pos - K)];
+			}
+
+			ans %= MOD;
+
+			for (int i = last + 1; i <= N; i++) {
+				ans += func(pos + 1, i);
+				ans %= MOD;
+			}
+		}
+
+		ans = ((ans % MOD) + MOD) % MOD;
+
+		return ans;
+	}
+}
 
 int main(void) {
 	cin >> T;
@@ -57,22 +85,10 @@ int main(void) {
 	for (int t = 1; t <= T; t++) {
 		cin >> N >> K >> P;
 
-		Int ans = 0LL;
-
-		ans += (N - P) * fat[N - 2];
-		ans %= MOD;
-
-		for (int i = K + 2; i <= N; i++) {
-			int bigger = N - P;
-
-			cout << bigger << " " << (i - K - 1) << " " << (N - (i - K)) << endl;
-
-			ans += bin[bigger][i - K - 1] * fat[N - (i - K)];
-			ans %= MOD;
-		}
-
-		ans = ((ans % MOD) + MOD) % MOD;
-
+		memset(dp, -1LL, sizeof(dp));
+		
+		Int ans = func(K - 1, 0);
+		
 		cout << "Case #" << t << ": " << ans << endl;
 	}
 	return 0;
