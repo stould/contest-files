@@ -8,31 +8,23 @@ const int MAXN = 101;
 int T, N, M, L;
 int dp[MAXN];
 int C[MAXN], V[MAXN], P[MAXN];
-int helper_dp[MAXN][1010][1010];
-int sub[110][1010];
+int helper_dp[MAXN][1010];
 
-int helper(int pos, int diff, int cst) {
-    if (cst > L || diff < 0) {
-        return 0;
+int helper(int pos, int diff) {
+    if (diff < 0) {
+        return INF;
     } else if (diff == 0) {
-        return 1;
-    } else if (pos >= M) {
         return 0;
+    } else if (pos >= M) {
+        return INF;
     } else {
-        int& ans = helper_dp[pos][diff][cst];
+        int& ans = helper_dp[pos][diff];
         
-        if (ans == -1) {
-            ans = 0;
-            
-            if (diff - V[pos] >= 0 && sub[diff - V[pos]]) {
-                ans = helper(pos + 1, diff - V[pos], cst + C[pos]);
-            }
-            if (ans == 0) {
-                if (sub[diff]) {
-                    ans = helper(pos + 1, diff, cst);
-                }
-            }
-        }        
+        if (ans == -1) {			
+            ans = C[pos] + helper(pos + 1, diff - V[pos]);
+			ans = min(ans, helper(pos + 1, diff));
+        }
+				
         return ans;
     }
 }
@@ -49,30 +41,25 @@ int main() {
         
         sort(P, P + N);
 
-        for (int i = 1; i <= M; i++) {
+        for (int i = 0; i < M; i++) {
             cin >> C[i] >> V[i];
         }
-        
-        memset(sub, 63, sizeof(sub));
-
-        for (int i = 0; i <= L; i++) {
-            sub[0][i] = 0;
-        }
-        
-        for (int i = 1; i <= M; i++) {
-            for (int j = 0; j <= L; j++) {
-                if (V[i] - j >= 0) {
-                    sub[i][j] = min(sub[i][j], sub[i - 1][j - V[i]] + C[i]);
-                } else {
-                    sub[i][j] = sub[i - 1][j];
-                }
-            }      
-        } 
         
         memset(dp, 63, sizeof(dp));
         
         dp[0] = 0;
-        
+				memset(helper_dp, -1, sizeof(helper_dp));
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < i; j++) {
+
+				int check = helper(0, abs(P[i] - P[j]));
+
+				if (check <= L) {
+					dp[i] = min(dp[i], dp[j] + 1);
+				}
+			}
+		}
+        /*
         priority_queue<pair<int, int> > q;
         q.push(make_pair(0, 0));
         
@@ -102,7 +89,7 @@ int main() {
             }            
         }   
         
-        
+        */
         int ans = dp[N-1];
         
         if (ans >= INF) ans = -1;
