@@ -72,8 +72,6 @@ struct MyLess {
 };
 
 int func (void) {
-    int i, j;
-
     dist[conv(RF,CF)] = 0;
     vis[conv(RF,CF)] = 0;
 
@@ -101,7 +99,7 @@ int func (void) {
             int next = conv(ni, nj);
 
             if (ni <= 0 || nj <= 0 || ni > R || nj > C || graph[next] == 1 || vis[next]) continue;
-
+			
             if (next >= 0 && next < R * C) {
                 int next_cost = dist[now] + ct[i];
                 int heuristic = max(abs(ni - RT),abs(nj - CT))*2;
