@@ -61,7 +61,10 @@ int main(void) {
 
 			q.pop();
 
+<<<<<<< HEAD
 			//cout << curr << " " << cnt[curr] << endl;
+=======
+>>>>>>> 5945da13dd451bae3b1df8793c9c01fbb633c76c
 			if (cost > dist[curr]) continue;
 
 			for (int i = 0; i < (int) G[curr].size(); i++) {
@@ -77,7 +80,10 @@ int main(void) {
 				}				
 			}
 		}
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 5945da13dd451bae3b1df8793c9c01fbb633c76c
 		cout << cnt[2] << "\n";
 	}
 	return 0;

@@ -25,7 +25,7 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 100005;
-const double EPS = 1e-8;
+const double EPS = 1e-5;
 
 int N;
 double A;
@@ -35,21 +35,39 @@ bool eq(double a, double b) {
 	return fabs(a - b) < EPS;
 }
 
+void gen() {
+	srand(time(NULL));
+	for (int i = 0; i < 10; i++) {
+		N = rand() % 10000;
+		A = rand() % 1000000;
+		
+		cout << N << " " << A << "\n";
+		
+		for (int j = 0; j < N; j++) {
+			cout << rand() % 10000 << " ";
+		}
+		cout << "\n";
+	}
+	cout << "0 0\n";
+}
+
 int main(void) {
+	//	gen();
+	//return 0;
 	for ( ; cin >> N >> A; ) {
 		if (N == 0 && A == 0) {
 			break;
 		}
 
 		int highest = 0;
-		double l = 0.0, h = 100000.0, m;
+		double l = 0.0, h = 100000000.0, m;
 		
 		for (int i = 0; i < N; i++) {
 			cin >> P[i];
 			highest = max(highest, P[i]);
 		}
 		
-		for (int x = 0; x < 250; x++) {
+		for (int x = 0; x < 450; x++) {
 			m = (l + h) / 2;
 
 			double area = 0.0;
@@ -70,7 +88,7 @@ int main(void) {
 		for (int i = 0; i < N; i++) {
 			area += max(0.0, P[i] - m);
 		}
-		
+		//cout << fixed << setprecision(4) << " seem " << A << " " << area << "\n";
 		if (eq(area, A)) {
 			if (eq(m, 0)) {
 				cout << ":D\n";

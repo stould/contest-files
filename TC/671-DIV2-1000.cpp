@@ -14,36 +14,15 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define debug(args...)
-#else
-#define debug(args...) fprintf(stderr,args)
-#endif
-
 typedef long long Int;
-typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
+class BearDestroysDiv2 {
+public:
+	int sumUp(int W, int H, int MOD);
+};
 
-int main(void) {
-	cin >> N;
-
-	Int ans = 0LL, sum = 0;
-	int curr;
-	map<Int, Int> cnt;
-
-	cnt[0] = 1;
-	
-	for (int i = 0; i < N; i++) {
-		cin >> curr;
-
-		sum += curr;
-		
-		ans += cnt[sum];
-		cnt[sum] += 1;
-	}
-	cout << ans <<"\n";
-	
-	return 0;
+int BearDestroysDiv2::sumUp(int W, int H, int M) {
 }
+
+//Powered by [KawigiEdit] 2.0!
