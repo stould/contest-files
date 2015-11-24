@@ -25,33 +25,26 @@ string S;
 int main(void) {
 	for ( ; cin >> A >> B >> S; ) {
 		N = S.size();
-
-		int b = 0;
-		int w = 0;
 		
 		Int ans = 0;
-
-		set<int> pos;
-
+		
 		for (int i = 0; i < N; i++) {
-			if  (S[i] == 'B') {
-				b += 1;
-				pos.insert(i);
-			} else {
-				w += 1;
-			}
-		}
-		string F = S;
-		for (int i = 0; i < b; i++) {
-			if (S[i] == 'B') {
-				pos.erase(i);
-			} else {
-				int close = *pos.begin();
-
+			if (S[i] != 'B') {
+				int close = -1;
+				for (int j = i + 1; j < N; j++) {
+					if (S[j] == 'B') {
+						close = j;
+						break;
+					}
+				}
+				if (close == -1) {
+					break;					
+				}
+				//cout << i << " " << close << "\n";
 				ans += min(A, (A - B) * (close - i));
-				
-				pos.erase(close);
+				swap(S[i], S[close]);
 			}
+			cout << S << " " << ans << endl;
 		}
 		
 		cout << ans << "\n";

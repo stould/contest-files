@@ -25,38 +25,51 @@ typedef unsigned uint;
 
 const int MAXN = 500005;
 int N, M;
-int dp[MAXN];
-
-int func(int val) {
-	if (val >= MAXN) return INT_MAX / 4;
-
-	if (val == M) {
-		return 0;
-	} else {
-		int& ans = dp[val];
-
-	if (ans == -1) {
-			ans = 100101000;
-			if (val > M) {
-				chmin(ans, 1 + func(val / 2));
-				chmin(ans, 1 + func(val / 3));
-				if (val - 7 >= 0) {
-					chmin(ans, 1 + func(val - 7));
-				}
-			} else {
-				chmin(ans, 1 + func(val * 2));
-				chmin(ans, 1 + func(val * 3));
-				chmin(ans, 1 + func(val + 7));
-			}
-		}
-		
-		return ans;
-	}
-}
+map<int, int> dp;
 
 int main(void) {
 	cin >> N >> M;
-	memset(dp, -1, sizeof(dp));
-	cout << func(N) << "\n";
+
+	queue<int> q;
+	q.push(N);
+
+	dp[N] = 0;
+
+	while (!q.empty()) {
+		int val = q.front();
+		q.pop();
+
+		if (val == M) {
+			break;
+		}
+
+		if (dp.find(val / 2) == dp.end() or dp[val / 2] > dp[val] + 1) {
+			dp[val / 2] = dp[val] + 1;
+			q.push(val / 2);
+		}
+		if (dp.find(val / 3) == dp.end() or dp[val / 3] > dp[val] + 1) {
+			dp[val / 3] = dp[val] + 1;
+			q.push(val / 3);
+		}
+		if (dp.find(val * 2) == dp.end() or dp[val * 2] > dp[val] + 1) {
+			dp[val * 2] = dp[val] + 1;
+			q.push(val * 2);
+		}
+		if (dp.find(val * 3) == dp.end() or dp[val * 3] > dp[val] + 1) {
+			dp[val * 3] = dp[val] + 1;
+			q.push(val * 3);
+		}
+		if (dp.find(val - 7) == dp.end() or dp[val - 7] > dp[val] + 1) {
+			dp[val - 7] = dp[val] + 1;
+			q.push(val - 7);
+		}
+		if (dp.find(val + 7) == dp.end() or dp[val + 7] > dp[val] + 1) {
+			dp[val + 7] = dp[val] + 1;
+			q.push(val + 7);
+		}
+	}
+
+	cout << dp[M] << endl;
+
 	return 0;
 }

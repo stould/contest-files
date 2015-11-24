@@ -24,55 +24,24 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
-
-int N;
-int P[MAXN];
+int N, T, L;
 
 int main(void) {
-	cin >> N;
+	cin >> N >> T >> L;
 
-	int ans = 0;
+	int A = 0, B = 0;
 
-	unordered_map<int, int> memo;
-	
 	for (int i = 0; i < N; i++) {
-		cin >> P[i];
-		memo[P[i]] += 1;
-	}
+		int C;
+		cin >> C;
 
-	if (memo[0] > 0) {
-		int p = 1;
-
-		while (p <= memo[0]) {
-			p *= 2;
+		if (abs(C - T) <= L) {
+			if (i % 2 == 0) A += abs(C - T);
+			else B += abs(C - T);
+			T = C;
 		}
-		p /= 2;
-
-		ans += 1 + (memo[0] - p);
 	}
 	
-	set<int> u_buff(P, P + N);
-	vector<int> uniq(u_buff.begin(), u_buff.end());
-
-	for (int i = 0; i < (int) uniq.size(); i++) {
-		int curr = uniq[i];
-		
-		if (memo[curr] <= 0 || curr == 0) continue;
-
-		while (memo[curr] > 0) {
-			int sum = curr;
-			
-			ans += 1;
-			memo[curr] -= 1;
-			
-			while (memo[sum] > 0) {
-				memo[sum] -= 1;
-				sum *= 2;			
-			}
-		}
-	}
-
-	cout << ans << "\n";
+	cout << A << " " << B << endl;
 	return 0;
 }
