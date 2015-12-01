@@ -24,6 +24,25 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+const int MAXN = 1000005;
+
+int P, K;
+int dp[MAXN];
+
+int func(int curr) {
+	if (curr == P) {
+		return 1;
+	} else {
+		int& ans = dp[curr];
+
+		if (ans == -1) {
+			
+		}
+		
+		return ans;
+	}
+}
+
 int main(void) {
 	return 0;
 }

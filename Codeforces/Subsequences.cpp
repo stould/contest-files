@@ -24,33 +24,48 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 100010;
+const int MAXN = 100005;
+const int MAXM = 15;
 
 int N, K;
 int P[MAXN];
-int B[MAXN];
+uInt values[MAXM][MAXN];
+uInt dp[MAXN][MAXM];
+
+void increase(int index_i, int index_j, Int add) {	
+	for (int i = index_i; i <= N; i += (i & -i)) {
+		values[index_j][i] += add;		
+	}
+}
+uInt read(int index_i, int index_j) {
+	uInt sum = 0;
+
+	for (int i = index_i; i > 0; i -= (i & -i)) {
+		sum += values[index_j][i];		
+	}
+	
+	return sum;
+}
 
 int main(void) {
 	cin >> N >> K;
-
+	
 	for (int i = 0; i < N; i++) {
 		cin >> P[i];
 	}
-
-	sort(P, P + N);
-	reverse(P, P + N);
 	
-	for (int i = 0; i < K; i++) {
-		B[i] = P[i];
-	}
+	for (int i = 0; i < N; i++) {
+		increase(P[i], 1, 1);
 
-	int s = K - 1;
+		for (int k = 2; k <= K + 1; k++) {
+			uInt sm = read(P[i] - 1, k - 1);
+			increase(P[i], k, sm);
+		}
+	}
 	
-	for (int i = K; i < N; i++) {
-		B[s--] += P[i];
-	}
-
-	cout << *max_element(B, B + K) << "\n";
+	uInt ans = read(N, K + 1);
+	
+	cout << ans << "\n";
 	
 	return 0;
 }
