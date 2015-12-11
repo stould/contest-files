@@ -24,43 +24,19 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int A[3], B[3], C[3];
+int N, V;
 
 int main(void) {
-	for (int i = 0; i < 2; i++) {
-		cin >> A[i] >> B[i] >> C[i];
+	while (cin >> N >> V) {
+		int s = 0;
+
+		for (int i = 0; i < N; i++) {
+			s += (V % 10);
+			V /= 10;
+		}
+
+		cout << s << " " << ((s % 3 == 0) ? "sim\n" : "nao\n");					 
+
 	}
-
-	int extra = 0;
-
-	extra += max(0, (A[0] - A[1]) / 2);
-	extra += max(0, (B[0] - B[1]) / 2);
-	extra += max(0, (C[0] - C[1]) / 2);
-
-	if (A[1] > A[0]) {
-		int need = A[1] - A[0];
-
-		A[0] += need;
-		extra -= need;
-	}
-	if (B[1] > B[0]) {
-		int need = B[1] - B[0];
-
-		B[0] += need;
-		extra -= need;
-	}
-	if (C[1] > C[0]) {
-		int need = C[1] - C[0];
-
-		C[0] += need;
-		extra -= need;
-	}
-
-	if (extra >= 0 && A[0] >= A[1] && B[0] >= B[1] && C[0] >= C[1]) {
-		cout << "Yes\n";
-	} else {
-		cout << "No\n";
-	}
-		
 	return 0;
 }
