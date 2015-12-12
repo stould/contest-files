@@ -25,51 +25,53 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 100005;
-const int INF = INT_MAX / 4;
 
-int N;
+int N, K, D;
 int P[MAXN];
-int posA[MAXN];
-int dp[MAXN][3];
-
-int func(int pos, int is_after) {
-	if (pos == N) {
-		return is_after ? 0 : 1;
-	} else {
-		int& ans = dp[pos][is_after];
-
-		if (ans == -1) {
-			ans = INF;
-			
-			if (is_after) {
-				ans = func(pos + 1, posA[pos + 1] > posA[pos]);
-			} else {
-				//move left
-				chmin(ans, 1 + func(pos + 1, 0));
-				//move right
-
-				chmin(ans, pos + func(pos + 1, posA[pos + 1] > posA[pos]));
-			}
-		}
-		
-		return ans;
-	}
-}
 
 int main(void) {
-	cin >> N;
+	cin >> N >> K >> D;
 
 	for (int i = 0; i < N; i++) {
 		cin >> P[i];
-		posA[P[i]] = i;
 	}
 
-	if (N == 1) {
-		cout << "0\n";
-	} else {
-		memset(dp, -1, sizeof(dp));
-		cout << func(2, posA[2] > posA[1]) << "\n";
+	Int s = 0;
+	int ans = 0;
+	
+	for (int i = 0; i < K; i++) {
+		s += P[i];
 	}
+
+	bool gone = false;
+	
+	for (int i = K; i < N; i++) {
+		if (s == 0) {
+			ans = -1;
+			break;
+		} else {
+			if (s >= D) {
+				s += P[i];
+				s -= P[i - K];
+			} else {
+				ans += 1;
+				
+				for (int j = 0; j < K; j++) {
+					
+				}
+			}
+		}
+	}
+	
+	if (!gone) {
+		if (s == 0) {
+			ans = -1;
+		} else if (s <= D) {
+			ans += 1;
+		}
+	}
+	
+	cout << ans << "\n";
 	
 	return 0;
 }
