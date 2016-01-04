@@ -1,3 +1,3 @@
-javac Main.java
+javac RollingBalls.java
 
-java -jar tester.jar -exec "java Main" -delay 100 -seed $1 
+java -jar tester.jar -exec "java RollingBalls" -delay 5 -seed $1 

@@ -1,10 +1,11 @@
 import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.Integer.lowestOneBit;
 import static java.lang.Integer.parseInt;
 
-public class Main {
+public class RollingBalls {
     public final int INF = 100010100;
 
     public int N;
@@ -35,7 +36,7 @@ public class Main {
         this.targetDist = new int[15][this.N][this.M];
 
         List<String> answerList = new ArrayList<>();
-        Set<Path> memo = new HashSet<>();
+        Set<Integer> memo = new TreeSet<>();
 
         for (int i = 0; i < N; i++) {
             this.start[i]  = start[i].toCharArray();
@@ -57,9 +58,10 @@ public class Main {
             }
         }
 
-        printTargetDist();
+        //printTargetDist();
 
         int best = Integer.MAX_VALUE;
+        boolean useSameColor = true;
 
         //main loop
         for (int run = 0; run < 20 * balls && answerList.size() < 20 * balls; run++) {
@@ -68,16 +70,20 @@ public class Main {
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     if (isBall(this.start[i][j]) && this.start[i][j] != this.target[i][j]) {
-                        paths.add(bfs(i, j));
+                        Path curr = bfs(i, j, useSameColor);
+
+                        if (curr.len != INF) {
+                            paths.add(curr);
+                        }
                     }
                 }
             }
-            //System.err.println(paths.size());
+
             Collections.sort(paths);
 
             int beg = 0;
 
-            while (beg < paths.size() && memo.contains(paths.get(beg))) {
+            while (beg < paths.size() && memo.contains(paths.get(beg).hashCode())) {
                 beg += 1;
             }
 
@@ -94,8 +100,13 @@ public class Main {
                 this.start[paths.get(beg).end_i][paths.get(beg).end_j] = this.start[paths.get(beg).std_i][paths.get(beg).std_j];
                 this.start[paths.get(beg).std_i][paths.get(beg).std_j] = '.';
 
-                memo.add(paths.get(beg));
-             //   printMaze();
+                memo.add(paths.get(beg).hashCode());
+            } else {
+                if (useSameColor) {
+                    useSameColor = false;
+                } else {
+                    break;
+                }
             }
             //System.err.println(run);
         }
@@ -171,7 +182,7 @@ public class Main {
     Run bfs starting from a ball position
     Return the best current sequence to put ball(si, sj) in a proper hole or in a nearest position
      */
-    Path bfs(int si, int sj) {
+    Path bfs(int si, int sj, boolean sameColor) {
         Path[][] dist = new Path[this.N][this.M];
         Path ans = new Path();
 
@@ -235,22 +246,34 @@ public class Main {
 
         for (int i = 0; i < this.N; i++) {
             for (int j = 0; j < this.M; j++) {
-                if (this.start[i][j] == '.' && this.target[i][j] == this.start[si][sj]) {
-                    int currOutcome = (this.targetDist[val][i][j] + 1);
+                if (this.start[i][j] == '.') {
+                    if ((isBall(this.target[i][j]) && this.target[i][j] == before) || (!sameColor)) {
+                        int currOutcome = (this.targetDist[val][i][j] + 1);
 
-                    if (dist[i][j].path.size() == 0) {
-                        currOutcome = INF;
-                    } else {
-                        currOutcome += dist[i][j].path.size();
-                    }
+                        if (sameColor) {
+                            for (int k = 0; k < 15; k++) {
+                                currOutcome = Math.min(currOutcome, this.targetDist[k][i][j]);
+                            }
+                        }
 
-                    if (currOutcome < outCome) {
-                        outCome = currOutcome;
-                        ans = dist[i][j];
+                        currOutcome *= 50;
+
+                        if (dist[i][j].path.size() == 0) {
+                            currOutcome = INF;
+                        } else {
+                            currOutcome += dist[i][j].path.size();
+                        }
+
+                        if (currOutcome < outCome) {
+                            outCome = currOutcome;
+                            ans = dist[i][j];
+                        }
                     }
                 }
             }
         }
+
+        //System.err.println(ans.std_i + " " + ans.std_j + " = " + ans.end_i + " " + ans.end_j);
 
         this.start[si][sj] = before;
 
@@ -264,7 +287,7 @@ public class Main {
         List<String> path;
 
         public Path() {
-            this.len = 1000000;
+            this.len = INF;
             this.path = new ArrayList<String>();
         }
 
@@ -304,7 +327,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        Main main = new Main();
+        RollingBalls main = new RollingBalls();
 
         int H = parseInt(input.nextLine());
 
