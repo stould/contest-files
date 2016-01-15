@@ -24,40 +24,27 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1000002;
-
-string A, B;
-char buffer[MAXN];
+uInt L, R, K;
 
 int main(void) {
-	scanf("%s", buffer);
-	A = string(buffer);
+    cin >> L >> R >> K;
 
-	scanf("%s", buffer);
-	B = string(buffer);
-
-    reverse(A.begin(), A.end());
-    reverse(B.begin(), B.end());
-
-    bool end = false;
-	
-	for (int i = (int) max(A.size(), B.size()) - 1; i >= 0; i--) {
-        char ca = i < (int) A.size() ? A[i] : '0';        
-        char cb = i < (int) B.size() ? B[i] : '0';
-
-		if (ca != cb) {
-			end = true;
-
-			if (ca < cb) {
-				cout << "<\n";
-			} else {
-				cout << ">\n";
-			}
-			break;
-		}
-	}
+    uInt base = 1;
     
-	if (!end) cout << "=\n";
+    bool seen = false;
+
+    for ( ; base <= R; base *= K) {
+        if (base >= L) {
+            cout << base << " ";
+            seen = true;
+        }
+    }
+    
+    if (!seen) {
+        cout << "-1\n";
+    } else {
+        cout << "\n";
+    }
     
 	return 0;
 }

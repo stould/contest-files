@@ -24,40 +24,24 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1000002;
+const int MAXN = 100005;
 
-string A, B;
-char buffer[MAXN];
+int N, A, CF, CN, M;
+pair<int, int> P[MAXN];
 
 int main(void) {
-	scanf("%s", buffer);
-	A = string(buffer);
+    cin >> N >> A >> CF >> CN >> M;
 
-	scanf("%s", buffer);
-	B = string(buffer);
+    for (int i = 0; i < N; i++) {
+        cin >> P[i].first;
+        P[i].second = i;
+    }
 
-    reverse(A.begin(), A.end());
-    reverse(B.begin(), B.end());
-
-    bool end = false;
-	
-	for (int i = (int) max(A.size(), B.size()) - 1; i >= 0; i--) {
-        char ca = i < (int) A.size() ? A[i] : '0';        
-        char cb = i < (int) B.size() ? B[i] : '0';
-
-		if (ca != cb) {
-			end = true;
-
-			if (ca < cb) {
-				cout << "<\n";
-			} else {
-				cout << ">\n";
-			}
-			break;
-		}
-	}
+    sort(P, P + MAXN);
     
-	if (!end) cout << "=\n";
+    for (int i = 0; i < N; i++) {
+        
+    }
     
 	return 0;
 }
