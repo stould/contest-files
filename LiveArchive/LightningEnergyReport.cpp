@@ -35,27 +35,31 @@ int P[MAXN][20];
 Int dist[MAXN];
 
 void ans_dfs(int x, int curr) {
-	curr += dist[x];
-
-	ans[x] = curr;
-
-	for (int i = 0; i < (int) adj[x].size(); i++) {
-		int u = adj[x][i];
-
-		if (u != parent[x]) {
-			ans_dfs(u, curr);
-		}
+	if (x == -1) {
+		return;
 	}
+
+	curr += dist[x];
+	
+	
+
+	ans[x] += curr;
+	
+	cout << x << " " << dist[x] << " " << ans[x] << endl;
+
+	dist[x] = 0;
+
+	ans_dfs(parent[x], curr);	
 }
 
 void dfs(int pos, int par){
-    if(parent[pos] == -1){
+    if(parent[pos] == -1) {
         parent[pos] = par;
 		
         for(int i = adj[pos].size() - 1,to;i >= 0;--i){
             to = adj[pos][i];
             if(to != par) {
-                dfs(to,pos);
+                dfs(to, pos);
             }
         }
     }
@@ -150,28 +154,40 @@ int main(void) {
 
 			cin >> A >> B >> C;
 
-			//int lca = LCA(A, B);
+			int lca = LCA(A, B);
 			
-			//dist[lca] += C;
-			dist[A] += C;
-
-			//cout << "Q => " << lca << " " << A << " " << B << "\n";
-			/*			for (int i = 0; i < (int) adj[B].size(); i++) {
-				int u = adj[B][i];
-				
-				if (u != parent[B]) {
-					//cout << "Son " << B << " " << u << "\n";
-					dist[u] -= C;
+			//cout << A << " " << B << " => " << lca << " " << parent[lca] << endl;
+			if (A == lca or B == lca) {				
+				if (parent[lca] >= 0) {
+					dist[parent[lca]] -= C;
 				}
-			}			
-			*/
-			dist[B] -= C;
+			
+				if (A != lca) {
+					dist[A] += C;
+				} else {
+					dist[B] += C;
+				}
+			} else {
+				//dist[lca] -= C;
+				if (parent[lca] >= 0) {
+					dist[parent[lca]] -= 2 * C;
+				}
+				//cout << "ed " << 2 * C << endl;
+
+				dist[A] += C;
+
+				if (A != B) {
+					dist[B] += C;
+				}
+			}
 		}
 
 		for (int i = 0; i < N; i++) {
+			cerr << "deb " << i << " " << dist[i] << endl;
+		}
+		for (int i = 1; i < N; i++) {
 			if (adj[i].size() == 1) {			
 				ans_dfs(i, 0);
-				break;
 			}
 		}
 
