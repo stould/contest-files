@@ -41,11 +41,7 @@ void ans_dfs(int x, int curr) {
 
 	curr += dist[x];
 	
-	
-
 	ans[x] += curr;
-	
-	cout << x << " " << dist[x] << " " << ans[x] << endl;
 
 	dist[x] = 0;
 
@@ -161,7 +157,7 @@ int main(void) {
 				if (parent[lca] >= 0) {
 					dist[parent[lca]] -= C;
 				}
-			
+				
 				if (A != lca) {
 					dist[A] += C;
 				} else {
@@ -170,8 +166,10 @@ int main(void) {
 			} else {
 				//dist[lca] -= C;
 				if (parent[lca] >= 0) {
-					dist[parent[lca]] -= 2 * C;
+					dist[parent[lca]] -= C;
 				}
+				
+				dist[lca] -= C;
 				//cout << "ed " << 2 * C << endl;
 
 				dist[A] += C;
@@ -182,9 +180,6 @@ int main(void) {
 			}
 		}
 
-		for (int i = 0; i < N; i++) {
-			cerr << "deb " << i << " " << dist[i] << endl;
-		}
 		for (int i = 1; i < N; i++) {
 			if (adj[i].size() == 1) {			
 				ans_dfs(i, 0);
