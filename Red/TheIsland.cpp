@@ -69,7 +69,7 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, Int K) {
             }
         }
         if (prev[t]<0) return make_pair(flow, cost);
-		
+
         Flow mi=INF;
         Cost cst=0;
         for (int v=t; v!=s; v=prev[v]) {
@@ -91,24 +91,22 @@ pair<Flow, Cost> flow(Graph&G, int s, int t, Int K) {
 }
 
 int main(void) {
-	ios_base::sync_with_stdio(false);
-	cin.tie(0);
-	while (cin >> N) {
+	while (scanf("%d", &N) == 1) {
 		Graph gf(N + N + 5);
-		
+
 		for (int i = 1; i <= N; i++) {
 			add_edge(gf, 0, i, 1, 0);
 			add_edge(gf, N + i, N + N + 2, 1, 0);
-			
+
 			for (int j = 1; j <= N; j++) {
 				cin >> M[i][j];
-				add_edge(gf, i, N + j, 1, SHOLD - M[i][j]);				
+				add_edge(gf, i, N + j, 1, SHOLD - M[i][j]);
 			}
 		}
 
 		pair<Int, Int> f = flow(gf, 0, N + N + 2, INF);
 
-		cout << -f.second  + (Int) N * SHOLD << "\n";
+		printf("%lld\n", -f.second  + (Int) N * SHOLD);
 	}
 	return 0;
 }
