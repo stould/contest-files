@@ -69,6 +69,7 @@ int main(void) {
 		}
 
 		for (int i = 0; i < (int) evil.size() - K; i++) {
+			//cerr << "Deb " << H << " " << X[evil[i]] << " " << R[evil[i]] << "\n";
 			if (H < X[evil[i]]) alive = false;
 			H -= X[evil[i]];
 

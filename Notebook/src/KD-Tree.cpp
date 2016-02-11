@@ -1,3 +1,7 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long Int;
+
 struct point { 
     Int x, y, z;
     point(Int x=0, Int y=0, Int z=0): x(x), y(y), z(z) {}
@@ -9,14 +13,14 @@ typedef vector<point> polygon;
 struct KDTreeNode {
     point p;
     int level;
-    KDTreeNode *below, *above;
+    KDTreeNode *left, *right;
 	
     KDTreeNode (const point& q, int levl) {
         p = q;
         level = levl;
-        below = above = 0;
+        left = right = 0;
     }
-    ~KDTreeNode() { delete below, above; }
+    ~KDTreeNode() { delete left; delete right; }
 	
     int diff (const point& pt) {
         switch (level) {
@@ -31,10 +35,10 @@ struct KDTreeNode {
     int rangeCount (point& pt, Int K) {
         int count = (distSq(pt) < K*K) ? 1 : 0;
         int d = diff(pt);
-        if (-d <= K && above != 0)
-            count += above->rangeCount(pt, K);
-        if (d <= K && below != 0)
-            count += below->rangeCount(pt, K);
+        if (-d <= K && right != 0)
+            count += right->rangeCount(pt, K);
+        if (d <= K && left != 0)
+            count += left->rangeCount(pt, K);
         return count;
     }
 };
@@ -56,15 +60,16 @@ public:
     //count the number of pairs that has a distance less than K
     Int countPairs(Int K) {
         Int count = 0;
-        f(i, 0, P.size())
+		for (int i = 0; i < (int) P.size(); i++) {
             count += root->rangeCount(P[i], K) - 1;
+		}
         return count;
     }
 		
 protected:
     void build() {
-        random_shuffle(all(P));
-        f(i, 0, P.size()) {
+        random_shuffle(P.begin(), P.end());
+		for (int i = 0; i < (int) P.size(); i++) {
             root = insert(root, P[i], -1);
         }
     }
@@ -74,8 +79,8 @@ protected:
             return t;
         } else {
             int d = t->diff(pt);
-            if (d <= 0) t->below = insert (t->below, pt, t->level);
-            else t->above = insert (t->above, pt, t->level);
+            if (d <= 0) t->left = insert (t->left, pt, t->level);
+            else t->right = insert (t->right, pt, t->level);
         }
         return t;
     }
@@ -87,9 +92,9 @@ int main() {
     polygon p;
     while (cin >> n >> k && n+k) {
         p.clear();
-        f(i, 0, n) {
+		for (int i = 0; i < n; i++) {
             cin >> e.x >> e.y >> e.z;
-            p.pb(e);
+            p.push_back(e);
         }
         KDTree tree(p, 3);
         cout << tree.countPairs(k) / 2LL << endl;

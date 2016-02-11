@@ -67,17 +67,15 @@ void buildAnswer() {
 }
 
 int main(void) {
-	cin.tie(0);
-	ios_base::sync_with_stdio(false);
-	
-	while (cin >> A >> B && !(A == 0 && B == 0)) {
+	while (scanf("%d%d", &A, &B) == 2 && !(A == 0 && B == 0)) {
 		buildAnswer();
 		for (int i = 0; i < 10; i++) {
-			if (i > 0) cout << " ";
-			cout << ans[i];
+			if (i > 0) putchar(' ');
+			printf("%d", ans[i]);
 		}
-		cout << endl;
+		printf("\n");
 	}
 
 	return 0;
 }
+

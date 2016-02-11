@@ -32,9 +32,9 @@ int main(void) {
 	vector<int> win(110, 0);
 	
 	for (int i = 0; i < M; i++) {
-		int curr = 0, id = -1;
+		int curr = -1, id = -1;
 		
-		for (int j = 0; j < N; j++) {
+		for (int j = 1; j <= N; j++) {
 			cin >> P[i][j];
 
 			if (P[i][j] > curr) {
@@ -42,16 +42,15 @@ int main(void) {
 				id = j;
 			}	
 		}
-
 		win[id] += 1;
 	}
 
-	int curr = 0, winner = -1;
+	int curr = -1, winner = -1;
 	
-	for (int i = 0; i < N; i++) {
+	for (int i = 1; i <= N; i++) {
 		if (win[i] > curr) {
 			curr = win[i];
-			winner = i + 1;
+			winner = i;
 		}
 	}
 

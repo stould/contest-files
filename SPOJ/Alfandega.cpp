@@ -19,40 +19,43 @@ typedef unsigned uint;
 
 int N, Q, A;
 int P[110];
-int dp[100 * 500 + 10];
 
 int main(void) {
 	scanf("%d%d%d", &N, &Q, &A);
 
-	int sum = 0;
-
 	for (int i = 0; i < N; i++) {
 		scanf("%d", &P[i]);
-		sum += P[i];
 	}
 
-	dp[0] = 1;
-
+	sort(P, P + N);
+	reverse(P, P + N);
+	
+	priority_queue<int, vector<int>, greater<int> > q;
+	
 	for (int i = 0; i < N; i++) {
-		for (int j = sum; j >= P[i]; j--) {
-			dp[j] |= dp[j - P[i]];
+		if (q.size() < 3) {
+			q.push(P[i]);
+		} else {
+			int s = q.top();
+			q.pop();
+			q.push(s + P[i]);
 		}
+		cout << i << " "<< q.top() << endl;
 	}
 
-	int best = 10101010;
+	double ans = 0.0;
+	
+	while (!q.empty()) {
+		int s = q.top();
+		q.pop();
 
-	for (int i = 0; i <= sum; i++) {
-		if (dp[i]) {
-			int p = max(0, i - Q), q = max(0, (sum - i) - Q);
-
-			chmin(best, p + q);		
+		if (s > Q) {
+			ans += A * (s - Q) / 100.0;
 		}
 	}
-	printf("%d\n", best);
-	double ans = A * best / 100.0;
 
 	printf("%.2lf\n", ans);
-	
+
 	
     return 0;
 }

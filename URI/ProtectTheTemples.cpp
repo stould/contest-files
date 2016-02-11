@@ -23,14 +23,22 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1005;
+const int MAXN = 1115;
 
 int T, N, M;
-vector<int> graph[MAXN];
-int deg[MAXN], on[MAXN];
+vector<int> G[MAXN];
+int color[MAXN];
 
-bool cmp(int a, int b) {
-	return deg[a] < deg[b];
+void dfs(int node, int c) {
+	color[node] = c;
+
+	for (int i = 0; i < (int) G[node].size(); i++) {
+		int u = G[node][i];
+
+		if (color[u] == -1) {
+			dfs(u, c ^ 1);
+		}
+	}
 }
 
 int main(void) {
@@ -39,58 +47,34 @@ int main(void) {
 	while (T--) {
 		cin >> N >> M;
 
-		vector<int> id(N);
-
-		for (int i = 0; i < N; i++) {
-			id[i] = i;
-			deg[i] = on[i] = 0;
-			graph[i].clear();
+		for (int i = 0; i < MAXN; i++) {
+			G[i].clear();
+			color[i] = -1;
 		}
 
 		for (int i = 0; i < M; i++) {
 			int A, B;
 			cin >> A >> B;
 
-			A -= 1;
-			B -= 1;
-
-			graph[A].push_back(B);
-			graph[B].push_back(A);
-			//debug("err %d %d\n", A, B);
-			
-			deg[A] += 1;
-			deg[B] += 1;
+			G[A].push_back(B);
+			G[B].push_back(A);
 		}
+
+		dfs(1, 0);
+
+		int c0 = 0;
+		int c1 = 0;
 		
-		sort(id.begin(), id.end(), cmp);
-
-		int ans = 0;
-
-		for (int i = 0; i < N; i++) {
-			if (on[id[i]]) continue;
-			
-			//debug("now %d\n", id[i]);
-			vector<int> g, b;
-			
-			for (int j = 0; j < (int) graph[id[i]].size(); j++) {
-				int u = graph[id[i]][j];
-
-				if (on[u]) {
-					b.push_back(u);
-				} else {
-					g.push_back(u);
-				}
-				//cout << id[i] << " " << u << " " << on[u] << "\n";
+		for (int i = 1; i <= N; i++) {
+			if (color[i] == 0) {
+				c0 += 1;
+			} else {
+				c1 += 1;
 			}
-
-			if (!g.empty()) {
-				for (int j = 0; j < (int) g.size(); j++) {
-					ans += 1;
-					on[g[j]] = on[id[i]] = 1;
-				}
-			} 
 		}
-		cout << ans <<"\n";
+
+		cout << max(c0, c1) << "\n";
+	
 	}
 	return 0;
 }

@@ -68,12 +68,14 @@ vector<vector<pair<int, int> > > generatePoly(int len) {
 			for (int j = 0; j < 4; j++) {
 				int now_i = now[i].first + dx[j];
 				int now_j = now[i].second + dy[j];
-				
+
+				if (now_i < 0) continue;
+
 				pair<int, int> curr = make_pair(now_i, now_j);
 				
 				if (find(now.begin(), now.end(), curr) == now.end()) {
 					vector<pair<int, int> > poss = now;
-
+					
 					poss.push_back(curr);
 					sort(poss.begin(), poss.end(), cmp);
 
