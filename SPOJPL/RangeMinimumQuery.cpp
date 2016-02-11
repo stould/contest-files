@@ -31,64 +31,58 @@ int P[MAXN];
 int dp[MAXN][50];
 
 void build() {
-  int pw = 1;
-  int base = 1;
+	int pw = 1; //2^pw
+	int base = 1;
 
-  for (int i = 0; i < N; i++) {
-    dp[i][0] = i;
-  }
+	for (int i = 0; i < N; i++) {
+		dp[i][0] = P[i];
+	}
   
-  while (base < N) {
-    for (int i = 0; i + base < N; i++) {
-      int before = base / 2;
-      
-      if (P[dp[i][pw - 1]] <= P[dp[i + base - before][pw - 1]]) {
-        dp[i][pw] = dp[i][pw - 1];
-      } else {
-        dp[i][pw] = dp[i + base - before][pw - 1];
-      }
-    }
-    
-    pw += 1;
-    base *= 2;
-  }
+	while (base < N) {
+		for (int i = 0; i + base < N; i++) {
+			int before = base > 1 ? base / 2 : 0;		
+			dp[i][base] = min(dp[i][before], dp[i + base - before][before]);
+		}    
+		pw += 1;
+		base *= 2;
+	}
 }
 
 int query(int l, int r) {
-  int len = r - l + 1;
+	int len = r - l + 1;
 
-  if (len == 1) return P[dp[l][0]];
+	if (len == 1) return dp[l][0];
   
-  int ps = 1;
+	int ps = 1;
   
-  while (l + 2 * ps <= r) {
-    ps *= 2;
-  }
+	while (l + 2 * ps <= r) {
+		ps *= 2;
+	}
 
-  int a = dp[l][ps];
-  int b = dp[r - ps][ps];
+	int a = dp[l][ps];
+	int b = dp[r - ps][ps];
 
-  return min(P[a], P[b]);
+	return min(a, b);
 }
 
 int main(void) {
-  cin >> N;
+	cin >> N;
 
-  for (int i = 0; i < N; i++) {
-    cin >> P[i];
-  }
+	for (int i = 0; i < N; i++) {
+		cin >> P[i];
+	}
 
-  build();
+	build();
 
-  cin >> Q;
+	cin >> Q;
 
-  for ( ; Q--; ) {
-    int A, B;
+	for ( ; Q--; ) {
+		int A, B;
 
-    cin >> A >> B;
+		cin >> A >> B;
 
         
-    cout << query(A, B) << "\n";
-  }
-  return 0;
+		cout << query(A, B) << "\n";
+	}
+	return 0;
 }

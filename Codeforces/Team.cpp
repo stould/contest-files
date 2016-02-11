@@ -29,14 +29,18 @@ int Z, U;
 int main(void) {
 	cin >> Z >> U;
 
-	string ans = "";
-	
+	//string ans = "";
+	list<int> ans;
 	for (int i = 0; i < U; i++) {
-		ans += "1";
+		//ans += "1";
+		ans.push_back(1);
 	}
 
 	U = 0;
-
+	list<int>::iterator b2, b1, n1;
+	
+	for (list<int>::iterator it = ans.begin(); it != ans.end(); it++) {
+		n1 = it + 1;
 	for (int i = 1; i < (int) ans.size() && Z > 0; i++) {
 		if (i - 2 >= 0 && i + 1 < (int) ans.size() && ans[i - 2] == '1' && ans[i - 1] == '1' && ans[i] == '1' && ans[i + 1] == '1') {
 			ans = ans.substr(0, i) + "0" + ans.substr(i, ans.size() - i);
