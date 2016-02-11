@@ -20,39 +20,40 @@ using namespace std;
 #define debug(args...) fprintf(stderr,args)
 #endif
 
+// print array
+template <typename T>
+ostream& operator<<(ostream &out, const vector<T> &list) {
+  out << "[";
+  for (int i = 0; i < (int)list.size(); ++i) {
+    if (i > 0) out << ", ";
+    out << list[i];
+  }
+  out << "]";
+  return out;
+}
+
 typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
+int D, L, V1, V2;
 
 int main(void) {
-	cin >> N;
+	cin >> D >> L >> V1 >> V2;
 
-	vector<uInt> od; 
+	double l = 0, h = 1000000, m;
 	
-	uInt all = 0;
-
-	for (int i = 0; i < N; i++) {
-		uInt A;
-		cin >> A;
-
-		if (A % 2 == 0) {
-			all += A;
-		} else{
-			od.push_back(A);
+	for (int i = 0; i < 300; i++) {
+		m = (l + h) / 2;
+		
+		if (V1 * m + D <= L - m * V2) {
+			l = m;
+		} else {
+			h = m;
 		}
 	}
-	
-	sort(od.rbegin(), od.rend());
 
-	int s = od.size() % 2 == 0 ? od.size() : od.size() - 1;
-	
-	for (int i = 0; i < s; i++) {
-		all += od[i];
-	}
-
-	cout << all << "\n";
+	cout << fixed << setprecision(6) << m << endl;
 	
 	return 0;
 }

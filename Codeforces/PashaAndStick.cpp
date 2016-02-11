@@ -24,6 +24,18 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+int N;
+
 int main(void) {
+	cin >> N;
+
+	int ans = 0;
+	
+	if (N % 2 == 0) {			
+		ans = floor((N - 1) / (double) 4);
+	}
+	
+	cout << ans << "\n";
+	
 	return 0;
 }
