@@ -24,46 +24,28 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 220;
+const Int INF = 10010100101010100LL;
 
-int N;
-string S;
-pair<int, int> P[MAXN];
+Int N, M;
 
 int main(void) {
-	cin >> N >> S;
+	cin >> N >> M;
+	
+	Int l = 0, h = 10000000, m;
+	Int ans = INF;
 
-	int ans = 0;
+	while (l <= h) {
+		m = (l + h) / 2;
 
-	int X = 0;
-	int Y = 0;
-
-	for (int i = 0; i < N; i++) {
-		if (S[i] == 'U') {
-			Y += 1;
-		} else if (S[i] == 'D') {
-			Y -= 1;
-		} else if (S[i] == 'L') {
-			X += 1;
+		int x = m / 6;
+		int a = m / 2;
+		int b = m / 3;
+		
+		if (a >= N && b >= M && a + b - x >= N + M) {
+			ans = m;
+			h = m - 1;
 		} else {
-			X -= 1;
-		}
-		P[i] = make_pair(X, Y);
-	}
-
-	for (int i = 0; i < N; i++) {
-		for (int j = i + 1; j < N; j++) {
-			int px = P[j].first;
-			int py = P[j].second;
-			
-			if (i != 0) {
-				px -= P[i - 1].first;
-				py -= P[i - 1].second;
-			}
-
-			if (px == 0 && py == 0) {
-				ans += 1;
-			}
+			l = m + 1;
 		}
 	}
 

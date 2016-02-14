@@ -24,6 +24,19 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+const int MAXN = 2020;
+
+int N;
+int P[MAXN];
+
 int main(void) {
+	cin >> N;
+
+	for (int i = 0; i < N; i++) {
+		cin >> P[i];
+	}
+	
+	sort(P, P + N);
+
 	return 0;
 }
