@@ -28,20 +28,20 @@ const int MAXN = 100005;
 
 int N, Q;
 int P[MAXN];
-int dp[MAXN][50];
+int dp[MAXN][19];
 
 void build() {
 	int pw = 1; //2^pw
-	int base = 1;
+	int base = 2;
 
 	for (int i = 0; i < N; i++) {
 		dp[i][0] = P[i];
 	}
   
-	while (base < N) {
-		for (int i = 0; i + base < N; i++) {
-			int before = base > 1 ? base / 2 : 0;		
-			dp[i][base] = min(dp[i][before], dp[i + base - before][before]);
+	while (base <= N) {
+		for (int i = 0; i + base / 2 - 1 < N; i++) {
+			int before = base / 2;		
+			dp[i][pw] = min(dp[i][pw - 1], dp[i + before][pw - 1]);
 		}    
 		pw += 1;
 		base *= 2;
@@ -54,22 +54,24 @@ int query(int l, int r) {
 	if (len == 1) return dp[l][0];
   
 	int ps = 1;
-  
+	int pw = 0;
+	
 	while (l + 2 * ps <= r) {
 		ps *= 2;
+		pw += 1;
 	}
 
-	int a = dp[l][ps];
-	int b = dp[r - ps][ps];
+	int a = dp[l][pw];
+	int b = dp[r - ps + 1][pw];
 
 	return min(a, b);
 }
 
 int main(void) {
-	cin >> N;
+	scanf("%d", &N);
 
 	for (int i = 0; i < N; i++) {
-		cin >> P[i];
+		scanf("%d", &P[i]);
 	}
 
 	build();
@@ -79,10 +81,8 @@ int main(void) {
 	for ( ; Q--; ) {
 		int A, B;
 
-		cin >> A >> B;
-
-        
-		cout << query(A, B) << "\n";
+		scanf("%d%d", &A, &B);
+		printf("%d\n", query(A, B));
 	}
 	return 0;
 }
