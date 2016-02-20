@@ -31,43 +31,43 @@ string S;
 pair<int, int> P[MAXN];
 
 int main(void) {
-	cin >> N >> S;
+    cin >> N >> S;
+    
+    int ans = 0;
+    
+    int X = 0;
+    int Y = 0;
 
-	int ans = 0;
+    for (int i = 0; i < N; i++) {        
+        if (S[i] == 'U') {
+            Y += 1;
+        } else if (S[i] == 'D') {
+            Y -= 1;
+        } else if (S[i] == 'L') {
+            X += 1;
+        } else {
+            X -= 1;
+        }
+        P[i] = make_pair(X, Y);
+    }
 
-	int X = 0;
-	int Y = 0;
-
-	for (int i = 0; i < N; i++) {
-		if (S[i] == 'U') {
-			Y += 1;
-		} else if (S[i] == 'D') {
-			Y -= 1;
-		} else if (S[i] == 'L') {
-			X += 1;
-		} else {
-			X -= 1;
-		}
-		P[i] = make_pair(X, Y);
-	}
-
-	for (int i = 0; i < N; i++) {
-		for (int j = i + 1; j < N; j++) {
-			int px = P[j].first;
-			int py = P[j].second;
+    for (int i = 0; i < N; i++) {
+        for (int j = i + 1; j < N; j++) {
+            int px = P[j].first;
+            int py = P[j].second;
 			
-			if (i != 0) {
-				px -= P[i - 1].first;
-				py -= P[i - 1].second;
-			}
+            if (i != 0) {
+                px -= P[i - 1].first;
+                py -= P[i - 1].second;
+            }
 
-			if (px == 0 && py == 0) {
-				ans += 1;
-			}
-		}
-	}
+            if (px == 0 && py == 0) {
+                ans += 1;
+            }
+        }
+    }
 
-	cout << ans << "\n";
+    cout << ans << "\n";
 
-	return 0;
+    return 0;
 }

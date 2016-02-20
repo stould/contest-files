@@ -25,5 +25,5 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 int main(void) {
-	return 0;
+    return 0;
 }

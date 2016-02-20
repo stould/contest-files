@@ -36,8 +36,8 @@ int main(void) {
 	int R = 0;
 	int G = 0;
 	int B = 0;
-
-	for (int i = 0; i < N; i++) {
+	
+	for (int i = 0; i < N; i++) {		
 		if (S[i] == 'R') {
 			R += 1;
 		} else if (S[i] == 'G') {
