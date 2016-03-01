@@ -28,6 +28,7 @@ int N, K;
 int T[110];
 
 int main(void) {
+<<<<<<< HEAD
     cin >> N >> K;
 
     for (int i = 0; i < N; i++) {
@@ -65,5 +66,7 @@ int main(void) {
 
     cout << ans << "\n";
     
+=======
+>>>>>>> a23c852519b942b5dc0de8e348cb58d520e9c0e0
     return 0;
 }
