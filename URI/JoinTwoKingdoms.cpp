@@ -22,6 +22,8 @@ const int INF = INT_MAX / 3;
 
 int N, Q;
 vector<int> treeA[MAXN], treeB[MAXN];
+vector<int> ds1, ds2;
+double len;
 
 vector<int> diameter(vector<int> tree[MAXN], int L) {
 	vector<int> ans(L + 1), dst(L + 1);
@@ -125,15 +127,50 @@ int main(void) {
 			treeB[B].push_back(A);
 		}
 
-		vector<int> ds1 = diameter(treeA, N);
-		vector<int> ds2 = diameter(treeB, Q);
+		len = 0.0;
+		
+		ds1 = diameter(treeA, N);
+		ds2 = diameter(treeB, Q);
 
-		double len = 0.0;
+		sort(ds2.begin() + 1, ds2.end());
 
+		vector<Int> acc(Q + 1);
+
+		for (int i = 1; i <= Q; i++) {
+			acc[i] = acc[i - 1] + ds2[i];
+		}
+		vector<int> vs(N + 1);
+		
 		for (int i = 1; i <= N; i++) {
-			for (int j = 1; j <= Q; j++) {
-				len += (double) max(ds1[0], max(ds2[0], ds1[i] + 1 + ds2[j]));
+			int l = 1, h = Q, m;
+			int best = Q;
+			
+			while (l <= h) {
+				m = (l + h) / 2;
+				
+				//cout << m << " " << ds1[i] + 1 + ds2[m] << " " << max(ds1[0], ds2[0]) << "\n";
+				
+				if (ds1[i] + 1 + ds2[m] > max(ds1[0], ds2[0])) {
+					best = m;
+					h = m - 1;
+				} else {
+					l = m + 1;
+				}
 			}
+			
+			double curr = 0.0;
+
+			if (best == 1) {
+				curr += Q * ds1[i] + (acc[Q] - acc[best - 1]) + Q;
+			} else if (best == Q) {
+				curr += Q * max(ds1[0], ds2[0]);
+			} else {			
+				curr += (best - 1) * max(ds1[0], ds2[0]);
+				curr += (Q - best + 1) * ds1[i] + (acc[Q] - acc[best - 1]) + (Q - best + 1);
+			}
+
+			vs[i] = curr;
+			len += curr;
 		}
 		
 		printf("%.3lf\n", len / (double) (N * Q));
