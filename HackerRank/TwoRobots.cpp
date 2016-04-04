@@ -32,48 +32,48 @@ pair<int, int> P[MAXN];
 int dp[MAXN][MAXN];
 
 int dist(int a, int b) {
-	if (a == 0) {
-		return abs(P[b].first - P[b].second);
-	} else {
-		return abs(P[a].second - P[b].first) + abs(P[b].first - P[b].second);
-	}
+    if (a == 0) {
+        return abs(P[b].first - P[b].second);
+    } else {
+        return abs(P[a].second - P[b].first) + abs(P[b].first - P[b].second);
+    }
 }
 
 int func(int p1, int p2) {
-	if (max(p1, p2) + 1 > M) {
-		return 0;
-	} else {
-		int& ans = dp[p1][p2];
+    if (max(p1, p2) + 1 > M) {
+        return 0;
+    } else {
+        int& ans = dp[p1][p2];
 
-		if (ans == -1) {
-			ans = INF;
+        if (ans == -1) {
+            ans = INF;
 			
-			int next = max(p1, p2) + 1;
+            int next = max(p1, p2) + 1;
 
-			//cout << p1 << " " << next << " " << dist(p1, next) << "\n";
-			//cout << p2 << " " << next << " " << dist(p2, next) << "\n";
+            //cout << p1 << " " << next << " " << dist(p1, next) << "\n";
+            //cout << p2 << " " << next << " " << dist(p2, next) << "\n";
 			
-			chmin(ans, dist(p1, next) + func(next, p2));
-			chmin(ans, dist(p2, next) + func(p1, next));
-		}
+            chmin(ans, dist(p1, next) + func(next, p2));
+            chmin(ans, dist(p2, next) + func(p1, next));
+        }
 
-		return ans;
-	}
+        return ans;
+    }
 }
 
 int main(void) {
-	cin >> T;
+    cin >> T;
 
-	for (int t = 1; t <= T; t++) {
-		cin >> N >> M;
+    for (int t = 1; t <= T; t++) {
+        cin >> N >> M;
 
-		for (int i = 1; i <= M; i++) {
-			cin >> P[i].first >> P[i].second;
-		}
+        for (int i = 1; i <= M; i++) {
+            cin >> P[i].first >> P[i].second;
+        }
 
-		memset(dp, -1, sizeof(dp));
+        memset(dp, -1, sizeof(dp));
 
-		printf("%d\n", func(0, 0));
-	}
-	return 0;
+        printf("%d\n", func(0, 0));
+    }
+    return 0;
 }
