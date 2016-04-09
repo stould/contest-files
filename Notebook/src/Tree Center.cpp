@@ -1,14 +1,20 @@
-vector<int> findCenter(int offset){
+void addEdge(int U_, int V_){
+    graph[U_].push_back(V_);
+    graph[V_].push_back(U_);
+    deg[U_]++;
+    deg[V_]++;
+}
+ 
+vector<int> findCenter(){
     queue<int> q;
     //pushing the leaves
     for(int i = 0; i < n; i++){
-        vis[i] = 0;
         dist[i] = 0;
         if(deg[i] == 1){
             q.push(i);
         }
     }
-    int bigger = 0;
+    int further = 0;
     while(!q.empty()){
         int top = q.front(); q.pop();
         for(int i = 0; i < graph[top].size(); i++){
@@ -17,13 +23,14 @@ vector<int> findCenter(int offset){
             if(deg[next] == 1){
                 q.push(next);
                 dist[next] = dist[top] + 1;
-                bigger = max(dist[next], bigger);
+                further = max(further, dist[next]);
             }
         }
     }
     vector<int> ans;
+    //all reachable nodes with the maximum distance, belong to the center
     for(int i = 0; i < n; i++){
-        if(dist[i] == bigger){
+        if(dist[i] == further){
             ans.push_back(i);
         }
     }
