@@ -20,13 +20,13 @@ typedef unsigned uint;
 Int N;
 
 int main(void) {
-	cin >> N;
+    cin >> N;
 
-	Int val = (N + 1) / 2LL;
+    Int val = (N + 1) / 2LL;
 
-	if (N % 2 == 1) val = -val;
+    if (N % 2 == 1) val = -val;
 	
-	cout << val << "\n";
+    cout << val << "\n";
 	
-	return 0;
+    return 0;
 }
