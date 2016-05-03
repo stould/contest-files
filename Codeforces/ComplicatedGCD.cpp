@@ -14,19 +14,25 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
+#ifdef ONLINE_JUDGE
+#define debug(args...)
+#else
+#define debug(args...) fprintf(stderr,args)
+#endif
+
 typedef long long Int;
+typedef unsigned long long uInt;
 typedef unsigned uint;
 
-Int N;
+string A, B;
 
 int main(void) {
-    cin >> N;
+    cin >> A >> B;
 
-    Int val = (N + 1) / 2LL;
-
-    if (N % 2 == 1) val = -val;
-	
-    cout << val << "\n";
-	
+    if (A == B) {
+        cout << A << "\n";
+    } else {
+        cout << 1 << "\n";
+    }
     return 0;
 }
