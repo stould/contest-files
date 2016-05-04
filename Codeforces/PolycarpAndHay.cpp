@@ -41,6 +41,7 @@ bool build_answer(int si, int sj, Int base) {
 
     memset(vis, false, sizeof(vis));
     memset(ans, false, sizeof(ans));
+    
     vis[si][sj] = true;
     
     Int whole = base;
