@@ -40,23 +40,24 @@ int cnt[MAXN];
 
 void add(string arg) {
     int pos = 0;
-
+    
     for (int i = 0; i < (int) arg.size(); i++) {
         int now = arg[i] - '0';
-
+        
         cnt[pos] += 1;
 
         if (trie[pos][now] == -1) {
-            trie[pos][now] = id++;
-            pos = id;
+            trie[pos][now] = id;
+            pos = id++;            
         } else {
             pos = trie[pos][now];
         }
     }
 }
 
-int check(string K_str, string arg, int pos, int trie_pos, int is_eq) {
+int check(string K_str, string arg, int pos, int trie_pos, int is_eq, string buff) {
     if (pos == (int) arg.size()) {
+        cout << buff << "\n" << arg << "\n\n";
         return cnt[trie_pos];
     } else {
         int val_arg = arg[pos] - '0';
@@ -64,17 +65,17 @@ int check(string K_str, string arg, int pos, int trie_pos, int is_eq) {
         
         int ans = 0;
 
-        if (trie[trie_pos][val_arg ^ val_k] != -1) {
-            ans += check(K_str, arg, pos + 1, trie[trie_pos][val_arg ^ val_k], is_eq);
-        }
-
-        if (val_k == 0) {
-            if (trie[trie_pos][val_arg ^ 1] != -1) {
-                cout << "hi\n";
-                ans += cnt[trie[trie_pos][val_arg ^ 1]];
+        for (int i = 0; i <= 1; i++) {
+            if (trie[trie_pos][val_arg ^ i] != -1) {
+                int next = val_arg ^ i;
+                
+                if (next == val_k) {
+                    ans += check(K_str, arg, pos + 1, trie[trie_pos][val_arg ^ i], is_eq, buff + char('0' + (val_arg ^ i)));
+                } else if (next > val_k || (next < val_k && !is_eq)) {
+                    ans += check(K_str, arg, pos + 1, trie[trie_pos][val_arg ^ i], false, buff + char('0' + (val_arg ^ i)));
+                }
             }
         }
-
 
         return ans;
     }
@@ -224,21 +225,24 @@ int main(void) {
 
     string K_str = to_bin(K);
 
-    cout << K_str << "\n";
-    
     for (int i = 0; i < (int) all.size(); i++) {
         acc ^= all[i];
         
         string curr = to_bin(acc);
-        cout << curr << "\n";
-        ans += check(K_str, curr, 0, 0, false);
-        
-        add(curr);
+        cout << curr << "\n\n";
+        ans += check(K_str, curr, 0, 0, false, "");
 
-        if (all[i] >= K) {
+        //cout << check(K_str, curr, 0, 0, false, "") << "\n";
+        
+        add(curr + '0');
+        add(curr + '1');
+
+        if (i > 0 && acc >= K) {
             ans += 1;
         }
     }
+
+    if (all[0] >= K) ans += 1;
 
     cout << ans << "\n";
     
