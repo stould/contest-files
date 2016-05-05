@@ -24,54 +24,47 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 200020;
+const int MAXN = 100005;
 
-int N, M;
+int N;
+Int K;
 Int A[MAXN];
 Int B[MAXN];
-Int C[MAXN];
-
-Int P[MAXN];
-Int Q[MAXN];
 
 int main(void) {
-    cin >> N;
+    cin >> N >> K;
 
-    map<Int, Int> cnt;
-    
     for (int i = 0; i < N; i++) {
         cin >> A[i];
-
-        cnt[A[i]] += 1;
     }
-
-    cin >> M;
-
-    for (int i = 0; i < M; i++) {
+    for (int i = 0; i < N; i++) {
         cin >> B[i];
-
-        P[i] += cnt[B[i]];
-    }
-    for (int i = 0; i < M; i++) {
-        cin >> C[i];
-
-        Q[i] += cnt[C[i]];
     }
 
-    int ans = 1;
+    Int ans = 0;
+    Int l = 0, h = 3000000000LL, m;
 
-    Int a = -1;
-    Int b = -1;
+    while (l <= h) {
+        m = l + (h - l) / 2;
 
-    for (int i = 0; i < M; i++) {
-        if (P[i] > a || (P[i] == a && Q[i] > b)) {
-            a = P[i];
-            b = Q[i];
-            ans = i + 1;
+        Int needed = 0;
+        
+        for (int i = 0; i < N; i++) {
+            needed += max(0LL, m * A[i] - B[i]);
+
+            if (needed > K) {
+                break;
+            }
+        }
+
+        if (needed <= K) {
+            ans = max(ans, m);
+            l = m + 1;
+        } else {
+            h = m - 1;
         }
     }
-    
+
     cout << ans << "\n";
-    
     return 0;
 }

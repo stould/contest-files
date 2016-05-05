@@ -45,7 +45,7 @@ void add(string arg) {
         int now = arg[i] - '0';
 
         cnt[pos] += 1;
-        
+
         if (trie[pos][now] == -1) {
             trie[pos][now] = id++;
             pos = id;
@@ -55,27 +55,26 @@ void add(string arg) {
     }
 }
 
-int check(string K_str, string arg, int pos, int trie_pos, int is_greater) {
+int check(string K_str, string arg, int pos, int trie_pos, int is_eq) {
     if (pos == (int) arg.size()) {
-        return 0;
-    } else if (is_greater) {
         return cnt[trie_pos];
     } else {
-        int val = arg[pos] - '0';
-        int ans = 0;
+        int val_arg = arg[pos] - '0';
+        int val_k   = K_str[pos] - '0';
         
-        if (arg[pos] == '0') {
-            if (trie[trie_pos][val ^ 1] != -1) {
-                ans += check(K_str, arg, pos + 1, trie[trie_pos][val ^ 1], true);
-            }
-            if (trie[trie_pos][val] != -1) {
-                ans += check(K_str, arg, pos + 1, trie[trie_pos][val], false);
-            }
-        } else {
-            if (trie[pos][0] != -1) {
-                ans += check(K_str, arg, pos + 1, trie[pos][0], false);
+        int ans = 0;
+
+        if (trie[trie_pos][val_arg ^ val_k] != -1) {
+            ans += check(K_str, arg, pos + 1, trie[trie_pos][val_arg ^ val_k], is_eq);
+        }
+
+        if (val_k == 0) {
+            if (trie[trie_pos][val_arg ^ 1] != -1) {
+                cout << "hi\n";
+                ans += cnt[trie[trie_pos][val_arg ^ 1]];
             }
         }
+
 
         return ans;
     }
@@ -224,12 +223,14 @@ int main(void) {
     memset(trie, -1, sizeof(trie));
 
     string K_str = to_bin(K);
+
+    cout << K_str << "\n";
     
     for (int i = 0; i < (int) all.size(); i++) {
         acc ^= all[i];
         
         string curr = to_bin(acc);
-
+        cout << curr << "\n";
         ans += check(K_str, curr, 0, 0, false);
         
         add(curr);
