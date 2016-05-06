@@ -110,6 +110,8 @@ int main(void) {
         int cnt = N + 1;
 
         set<int> seen[N];
+
+        bool has_full = false;
         
         for (int i = 0; i < N; i++) {
             cin >> C[i];
@@ -121,6 +123,10 @@ int main(void) {
                 seen[i].insert(T[i][j]);
             }
 
+            if (C[i] == N) {
+                has_full = true;
+            }
+            
             if (C[i] != N) {
                 seen[i].insert(0);
             }
@@ -159,15 +165,11 @@ int main(void) {
                 add_edge(cnt + i + 1, t, 1);
             }
 
-            bool completed = true;
-
-            for (int i = 0; i < N; i++) {
-                if (K != N && seen[i].count(0)) {
-                    used[i] = 1;
-                }
-                completed &= used[i];
+            if (K == 0 && has_full) {
+                cout << "N\n";
+                continue;
             }
-                        
+            
             int f = max_flow(s, t);
             //cout << f << " " << K << "\n";
             if (f >= K) {
