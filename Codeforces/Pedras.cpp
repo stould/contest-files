@@ -24,22 +24,29 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
+string S;
 
 int main(void) {
-    cin >> N;
+    while (cin >> S) {
+        string buff;
+        for (int i = 0; i < (int) S.size(); i++) {
+            buff += S[i];
 
-    int weeks = N / 7;
-    int rest  = N % 7;
+            int len = (int) buff.size();
 
-    int best  = weeks * 2 + min(rest, 2);
-    int worst = weeks * 2;
+            if (i > 0) {
+                if (tolower(buff[len - 1]) == tolower(buff[len - 2]) && buff[len - 1] != buff[len - 2]) {
+                    buff.pop_back();
+                    buff.pop_back();
+                }
+            }
+        }
 
-    if (rest == 6) {
-        worst += 1; 
+        if (buff.empty()) {
+            cout << "Vazia\n";
+        } else {
+            cout << buff << "\n";
+        }
     }
-    
-    cout << worst << " " << best << "\n";
-    
     return 0;
 }

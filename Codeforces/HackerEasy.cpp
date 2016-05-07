@@ -24,45 +24,40 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1010;
+const int MAXN = 550;
 
-int N, K;
-int A[MAXN];
-int B[MAXN];
+int N;
+int A[MAXN], B[MAXN];
 
 int main(void) {
-    cin >> N >> K;
+    while (cin >> N && N != 0) {
+        for (int i = 0; i < N; i++) {
+            cin >> A[i];
+        }
+        for (int i = 0; i < N; i++) {
+            cin >> B[i];
+        }
 
-    for (int i = 0; i < N; i++) {
-        cin >> A[i];
-    }
-    for (int i = 0; i < N; i++) {
-        cin >> B[i];
-    }
-
-    int ans = 0;
-
-    while (1) {
-        bool ok = true;
+        int ans = 0;
         
         for (int i = 0; i < N; i++) {
-            if (K < 0 || (B[i] < A[i] && B[i] + K < A[i])) {
-                ok = false;
+            for (int j = 0; j < N; j++) {
+                if (A[i] == B[j]) {
+                    int k = 0;
+
+                    while (i + k < N && j + k < N) {
+                        if (A[i + k] != B[j + k]) {
+                            break;
+                        }
+                        k += 1;
+                    }
+
+                    ans = max(ans, k);
+                }
             }
-            int diff = max(0, A[i] - B[i]);
-            
-            K -= diff;
-            B[i] -= A[i];
-            B[i] += diff;
-            
-            if (B[i] < 0) break;
         }
-        
-        if (!ok) break;
 
-        ans += 1;
+        cout << ans << "\n";
     }
-
-    cout << ans << "\n";
     return 0;
 }
