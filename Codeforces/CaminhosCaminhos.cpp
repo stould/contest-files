@@ -56,8 +56,8 @@ void add(string arg) {
 }
 
 int check(string K_str, string arg, int pos, int trie_pos, int is_eq, string buff) {
-    if (pos == (int) arg.size()) {
-        cout << buff << "\n" << arg << "\n\n";
+    if (pos == 31) {  
+        cout << K << "\n" << buff << "\n" << arg << cnt[trie_pos] << "\n\n";
         return cnt[trie_pos];
     } else {
         int val_arg = arg[pos] - '0';
@@ -222,20 +222,19 @@ int main(void) {
     int acc = 0;
 
     memset(trie, -1, sizeof(trie));
-
+    
     string K_str = to_bin(K);
 
     for (int i = 0; i < (int) all.size(); i++) {
         acc ^= all[i];
         
         string curr = to_bin(acc);
-        cout << curr << "\n\n";
+        cout << curr.size() << " " << curr << "\n\n";
         ans += check(K_str, curr, 0, 0, false, "");
 
         //cout << check(K_str, curr, 0, 0, false, "") << "\n";
         
         add(curr + '0');
-        add(curr + '1');
 
         if (i > 0 && acc >= K) {
             ans += 1;
