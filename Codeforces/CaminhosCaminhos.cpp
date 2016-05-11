@@ -229,7 +229,7 @@ int main(void) {
         acc ^= all[i];
         
         string curr = to_bin(acc);
-        cout << curr.size() << " " << curr << "\n\n";
+        cout << curr.size() << " " <<  curr << "\n\n";
         ans += check(K_str, curr, 0, 0, false, "");
 
         //cout << check(K_str, curr, 0, 0, false, "") << "\n";
