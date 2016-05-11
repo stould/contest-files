@@ -24,36 +24,26 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 100005;
-
 int N;
-Int K;
-int P[MAXN];
+string S;
 
 int main(void) {
-    cin >> N >> K;
+    cin >> N >> S;
 
-    for (int i = 0; i < N; i++) {
-        cin >> P[i];
-    }
+    if (N > 26) {
+        cout << "-1\n";
+    } else {
+        map<char, bool> seen;
 
-    Int curr = 0;
-    
-    for (int i = 0; i < N; i++) {
-        curr += (i + 1);
-
-        if (curr >= K) {
-            curr -= (i + 1);
-
-            for (int j = 0; j <= i; j++) {
-                curr += 1;
-                if (curr == K) {
-                    cout << P[j] << "\n";
-                    return 0;
-                }
+        int ans = 0;
+        
+        for (int i = 0; i < N; i++) {
+            if (seen[S[i]]) {
+                ans += 1;
             }
+            seen[S[i]] = true;
         }
+        cout << ans << "\n";
     }
-    
     return 0;
 }
