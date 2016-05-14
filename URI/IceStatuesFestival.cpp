@@ -36,33 +36,33 @@ int main(void) {
         for(i = 0; i < n; i++) {
             fastRead_int(c[i]);
         }
-		sort(c, c + n);
+        sort(c, c + n);
 
-		for (i = 0; i <= m; i++) {
-			dist[i] = INF;
-		}
+        for (i = 0; i <= m; i++) {
+            dist[i] = INF;
+        }
 
 
-		int qF = 0, qE = 0;
+        int qF = 0, qE = 0;
 
-		q[qE++] = 0;
+        q[qE++] = 0;
         dist[0] = 0;
 
         for ( ; qF < qE; ) {
             int curr = q[qF++];
 			
-			if (curr == m) {
+            if (curr == m) {
                 printf("%d\n", dist[m]);
                 break;
             }
 
             for (i = n - 1; i >= 0; i--) {
-				if (curr + c[i] <= m) {
-					if (dist[curr + c[i]] > dist[curr] + 1) {
-						q[qE++] = curr + c[i];
-						dist[curr + c[i]] = min(dist[curr + c[i]], dist[curr] + 1);
-					}
-				}
+                if (curr + c[i] <= m) {
+                    if (dist[curr + c[i]] > dist[curr] + 1) {
+                        q[qE++] = curr + c[i];
+                        dist[curr + c[i]] = min(dist[curr + c[i]], dist[curr] + 1);
+                    }
+                }
             }
         }
     }

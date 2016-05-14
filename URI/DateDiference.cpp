@@ -20,71 +20,51 @@ typedef unsigned uint;
 int T;
 int sy, sm, sd, ey, em, ed;
 int days[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+int dp[35][15][3000];
 
 int leap(int y) {
-	return (y % 400 == 0) || (y % 4 == 0 && y % 100 != 0);
+    return (y % 400 == 0) || (y % 4 == 0 && y % 100 != 0);
 }
 
 int main(void) {
-	scanf("%d", &T);
-	for ( ; T--; ) {
-		scanf("%d-%d-%d %d-%d-%d", &ey, &em, &ed, &sy, &sm, &sd);
+    scanf("%d", &T);
 
-		if (ey < sy || (ey == sy && em < sm || (ey == sy && em == sm && ed < sd))) {
-			swap(ey, sy);
-			swap(em, sm);
-			swap(ed, sd);
-		}
-		
-		int ans = 0;
+    dp[1][1][1970] = 0;
 
-		for (int i = sm; i <= 12; i++) {
-			if (i == 2 && leap(sy)) {
-				for (int j = (i == sm ? sd : 1); j <= 29; j++) {
-					if (sy == ey && i == em && j == ed) {
-						goto ed1;
-					}
-					ans += 1;
-				}
-			} else {
-				for (int j = (i == sm ? sd : 1); j <= days[i]; j++) {
-					if (sy == ey && i == em && j == ed) {
-						goto ed1;
-					}
-					ans += 1;
-				}
-			}
-		}
-	ed1:;
-		if (sy != ey) {
-			for (int i = em; i >= 1; i--) {
-				if (i == 2 && leap(ey)) {
-					for (int j = (i == em) ? ed - 1: 29; j >= 1; j--) {
-						if (sy == ey && i == sm && j == sd) {
-							goto ed2;
-						}
-						ans += 1;
-					}
-				} else {
-					for (int j = (i == em) ? ed - 1 : days[i]; j >= 1; j--) {
-						if (sy == ey && i == sm && j == sd) {
-							goto ed2;
-						}
-						ans += 1;
-					}
-				}
-			}
-		}
-	ed2:;
-				 
-		for (int i = sy + 1; i < ey; i++) {
-			if (leap(i)) {
-				ans += 366;
-			} else {
-				ans += 365;
-			}
-		}		
-		printf("%d\n", ans);
-	}
+    int py = 1970;
+    int pm = 1;
+    int pd = 1;
+    
+    for (int y = 1970; y <= 2014; y++) {
+        for  (int m = 1; m <= 12; m++) {
+            int day_cnt = days[m];
+
+            if (m == 2 && leap(y)) {
+                day_cnt += 1;
+            }
+
+            for (int d = 1; d <= day_cnt; d++) {
+                dp[d][m][y] = 1 + dp[pd][pm][py];
+
+                py = y;
+                pm = m;
+                pd = d;                
+            }
+        }
+    }
+    
+    for ( ; T--; ) {
+        scanf("%d-%d-%d %d-%d-%d", &ey, &em, &ed, &sy, &sm, &sd);
+
+        if (ey < sy || (ey == sy && em < sm) || (ey == sy && em == sm && ed < sd)) {
+            swap(ey, sy);
+            swap(em, sm);
+            swap(ed, sd);
+        }
+        
+        int ans = dp[ed][em][ey] - dp[sd][sm][sy];
+	
+        printf("%d\n", ans);
+    }
     return 0;
 }
