@@ -1,33 +1,4 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <set>
-#include <map>
-#include <list>
-#include <queue>
-#include <stack>
-#include <memory>
-#include <iomanip>
-#include <numeric>
-#include <functional>
-#include <new>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <climits>
-#include <cctype>
-#include <ctime>
-
-#define REP(i, n) for(int (i) = 0; i < n; i++)
-#define FOR(i, a, n) for(int (i) = a; i < n; i++)
-#define FORR(i, a, n) for(int (i) = a; i <= n; i++)
-#define for_each(q, s) for(typeof(s.begin()) q=s.begin(); q!=s.end(); q++)
-#define sz(n) n.size()
-#define pb(n) push_back(n)
-#define all(n) n.begin(), n.end()
+#include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
     if(!b) return a;
@@ -37,39 +8,47 @@ template<typename T> T lcm(T a, T b) {
     return a * b / gcd(a, b);
 }
 
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
+typedef long long Int;
+typedef unsigned uint;
 
-int N, cnt[26] = {0};
-char str[100010];
-char c[5] = "ACGT";
-set<char> s;
+int N;
+string A, B;
 
 int main(void) {
-    scanf("%d %s", &N, str);
+	while (cin >> N >> A >> B) {
+		string ans = "";
+		
+		int cntA = 0;
+		int cntB = 0;
+		
+		for (int i = 0; i < N; i++) {
+			if (cntB == N / 2) {
+				ans += A[i];
+			} else if (cntA == N / 2) {
+				ans += B[i];
+			} else {
+				if (A[i] != B[i]) {
+					if (A[i] < B[i]) {
+						ans += A[i];
+						cntA += 1;
+					} else {
+						ans += B[i];
+						cntB += 1;
+					}
+				} else {
+					ans += A[i];				
+				}
+			}
+		}
 
-    int base = 0;
-
-    string ans = "";
-
-    FOR(i, base, N) {
-        cnt[str[i]-'A'] += 1;
-        s.insert(str[i]);
-    }
-    if(s.size() != 4) {
-        printf("%d\n", 0);
-        REP(i, 4) if(!s.count(c[i])) {
-            REP(j, N) putchar(c[i]);
-            break;
-        }
-    } else {
-        int last = INT_MAX, index = -1;
-        REP(i, 26) if(cnt[i] < last && cnt[i] != 0) last = cnt[i], index = i;
-        printf("%d\n", last);
-        REP(i, N) putchar('A'+index);
-    }
+		cout << ans << "\n";
+	}
+	
     return 0;
 }
-
