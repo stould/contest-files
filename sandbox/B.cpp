@@ -24,26 +24,16 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-string S;
+Int N, A, B, C, D;
 
 int main(void) {
-    cin >> N >> S;
+    cin >> N >> A >> B >> C >> D;
 
-    if (N > 26) {
-        cout << "-1\n";
-    } else {
-        map<char, bool> seen;
-
-        int ans = 0;
-        
-        for (int i = 0; i < N; i++) {
-            if (seen[S[i]]) {
-                ans += 1;
-            }
-            seen[S[i]] = true;
-        }
-        cout << ans << "\n";
+    for (int i = 1; i <= N; i++) {
+        Int X = i;
+        Int U = -(D - A - X);
+        Int Y = -(B + C - X);
+        Int V = -(D - Y - A);
     }
     return 0;
 }

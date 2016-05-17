@@ -24,6 +24,27 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+int T, N;
+int P[110];
+
 int main(void) {
+    cin >> T;
+
+    for (int t = 1; t <= T; t++) {
+        cin >> N;
+
+        int x = 0;
+        
+        for (int i = 0; i < N; i++) {
+            cin >> P[i];
+            x ^= P[i];
+        }
+
+        if (x == 0) {
+            cout << "Second\n";
+        } else {
+            cout << "First\n";
+        }
+    }
     return 0;
 }
