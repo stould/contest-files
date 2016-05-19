@@ -24,28 +24,24 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int T, N;
-int P[110];
+const int MAXN = 1010;
+const int INF = INT_MAX / 5;
 
-int win(vector<int> x, int len) {
-    if (x[0] == len) {
-        return 0;
-    } else {
-        for (int i = 1; i < (int) x.size(); i++) {
-            if (x[i] > 0) {
-                for (int k = 0; k < i; k++) {
-                    vector<int> next = x;
-                    next[i] -= 1;
-                    next[k] += 1;
+int T;
+int N;
+int A[MAXN], B[MAXN];
+int dp[MAXN][MAXN][2];
 
-                    if (!win(next, len)) {
-                        return 1;
-                    }
-                }
-            }
+int func(int pos, int used) {
+    if (pos == N) {
+        if (used == N) {
+            return 0;
+        } else {
+            return INF;
         }
-        return 0;
-    }    
+    } else {
+        int& ans = dp[pos][used][p];
+    }
 }
 
 int main(void) {
@@ -54,21 +50,14 @@ int main(void) {
     for (int t = 1; t <= T; t++) {
         cin >> N;
 
-        int s = 0;
-        
         for (int i = 0; i < N; i++) {
-            cin >> P[i];
-
-            if (P[i] > 0 && P[i] % 2 == 1) {
-                s ^= i;
-            }
+            cin >> A[i];
+        }
+        for (int i = 0; i < N; i++) {
+            cin >> B[i];
         }
 
-        if (s != 0) {
-            cout << "First\n";
-        } else {
-            cout << "Second\n";
-        }
+        
     }
     return 0;
 }

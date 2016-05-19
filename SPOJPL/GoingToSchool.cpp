@@ -25,6 +25,7 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 16;
+<<<<<<< HEAD
 const int MAX_DEPTH = 50;
 
 int T, N, P, Q;
@@ -54,11 +55,18 @@ double func(int curr, int depth, int goal) {
         return dp[curr][depth];
     }
 }
+=======
+
+int T, N;
+int P[MAXN][MAXN];
+int deg[MAXN];
+>>>>>>> d50f06750f0595a8f1cbd4f124455eb20faad968
 
 int main(void) {
     cin >> T;
 
     for (int t = 1; t <= T; t++) {
+<<<<<<< HEAD
         cin >> N >> P >> Q;
 
         for (int i = 0; i <= N; i++) {
@@ -85,6 +93,25 @@ int main(void) {
         memset(mark, false, sizeof(mark));
 
         cout << fixed << setprecision(5) << func(P, 0, Q) << "\n";
+=======
+        cin >> N;
+
+        memset(P, 0, sizeof(P));
+        memset(deg, 0, sizeof(deg));
+
+        for (int i = 1; i < N; i++) {
+            int A, B, C;
+            cin >> A >> B >> C;
+
+            A -= 1;
+            B -= 1;
+
+            deg[A] += 1;
+            deg[B] += 1;
+
+            P[A][B] = P[B][A] = C;
+        }
+>>>>>>> d50f06750f0595a8f1cbd4f124455eb20faad968
     }
     return 0;
 }
