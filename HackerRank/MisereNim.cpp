@@ -1,5 +1,3 @@
-
-
 #include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
@@ -26,31 +24,40 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-Int A, B, C;
+int T, N;
+int P[110];
 
 int main(void) {
-    cin >> A >> B >> C;
+    cin >> T;
 
-    if (A == B) {
-        cout << "YES\n";
-        return 0;
-    }
-    
-    if (C == 0) {
-        if (A == B) {
-            cout << "YES\n";
-        } else {
-            cout << "NO\n";
-        }
-    } else {
-        Int mod = (((B - A) % C) + C) % C;
+    for (int t = 1; t <= T; t++) {
+        cin >> N;
+
+        int x = 0;
+        bool has = false;
         
-        if (mod == 0 && (B - A) / C >= 0) {
-            cout << "YES\n";
-        } else {
-            cout << "NO\n";
+        for (int i = 0; i < N; i++) {
+            cin >> P[i];
+            x ^= P[i];
+
+            if (P[i] > 1) {
+                has = true;
+            }
+        }
+
+        if (!has) {
+            if (x != 0) {
+                cout << "Second\n";
+            } else {
+                cout << "First\n";
+            }
+        } else {        
+            if (x == 0) {
+                cout << "Second\n";
+            } else {
+                cout << "First\n";
+            }
         }
     }
-    
     return 0;
 }
