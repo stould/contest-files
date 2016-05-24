@@ -24,55 +24,42 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 2000005;
+const int MAXN = 1048579;
 
 int N, K;
 int P[MAXN];
 
-void gen() {
-   srand(time(NULL));
-    cout << 50 << " " << 20 << endl;
-    for (int i = 0; i < 50; i++) {
-        for (int j = 0; j < 20; j++) {
-            cout << j << " ";
-        }
-        cout << endl;
-    }    
-}
-
 int main(void) {
+    cin.tie(0);
+    ios_base::sync_with_stdio(false);
     //gen(); return 0;
-    cin >> N >> K;
-
-    set<vector<int> > st;
-    
-    for (int i = 0; i < N; i++) {
-        vector<int> tree(MAXN, -1);
+    while (cin >> N >> K) {
+        set<vector<int> > st;
         
-        for (int j = 0; j < K; j++) {
-            cin >> P[j];
-
-            int rt = 1;
-
-            while (tree[rt] != -1) {
-                if (tree[rt] > P[j]) {
-                    rt = rt * 2;
-                } else {
-                    rt = rt * 2 + 1;
+        for (int i = 0; i < N; i++) {
+            vector<int> tree(MAXN, -1);
+            vector<int> used(MAXN, -1);
+            
+            for (int j = 0; j < K; j++) {
+                cin >> P[j];
+                
+                int rt = 1;
+                
+                while (tree[rt] != -1) {
+                    if (tree[rt] > P[j]) {
+                        rt = rt * 2;
+                    } else {
+                        rt = rt * 2 + 1;
+                    }
                 }
+                tree[rt] = P[j];
+                used[rt] = 1;
             }
-            tree[rt] = P[j];
+            
+            st.insert(used);
         }
-
-        for (int j = 0; j < MAXN; j++) {
-            if (tree[j] != -1) {
-                tree[j] = 1;
-            }
-        }
-
-        st.insert(tree);
+        
+        cout << st.size() << "\n";
     }
-
-    cout << st.size() << "\n";
-    return 0;
+        return 0;
 }
