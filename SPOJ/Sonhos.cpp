@@ -14,8 +14,8 @@ int dx[4] = {-1,0,1,0};
 int dy[4] = {0,1,0,-1};
 
 int main(void) {
-    freopen("i.in", "r", stdin);
     scanf("%d", &test);
+    
     for( ; test-- > 0; ) {
         scanf("%d%d", &n, &m);
         for(i = 0; i < n; i++) {
@@ -49,8 +49,6 @@ int main(void) {
             pair<int, int> p1 = tmp.first;
             pair<int, int> p2 = tmp.second;
             q.pop();
-
-            printf("%d %d - %d %d\n", p1.first, p1.second, p2.first, p2.second);
 
             visA[p1.first][p1.second] = true;
             visB[p2.first][p2.second] = true;
