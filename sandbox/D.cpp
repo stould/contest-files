@@ -24,88 +24,61 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 301;
-const int INF = 100000110;
+const Int INF = 1001001001001010010LL;
+Int N;
+Int up[] = {1LL, 2LL, 3LL, 4LL, 5LL, 6LL, 7LL, 15LL, 23LL, 50LL, 114LL, 330LL, 1330LL, 10591LL, 215970LL, 19464802LL, 16542386125LL, 409477218238718LL};
 
-int N, M, P;
-int V[MAXN][MAXN];
-vector<pair<int, int> > buff[MAXN * MAXN];
-int dp[MAXN * MAXN];
-
-int dist(int a, int b, int p, int q) {
-    return abs(a - p) + abs(b - q);
-}
-
-void gen() {
-    cout << "300 300 11\n";
-    srand(time(NULL));
-    vector<int> vs(300 * 300);
-    int pos = 0;
-    int val = 1;
-    for (int i = 0; i < 90000; i++) {
-        vs[i] = val;
-
-        if (i % 10000 == 0) {
-            val += 1;
+Int func(Int curr, int best) {
+    for (int x = 0; x < best; x++) {
+        Int ps = 1;
+        for (Int i = 1; curr - i * i * i >= 0; i++) {
+            ps = i;
         }
+        curr -= ps * ps * ps;
     }
-    vs[0] = 11;
-    random_shuffle(vs.begin(), vs.end());
-    
-    for (int i = 0; i < 300; i++) {
-        for (int j = 0; j < 300; j++) {
-            cout << vs[pos++] << " ";
-        }
-        cout << "\n";
-    }
+    return curr;
 }
 
 int main(void) {
-    //gen(); return 0;
-    scanf("%d%d%d", &N, &M, &P);
+    cin >> N;
 
-    int ans = INF;
-
-    set<pair<int, pair<int, int> > > q;
-
-    memset(dp, 63, sizeof(dp));
+    int best = 0;
     
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < M; j++) {
-            scanf("%d", &V[i][j]);
-            buff[V[i][j]].push_back(make_pair(i, j));
-
-            if (V[i][j] == 1) {
-                dp[1] = min(dp[1], dist(0, 0, i, j));
-                q.insert(make_pair(dist(0, 0, i, j), make_pair(i, j)));                
-            }
-        }
+    for (int i = 0; i < 18; i++) {
+        if (N >= up[i]) {
+            best = i + 1;
+        }        
     }
-
-    while (!q.empty()) {
-        int ds = (*q.begin()).first;
-        int r = (*q.begin()).second.first;
-        int c = (*q.begin()).second.second;
-        q.erase(q.begin());
-
-        //if (ds > dp[V[r][c]]) continue;
+    for (int i = 1; i <= 50; i++) {
+        Int ans = func(i, best);
         
-        if (V[r][c] == P) {
-            chmin(ans, dp[P]);
-        }
-
-        for (int i = 0; i < (int) buff[V[r][c] + 1].size(); i++) {
-            int nr = buff[V[r][c] + 1][i].first;
-            int nc = buff[V[r][c] + 1][i].second;
+        cout << best << " " << i << " " << ans << "\n";
+    }
+    /*
+    for (int x = 1; x <= 200; x++) {
+        int best = 0;
+        int val = 0;
+        for (int y = 1; y <= x; y++) {
+            int curr = y;
+            int used = 0;
             
-            if (dp[V[nr][nc]] > ds + dist(r, c, nr, nc)) {
-                dp[V[nr][nc]] = ds + dist(r, c, nr, nc);
-                q.insert(make_pair(dp[V[nr][nc]], make_pair(nr, nc)));
+            while (curr > 0) {
+                for (int i = y; i >= 1; i--) {
+                    if (i * i * i <= curr) {
+                        curr -= i * i * i;
+                        used += 1;
+                        break;
+                    }
+                }
+            }
+            if (used >= best) {
+                best = used;
+                val = y;
             }
         }
+        cout << x << " " << val << " " << best << "\n";
     }
+    */
 
-    printf("%d\n", ans);
-    
     return 0;
 }
