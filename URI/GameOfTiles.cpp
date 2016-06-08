@@ -24,81 +24,111 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 51;
+const int MAXN = 2501;
 
 int N, M;
-string S[MAXN];
-bool is_good;
-bool vis[MAXN][MAXN];
-int dx[4] = {-1, 1, 0, 0};
-int dy[4] = {0, 0, -1, 1};
+string S[60];
+int name[60][60];
 
-void dfs(int ni, int nj, int len) {
-    //cout << ni << " " << nj << "\n";
-    if (is_good) return;
-    
-    bool ok = false;
-    
-    for (int i = 0; i < 4; i++) {
-        int pi = ni + dx[i];
-        int pj = nj + dy[i];
+int dx[2] = {1, 0};
+int dy[2] = {0, 1};
 
-        if (pi >= 0 && pj >= 0 && pi < N && pj < M) {
-            if (!vis[pi][pj] && S[pi][pj] == '.') {
-                ok = true;
+vector<int> graph[MAXN];
+
+bool bpm(int u, bool seen[], int matchR[]) {
+    for (int i = 0; i < (int) graph[u].size(); i++) {
+        int v = graph[u][i];
+
+        if (!seen[v]) {
+            seen[v] = true; 
+ 
+            if (matchR[v] < 0 || bpm(matchR[v], seen, matchR)) {
+                matchR[v] = u;
+                return true;
             }
         }
     }
-
-    if (!ok) {
-        if (len % 2 == 0) {
-            is_good = true;
-        }
-    } else {
-        for (int i = 0; i < 4; i++) {
-            int pi = ni + dx[i];
-            int pj = nj + dy[i];
-            
-            if (pi >= 0 && pj >= 0 && pi < N && pj < M) {
-                if (!vis[pi][pj] && S[pi][pj] == '.') {
-                    vis[pi][pj] = true;
-                    dfs(pi, pj, len + 1);
-                    vis[pi][pj] = false;
-                }
-            }
-        }
-    }
+    return false;
 }
+ 
+int maxBPM(int limit) {
+    int matchR[MAXN];
+ 
+    memset(matchR, -1, sizeof(matchR));
+ 
+    int result = 0; 
+    for (int u = 0; u < limit; u++) {
+        bool seen[MAXN];
+        memset(seen, 0, sizeof(seen));
+ 
+        if (bpm(u, seen, matchR)) {
+            //cout << "S " << u << endl;
+            result++;
+        }
+    }
+    return result;
+}
+
 
 int main(void) {
     while (cin >> N >> M) {
         if (N == 0 && M == 0) break;
+
         for (int i = 0; i < N; i++) {
             cin >> S[i];
         }
 
-        bool one = false;
+        for (int i = 0; i < MAXN; i++) {
+            graph[i].clear();
+        }
+        
+        int cnt = 0;        
+        int cntO = 0;
         
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (S[i][j] == '.') {
-                    memset(vis, false, sizeof(vis));
-                    is_good = false;
-                    dfs(i, j, 1);
-
-                    if (!is_good) {
-                        one = true;
-                        goto end;
+                    if ((i + j) % 2 == 0) {
+                        name[i][j] = cnt++;
                     }
                 }
             }
         }
+
+        cntO = cnt;
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (S[i][j] == '.') {
+                    if ((i + j) % 2 == 1) {
+                        name[i][j] = cntO++;
+                    }
+                }
+            }
+        }
+
+                    
         
-    end:;
-        if (one) {
-            cout << "1\n";
-        } else {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (S[i][j] == '.') {
+                    for (int k = 0; k < 2; k++) {
+                        int pi = i + dx[k];
+                        int pj = j + dy[k];
+                        
+                        if (pi >= 0 && pj >= 0 && pi < N && pj < M && S[pi][pj] == '.') {
+                            graph[name[i][j]].push_back(name[pi][pj]);
+                            graph[name[pi][pj]].push_back(name[i][j]);
+                        }
+                    }
+                }
+            }
+        }
+        //cout << 2 * maxBPM(cnt) << " " << cntO << endl;
+        if (2 * maxBPM(cnt) == cntO) {
             cout << "2\n";
+        } else {
+            cout << "1\n";
         }
     }
      

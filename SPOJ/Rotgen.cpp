@@ -23,7 +23,10 @@ int main(void) {
   //  freopen("i.in", "r", stdin);
   //  freopen("rt.out", "w", stdout);
     cin >> x;
+    bool ok = false;
     while(x-- > 0) {
+        if (ok) cout << endl;
+        ok = true;
         cin >> n >> k;
         while(k-- > 0) {
             cout << n << endl;
@@ -41,7 +44,6 @@ int main(void) {
             n = novo;
         }
         cout << n << endl;
-        cout << endl;
     }
     return 0;
 }

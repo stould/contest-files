@@ -33,53 +33,53 @@ double dp[220][MAXN];
 bool mark[220][MAXN];
 
 double func(int id, int len, double buff) {
-	if (len == 0) {
-		if (id == 1) {
-			return 0;
-		} else {
-			return -INF;
-		}
-	} else {
-		double& ans = dp[id][len];
+    if (len == 0) {
+        if (id == 1) {
+            return 0;
+        } else {
+            return -INF;
+        }
+    } else {
+        double& ans = dp[id][len];
 
-		if (!mark[id][len]) {
-			ans = -INF;
-			mark[id][len] = true;
+        if (!mark[id][len]) {
+            ans = -INF;
+            mark[id][len] = true;
 
-			for (int i = 0; i < (int) G[id].size(); i++) {
-				int u = G[id][i].first;
-				int D = G[id][i].second.first;
-				int V = G[id][i].second.second;
+            for (int i = 0; i < (int) G[id].size(); i++) {
+                int u = G[id][i].first;
+                int D = G[id][i].second.first;
+                int V = G[id][i].second.second;
 				
-				if (len - 1 >= 0) {
-					chmax(ans, V / (double) D + func(id, len - 1, buff + V / (double) D));
-				}
+                if (len - 1 >= 0) {
+                    chmax(ans, V / (double) D + func(id, len - 1, buff + V / (double) D));
+                }
 				
-				if (len - D >= 0) {
-					chmax(ans, V + func(u, len - D, buff + V));
-				}
-			}
-		}
+                if (len - D >= 0) {
+                    chmax(ans, V + func(u, len - D, buff + V));
+                }
+            }
+        }
 			
-		return ans;
-	}
+        return ans;
+    }
 }
 
 int main(void) {
-	cin >> N >> M >> P;
+    cin >> N >> M >> P;
 
-	for (int i = 0; i < M; i++) {
-		int A, B, D, V;
+    for (int i = 0; i < M; i++) {
+        int A, B, D, V;
 
-		cin >> A >> B >> D >> V;
+        cin >> A >> B >> D >> V;
 		
-		G[A].push_back(make_pair(B, make_pair(D, V)));
-		G[B].push_back(make_pair(A, make_pair(D, V)));
-	}
+        G[A].push_back(make_pair(B, make_pair(D, V)));
+        G[B].push_back(make_pair(A, make_pair(D, V)));
+    }
 
-	memset(mark, false, sizeof(mark));
+    memset(mark, false, sizeof(mark));
 	
-	cout << fixed << setprecision(10) << func(1, P, 0) << endl;
+    cout << fixed << setprecision(10) << func(1, P, 0) << endl;
 
-	return 0;
+    return 0;
 }
