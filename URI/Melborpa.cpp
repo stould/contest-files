@@ -1,5 +1,3 @@
-
-
 #include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
@@ -26,24 +24,30 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N, H;
+int N;
+Int dp[20][11][3];
+bool s[20][11][3];
+
+Int func(int pos, int last, int seen, int lpos) {
+    if (s[pos][last][seen]) return dp[pos][last][seen];
+    if (pos > lpos) {
+        return seen ? 1LL : 0LL;            
+    } else if (pos == lpos) {
+        return seen ? 10LL : 0LL;
+    } else {
+        Int& ans = dp[pos][last][seen];
+
+        if (ans == -1) {
+            ans = 0LL;
+        }
+
+        return ans;
+    }
+}
 
 int main(void) {
-    cin >> N >> H;
+    cin >> N;
 
-    int ans = 0;
-
-    for (int i = 0; i < N; i++) {
-        int P;
-        cin >> P;
-
-        if (P <= H) {
-            ans += 1;
-        } else {
-            ans += 2;
-        }
-    }
-
-    cout << ans << "\n";
+    cout << func(1, 0, false, N) << "\n";
     return 0;
 }

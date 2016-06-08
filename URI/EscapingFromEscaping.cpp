@@ -1,5 +1,3 @@
-
-
 #include <bits/stdc++.h>
 
 template<typename T> T gcd(T a, T b) {
@@ -26,24 +24,35 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N, H;
+string S;
 
 int main(void) {
-    cin >> N >> H;
+    cin >> S;
 
-    int ans = 0;
+    int N = (int) S.size();
 
-    for (int i = 0; i < N; i++) {
-        int P;
-        cin >> P;
+    for (int len = 1; len <= 17; len++) {
+        set<int> st;
 
-        if (P <= H) {
-            ans += 1;
-        } else {
-            ans += 2;
+        for (int i = 0; i + len - 1 < N; i++) {
+            int now = 0;
+            
+            for (int j = 0; j < len; j++) {
+                if (S[i + j] == '1') {
+                    now |= (1 << j);
+                }
+            }
+
+            st.insert(now);
         }
-    }
 
-    cout << ans << "\n";
+        //cout << len << " " << st.size() << "\n";
+        
+        if (1 << len != (int) st.size()) {
+            cout << len << "\n";
+            break;
+        }
+    }    
+    
     return 0;
 }
