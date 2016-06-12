@@ -29,7 +29,7 @@ const int INF = INT_MAX / 5;
 
 string S[100];
 int belong[MAXN];
-int N, L;
+int N;
 
 // Begins Suffix Arrays implementation
 // O(n log n) - Manber and Myers algorithm
@@ -57,12 +57,12 @@ bool smaller_first_char(int a, int b){
 }
 
 void SuffixSort(int n){
-    //sort suffixes according to their first character
+ //sort suffixes according to their first character
     for (int i=0; i<n; ++i){
         pos[i] = i;
     }
     sort(pos, pos + n, smaller_first_char);
-    //{pos contains the list of suffixes sorted by their first character}
+ //{pos contains the list of suffixes sorted by their first character}
 
     for (int i=0; i<n; ++i){
         bh[i] = i == 0 || str[pos[i]] != str[pos[i-1]];
@@ -70,7 +70,7 @@ void SuffixSort(int n){
     }
 
     for (int h = 1; h < n; h <<= 1){
-        //{bh[i] == false if the first h characters of pos[i-1] == the first h characters of pos[i]}
+   //{bh[i] == false if the first h characters of pos[i-1] == the first h characters of pos[i]}
         int buckets = 0;
         for (int i=0, j; i < n; i = j){
             j = i + 1;
@@ -79,7 +79,7 @@ void SuffixSort(int n){
             buckets++;
         }
         if (buckets == n) break; // We are done! Lucky bastards!
-        //{suffixes are separted in buckets containing strings starting with the same h characters}
+   //{suffixes are separted in buckets containing strings starting with the same h characters}
 
         for (int i = 0; i < n; i = nxt[i]){
             cnt[i] = 0;
@@ -136,102 +136,69 @@ void getLcp(int n){
 }
 // End of the longest common prefix algorithm
 
-int tree[MAXN][30];
-Int maskTree[MAXN][30];
+int tree[4 * MAXN];
+int lazy[4 * MAXN];
 
-void build() {
-    int pw = 1;
-    int base = 2;
- 
-    for (int i = 0; i < L; i++) {
-        tree[i][0] = lcp[i];
-        maskTree[i][0] = (1LL << (Int) belong[pos[i]]);
+void goDown(int node, int l, int r) {    
+    if (lazy[node]) {
+        tree[node] += lazy[node];
+        
+        if (l != r) {
+            lazy[2 * node]     += lazy[node];
+            lazy[2 * node + 1] += lazy[node];
+        } 
     }
-  
-    while (base <= L) {
-        for (int i = 0; i + base / 2 - 1 < L; i++) {
-            int before = base / 2;		
-            tree[i][pw] = min(tree[i][pw - 1], tree[i + before][pw - 1]);
-            maskTree[i][pw] = maskTree[i][pw - 1] | maskTree[i + before][pw - 1];
-        }    
-        pw += 1;
-        base *= 2;
+    lazy[node] = 0;
+}
+
+void build(int node, int l, int r) {
+    if (l == r) {
+        tree[node] = lcp[l];
+    } else {
+        int m = (l + r) / 2;
+        
+        build(2 * node, l, m);
+        build(2 * node + 1, m + 1, r);
+        
+        tree[node] = min(tree[2 * node], tree[2 * node + 1]);
     }
 }
 
-int query(int l, int r) {
-    int len = r - l + 1;
- 
-    if (len == 1) return tree[l][0];
-  
-    int ps = 1;
-    int pw = 0;
-	
-    while (l + 2 * ps <= r) {
-        ps *= 2;
-        pw += 1;
+Int query(int node, int l, int r, int bl, int br) {
+    goDown(node, l, r);
+    if (l >= bl && r <= br) {
+        return tree[node];
+    } else if (l > br || r < bl) { 
+        return INF;
+    } else {
+        int m = (l + r) / 2;
+        
+        Int a = query(2 * node, l, m, bl, br);
+        Int b = query(2 * node + 1, m + 1, r, bl, br);
+        
+        return min(a, b);
     }
- 
-    int a = tree[l][pw];
-    int b = tree[r - ps + 1][pw];
- 
-    return min(a, b);
 }
 
-Int queryMask(int l, int r) {
-    int len = r - l + 1;
-    
-    if (len == 1) return maskTree[l][0];
-    
-    int ps = 1;
-    int pw = 0;
-	
-    while (l + 2 * ps <= r) {
-        ps *= 2;
-        pw += 1;
-    }
- 
-    Int a = maskTree[l][pw];
-    Int b = maskTree[r - ps + 1][pw];
- 
-    return a | b;
+void update(int node, int l, int r, int bl, int br, Int value) {    
+    goDown(node, l, r);
+    if (l > r) {
+        return;
+    } else if (l > br || r < bl) {
+        return;
+    } else if (l >= bl && r <= br) {
+        lazy[node] = value;    
+        goDown(node, l, r);
+    } else {
+        int m = (l + r) / 2;       
+        
+        update(2 * node, l, m, bl, br, value);
+        update(2 * node + 1, m + 1, r, bl, br, value);
+        
+        tree[node] = max(tree[2 * node], tree[2 * node + 1]);
+    }    
 }
 
-int funcL(int l, int r, int rbound, int val) {
-    int ans = rbound;
-    
-    while (l <= r) {
-        int m = l + (r - l) / 2;
-
-        int curr = query(m, rbound);
-
-        if (curr < val) {
-            l = m + 1;
-        } else {
-            ans = m;
-            r = m - 1;
-        }
-    }
-    return ans;
-}
-
-int funcR(int l, int r, int lbound, int val) {
-    int ans = lbound;
-    
-    while (l <= r) {
-        int m = l + (r - l) / 2;
-
-        int curr = query(lbound, m);
-
-        if (curr < val) {
-            r = m - 1;
-        } else {
-            ans = m;
-            l = m + 1;
-        }
-    }
-    return ans;
-}
 
 int main(void) {
     while (cin >> N && N != 0) {
@@ -250,7 +217,7 @@ int main(void) {
             }
         }        
 
-        L = (int) all.size();
+        int L = (int) all.size();
         int ps = 0;
         
         for (int i = 0; i < L; i++) {
@@ -261,13 +228,11 @@ int main(void) {
                 continue;
             }
 
-            belong[i] = ps;     
+            belong[i] = ps;
         }
 
         SuffixSort(L);
         getLcp(L);
-
-        build();        
 
         set<Int> seen;
         
@@ -279,36 +244,40 @@ int main(void) {
                 unique[S[belong[pos[i]]]] = 1000000;
             }            
         }
-        /*
-          vector<pair<int, int> > vs;
-        
-          for (int i = 0; i < L; i++) {
-          vs.push_back(make_pair(rnk[i], i));              
-          }
-        
-          sort(vs.begin(), vs.end());
-          
-          for (int i = N - 1; i < L; i++) {
-              cout << (1LL << belong[pos[i]]) << " " << queryMask(i, i) <<"\n";
-              //cout << i << "    " << lcp[i] << " " << all.substr(vs[i].second, all.size() - vs[i].second) << "\n";
-              //cout << lcp[i] << "\n";
-          }
-          cout << "\n";
-          
-        */
 
+        build(1, 0, L - 1);
         
-        for (int i = N - 1; i < L; i++) {
-            //cout << belong[pos[i]] << " " << (1LL << belong[pos[i]]) << " " << queryMask(1, 0, L - 1, i, i) << "\n";
-            if (lcp[i] > 0) {
-                int lbound = funcL(N - 1, i, i, lcp[i]) - 1;
-                int rbound = funcR(i, L - 1, i, lcp[i]);
+        while (1) {
+            int gr = 0;
+            for (int i = N - 1; i < L; i++) {
+                int li = query(1, 0, L - 1, i, i);
+
+                gr = max(gr, li);
                 
-                //cout << lbound << " " << i << " " << rbound << " => " << queryMask(lbound, rbound) << "\n";
-                seen.insert(queryMask(lbound, rbound));
-            }              
+                int j = i + 1;
+                Int mask = (1LL << belong[pos[i]]);
+                int sm = INT_MAX;
+                
+                while (j < L) {
+                    int lj = query(1, 0, L - 1, j, j);
+
+                    if (lj <= 0) break;
+                    
+                    gr = max(gr, lj);
+                    sm = min(sm, lj);
+                    
+                    mask |= (1LL << belong[pos[j]]);
+                    j += 1;
+                }
+                if (j != i + 1) {
+                    update(1, 0, L - 1, i + 1, j - 1, -sm);
+                    seen.insert(mask);
+                }
+                i = j - 1;
+            }
+            if (gr == 0) break;
         }
-        
+
         for (int i = 0; i < N; i++) {
             if (unique[S[i]] == 1) {
                 seen.insert(1LL << (Int) i);
