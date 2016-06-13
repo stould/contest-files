@@ -27,71 +27,77 @@ typedef unsigned uint;
 const int MAXN = 3200005;                 
 const int MAX_LEN = 3;
 
-int T, N;
-Int P[100005];
+int T, N, K;
+int P[100005];
 
 int child[MAXN][2];
+int conta[MAXN][2];
 int n;
 	
 void resetTrie() {
     n = 1;
-    memset(child, 0, sizeof(child));
+    memset(child, -1, sizeof(child));
+    memset(conta, 0, sizeof(conta));
 }
 
 void addWord(Int x) {
     int now = 0;
 	
-    for (int i = 31; i >= 0; i--) {
-        int letter_pos = (x & (1LL << (Int) i)) != 0;
-	
-        if (!child[now][letter_pos]) {
+    for (int i = 25; i >= 0; i--) {
+        int letter_pos = (x & (1 << i)) != 0;
+        if (child[now][letter_pos] == -1) {
             child[now][letter_pos] = n++;
+            conta[now][letter_pos] += 1;
         }		
         now = child[now][letter_pos];
     }
 }
 
-Int query(Int x) {
-    Int value = 0;
+Int query(Int x, int pos, int trie_pos, int value, int buff) {
+    if (value >= K) return 0;
+    if (pos < 0) {
+        return buff;
+    }
 		
-    int now = 0;
+    int wish = (x & (1 << pos)) != 0;
+    Int ans = 0;
 
-    for (int i = 31; i >= 0; i--) {
-        int wish = (x & (1LL << (Int) i)) != 0LL;
-        
-        if (child[now][wish ^ 1]) {
-            value += (1LL << i);
-            now = child[now][wish ^ 1];
-        } else if (child[now][wish]) {
-            now = child[now][wish];
-        } else {
-            break;
-        }
+    if ((wish ^ 1) > 1) {
+        cout << "EE\n";
     }
 
-    return value;
+    
+    if (child[trie_pos][wish ^ 1] != -1) {
+        ans += query(x, pos - 1, child[trie_pos][wish ^ 1], value + (1 << pos), conta[trie_pos][wish ^ 1]);
+    }
+    if (child[trie_pos][wish] != -1) {
+        ans += query(x, pos - 1, child[trie_pos][wish], value, conta[trie_pos][wish]);
+    }
+    
+    return ans;
 }
 
 int main(void) {
     scanf("%d", &T);
 
     for (int t = 1; t <= T; t++) {
-        cin >> N;
+        resetTrie();
+        cin >> N >> K;
 
         Int ans = 0;
         Int all = 0;
-
+        
         addWord(0LL);
-		
+        
         for (int i = 0; i < N; i++) {
-            scanf("%lld", &P[i]);
+            scanf("%d", &P[i]);
 
             all ^= P[i];		
-            chmax(ans, query(all));
+            ans += query(all, 25, 0, 0, 0);
+            //cout << query(all, 31, 0, 0) << "\n";
             addWord(all);
         }
-        chmax(ans, query(0LL));
-        resetTrie();
+        //ans += query(all, 20, 0, 0, 0);
         printf("%lld\n", ans);
     }
 	
