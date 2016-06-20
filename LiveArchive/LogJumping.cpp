@@ -24,21 +24,39 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-string S;
-int A, B;
+const int MAXN = 1010;
+
+int T;
+int N, P[MAXN], A[MAXN];
 
 int main(void) {
-    cin >> N;
+    cin >> T;
 
-    for (int i = 0; i < N; i++) {
-        cin >> S >> A >> B;
+    while (T--) {
+        cin >> N;
 
-        if (A >= 2400 && A < B) {
-            cout << "YES\n";
-            return 0;
+        for (int i = 0; i < N; i++) {
+            cin >> P[i];
         }
+        sort(P, P + N);
+
+        int pl = 0;
+        int pr = N - 1;
+        
+        for (int i = 0; i < N; i++) {
+            if (i % 2 == 0) {
+                A[pl++] = P[i];
+            } else {
+                A[pr--] = P[i];
+            }
+        }
+        int ans = abs(A[0] - A[N - 1]);
+
+        for (int i = 1; i < N; i++) {
+            chmax(ans, abs(A[i] - A[i - 1]));
+        }
+
+        cout << ans << "\n";
     }
-    cout << "NO\n";
-    return 0;    
+    return 0;
 }

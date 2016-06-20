@@ -24,6 +24,28 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+const int MAXN = 505;
+
+int T, N, M;
+vector<int> G[MAXN];
+int P[MAXN], C[MAXN];
 int main(void) {
+    cin >> T;
+
+    while (T--) {
+        cin >> N >> M;
+
+        for (int i = 0; i < MAXN; i++) {
+            G[i].clear();
+        }
+
+        for (int i = 0; i < M; i++) {
+            int A, B;
+            cin >> A >> B;
+
+            G[A].push_back(B);
+            G[B].push_back(A);
+        }
+    }
     return 0;
 }

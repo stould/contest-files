@@ -6,10 +6,11 @@
 int T[MAX], term[MAX], sig[MAX][cc], cnt;
 vector <int> indice[MAX];
 
-void add (char s[MAXS], int id){
-    int x = 0, n = strlen(s);
+void add(string& arg) {
+    int x = 0, n = (int) arg.size();
+
     for (int i = 0; i < n; i++){
-        int c = s[i]-'A';
+        int c = (int) arg[i];
         if (sig[x][c] == 0) term[cnt] = 0, sig[x][c] = cnt++;
         x = sig[x][c];
     }

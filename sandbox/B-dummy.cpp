@@ -24,6 +24,20 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+Int N;
+
 int main(void) {
+    cin >> N;
+    bool flag = false;
+    for (Int a = 0; a * 1234 <= N && !flag; a++) {
+        for (Int b = 0; a * 1234 + b * 123456 <= N && !flag; b++) {
+            for (Int c = 0; c * 1234567 + b * 123456 + a * 1234 <= N && !flag; c++) {
+                if (a * 1234 + b * 123456 + c * 1234567 == N) {
+                    flag = true;
+                }
+            }
+        }
+    }
+    cout << flag << "\n";
     return 0;
 }
