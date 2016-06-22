@@ -11,7 +11,10 @@ void add(string& arg) {
 
     for (int i = 0; i < n; i++){
         int c = (int) arg[i];
-        if (sig[x][c] == 0) term[cnt] = 0, sig[x][c] = cnt++;
+        if (sig[x][c] == 0) {
+            term[cnt] = 0;
+            sig[x][c] = cnt++;
+        }
         x = sig[x][c];
     }
     term[x] = 1;
@@ -25,14 +28,26 @@ void aho (){
         if (v) Q.push (v), T[v] = 0;
     }
     while (!Q.empty()){
-        int u = Q.front(); Q.pop();
+        int u = Q.front();
+        Q.pop();
+        
         for (int i = 0; i < cc; i++){
             int x = sig[u][i];
-            if (x == 0) continue;
+
+            if (x == 0) {
+                continue;
+            }
+            
             int v = T[u];
-            while (sig[v][i] == 0 && v != 0) v = T[v];
+
+            while (sig[v][i] == 0 && v != 0) {
+                v = T[v];
+            }
+
             int y = sig[v][i];
-            Q.push(x), T[x] = y, term[x] |= term[y];
+            Q.push(x);
+            T[x] = y;
+            term[x] |= term[y];
         }
     }
 }
