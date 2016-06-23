@@ -118,14 +118,14 @@ int func(int pos, int bd) {
 }
 
 int main(void) {
+    cin.tie(0);
+    ios_base::sync_with_stdio(false);
+    
     cin >> test;
 
     for (int t = 1; t <= test; t++) {
         cin >> N >> M >> B;
 
-        memset(sig, 0, sizeof(sig));
-        memset(profit, 0, sizeof(profit));
-        
         cnt = 1;
         
         for (int i = 0; i < N; i++) {
@@ -140,8 +140,11 @@ int main(void) {
         aho();
 
         memset(dp, -1, sizeof(dp));
-
+        
         cout << "Case #" << t << ": " << func(0, B) << endl;
+        
+        memset(sig, 0, sizeof(sig));
+        memset(profit, 0, sizeof(profit));    
     }
     return 0;
 }

@@ -25,7 +25,11 @@ void aho (){
     queue <int> Q;
     for (int i = 0; i < cc; i++){
         int v = sig[0][i];
-        if (v) Q.push (v), T[v] = 0;
+
+        if (v) {
+            Q.push (v);
+            T[v] = 0;
+        }
     }
     while (!Q.empty()){
         int u = Q.front();
