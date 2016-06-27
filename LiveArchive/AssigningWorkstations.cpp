@@ -7,48 +7,48 @@ const int MAXN = 300030;
 int N, K;
 
 int main() {
-    cin >> N >> K;
+    while (cin >> N >> K) {
 
-    vector<pair<long long, int> > P;
+        vector<pair<long long, int> > P;
 
-    for (int i = 0; i < N; i++) {
-        int A, B;
+        for (int i = 0; i < N; i++) {
+            int A, B;
     
-        cin >> A >> B;
+            cin >> A >> B;
     
-        P.push_back(make_pair(A, 1));
-        P.push_back(make_pair(A + B, 0));    
-    }
+            P.push_back(make_pair(A, 1));
+            P.push_back(make_pair(A + B, 0));    
+        }
 
-    sort(P.begin(), P.end());
+        sort(P.begin(), P.end());
 
-    int ans = 0;
+        int ans = 0;
 
-    priority_queue<long long, vector<long long>, greater<long long> > pool;
+        priority_queue<long long, vector<long long>, greater<long long> > pool;
   
-    for (int i = 0; i < 2 * N; i++) {
-        if (P[i].second == 0) {
-            pool.push(P[i].first);
-        } else {
-            bool can = false;
+        for (int i = 0; i < 2 * N; i++) {
+            if (P[i].second == 0) {
+                pool.push(P[i].first);
+            } else {
+                bool can = false;
       
-            while (!pool.empty()) {
-                if (P[i].first - pool.top() > K) {
-                    pool.pop();
-                } else {
-                    can = true;
-                    pool.pop();
-                    break;
+                while (!pool.empty()) {
+                    if (P[i].first - pool.top() > K) {
+                        pool.pop();
+                    } else {
+                        can = true;
+                        pool.pop();
+                        break;
+                    }
+                }      
+      
+                if (!pool.empty() || can) {
+                    ans += 1;
                 }
-            }      
-      
-            if (!pool.empty() || can) {
-                ans += 1;
             }
         }
+  
+        cout << ans << "\n";
     }
-  
-    cout << ans << "\n";
-  
     return 0;
 }

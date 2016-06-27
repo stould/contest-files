@@ -24,21 +24,30 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-string S;
-int A, B;
+int N, X;
 
 int main(void) {
-    cin >> N;
+    cin >> N >> X;
 
+    Int has = X;
+    int ans = 0;
+    
     for (int i = 0; i < N; i++) {
-        cin >> S >> A >> B;
+        string S;
+        int V;
+        
+        cin >> S >> V;
 
-        if (A >= 2400 && A < B) {
-            cout << "YES\n";
-            return 0;
+        if (S == "+") {
+            has += V;
+        } else {
+            if (has >= V) {
+                has -= V;
+            } else {
+                ans += 1;
+            }
         }
     }
-    cout << "NO\n";
+    cout << has << " " << ans << "\n";
     return 0;    
 }

@@ -24,21 +24,41 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-Int N;
+const int MAXN = 110;
+
+int N;
+int P[MAXN];
 
 int main(void) {
     cin >> N;
 
-    for (Int a = 0; a <= 1000; a++) {
-        for (Int b = 0; b <= 8500; b++) {
-            Int val = N - a * 1234567LL - b * 123456LL;
+    for (int i = 0; i < N; i++) {
+        cin >> P[i];
+    }
 
-            if (val >= 0 && val % 1234 == 0) {
-                cout << "YES\n";
-                return 0;
+    while (1) {
+        int bi = 0;
+        int bj = -1;
+        
+        for (int i = 0; i < N; i++) {
+            int j = i;
+            
+            while (j + 1 < N && P[j] > P[j + 1]) {
+                j += 2;
             }
+            if (j - i + 1 > bj - bi + 1) {
+                bi = i;
+                bj = j;
+            }
+            i = j;
+        }
+        if (bi == bj) {
+            break;
+        }
+        cout << bi + 1 << " " << bj << "\n";
+        for (int i = bi; i < bj; i += 2) {
+            swap(P[i], P[i + 1]);
         }
     }
-    cout << "NO\n";
     return 0;
 }

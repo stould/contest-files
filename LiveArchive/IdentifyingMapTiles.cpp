@@ -7,7 +7,7 @@ map<char, int> dx;
 map<char, int> dy;
 
 int main() {
-	cin >> S;
+    while (cin >> S) {
 
 	dx['0'] = 0;
 	dy['0'] = 0;
@@ -27,13 +27,13 @@ int main() {
 	int level = 1;
 
 	for (int i = N - 1; i >= 0; i--) {
-		x += level * dx[S[i]];
-		y += level * dy[S[i]];
+            x += level * dx[S[i]];
+            y += level * dy[S[i]];
     
-		level *= 2;
+            level *= 2;
 	}
 
 	cout << N << " " << x << " " << y << "\n";
-  
-	return 0;
+    }
+    return 0;
 }
