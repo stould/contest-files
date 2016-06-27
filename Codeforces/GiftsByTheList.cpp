@@ -35,12 +35,7 @@ vector<int> ans;
 
 bool dfs(int node, int prev) {
     int cr = true;
-
-    if (ask[node]) {
-        prev = node;
-        ans.push_back(node);        
-    }
-
+        
     for (int i = 0; i < (int) G[node].size(); i++) {
         int u = G[node][i];        
         
@@ -50,6 +45,14 @@ bool dfs(int node, int prev) {
             }
         }
     }
+
+    if (P[node] != node && (prev != -1 && P[node] != P[prev])) {
+        cr = false;
+    }
+    if (ask[node]) {
+        ans.push_back(node);        
+    }
+
     return cr;
 }
 

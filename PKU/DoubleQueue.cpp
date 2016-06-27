@@ -1,4 +1,27 @@
-const int MAXN = 100005;
+#include <iostream>
+#include <cstdlib>
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+
+using namespace std;
+
+#ifdef ONLINE_JUDGE
+#define debug(args...)
+#else
+#define debug(args...) fprintf(stderr,args)
+#endif
+
+typedef long long Int;
+typedef unsigned long long uInt;
+typedef unsigned uint;
 
 struct Node {
     Node* L;
@@ -6,12 +29,14 @@ struct Node {
 	
     int value;
     int priority;
+    int id;
     int size;
 
-    Node(int v) {
+    Node(int v, int i) {
         value = v;
+        id = i;
         size = 1;
-        priority = rand() % MAXN;
+        priority = rand() % 100000000;
     }
 	
     void update_size() {
@@ -25,26 +50,6 @@ struct Node {
         }
     }
 };
-
-void printP(Node* root) {
-    if (root == NULL) {
-        return;
-    } else {
-        printP(root->L);
-        cout << root->value << " ";
-        printP(root->R);
-    }
-}
-void printI(Node* root) {
-    if (root == NULL) {
-        return;
-    } else {
-        cout << root->value << " ";
-        printI(root->L);
-        printI(root->R);
-    }
-}
-
 
 void split(Node* root, Node*& l, Node*& r, int val) {
     if (!root) {
@@ -138,44 +143,51 @@ bool find(Node* root, int value) {
     }
 }
 
-//What's the kth smallest number ?
-Node* kth(Node* root, int pos) {
-    if (!root) {
-        return NULL;
+Node* getMax(Node* root) {
+    if (root->R == NULL) {
+        return root;
     } else {		
-        int curr_pos = 1;
-		
-        if (root->L) {
-            curr_pos += root->L->size;
-        }
-
-        if (curr_pos == pos) {
-            return root;
-        } else if (root->L && curr_pos > pos) {
-            return kth(root->L, pos);
-        } else if (root->R) {
-            return kth(root->R, pos - 1 - (root->L ? root->L->size : 0));
-        } else {
-            return NULL;
-        }
+        return getMax(root->R);
+    }
+}
+Node* getMin(Node* root) {
+    if (root->L == NULL) {
+        return root;
+    } else {		
+        return getMin(root->L);
     }
 }
 
-//How many numbers are smaller than value ?
-int query(Node* root, int value) {
-    if (root == NULL) {
-        return 0;
-    } else {
-        if (root->value < value) {
-            int ans = 1;
-			
-            if (root->L != NULL) {
-                ans += root->L->size;
-            } 
-			
-            return ans + query(root->R, value);
+
+int main(void) {
+    int kind;
+    Node* root = NULL;
+    
+    while (cin >> kind && kind != 0) {        
+        if (kind == 1) {
+            int val, pri;
+            
+            cin >> val >> pri;
+            
+            Node* buff = new Node(pri, val);
+            insert(root, buff);
+        } else if (kind == 2) {
+            if (root == NULL) {
+                cout << 0 << endl;
+            } else {
+                Node* nd = getMax(root);
+                cout << nd->id << endl;
+                remove(root, nd->value);
+            }
         } else {
-            return query(root->L, value);
+            if (root == NULL) {
+                cout << 0 << endl;
+            } else {
+                Node* nd = getMin(root);
+                cout << nd->id << endl;
+                remove(root, nd->value);
+            }
         }
     }
+    return 0;
 }

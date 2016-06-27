@@ -24,28 +24,12 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+const int MAXN = 599905;
 const int INF = INT_MAX / 5;
 
-string S[100];
+string S[61];
 int belong[MAXN];
 int N, L;
-
-// Begins Suffix Arrays implementation
-// O(n log n) - Manber and Myers algorithm
-
-//Usage:
-// Fill str with the characters of the string.
-// Call SuffixSort(n), where n is the length of the string stored in str.
-// That's it!
-
-//Output:
-// pos = The suffix array. Contains the n suffixes of str sorted in lexicographical order.
-//       Each suffix is represented as a single integer (the position of str where it starts).
-// rnk = The inverse of the suffix array. rnk[i] = the index of the suffix str[i..n)
-//        in the pos array. (In other words, pos[i] = k <==> rnk[k] = i)
-//        With this array, you can compare two suffixes in O(1): Suffix str[i..n) is smaller
-//        than str[j..n) if and only if rnk[i] < rnk[j]
 
 int str[MAXN]; //input
 int rnk[MAXN], pos[MAXN]; //output
@@ -57,12 +41,11 @@ bool smaller_first_char(int a, int b){
 }
 
 void SuffixSort(int n){
-    //sort suffixes according to their first character
     for (int i=0; i<n; ++i){
         pos[i] = i;
     }
+
     sort(pos, pos + n, smaller_first_char);
-    //{pos contains the list of suffixes sorted by their first character}
 
     for (int i=0; i<n; ++i){
         bh[i] = i == 0 || str[pos[i]] != str[pos[i-1]];
@@ -70,7 +53,6 @@ void SuffixSort(int n){
     }
 
     for (int h = 1; h < n; h <<= 1){
-        //{bh[i] == false if the first h characters of pos[i-1] == the first h characters of pos[i]}
         int buckets = 0;
         for (int i=0, j; i < n; i = j){
             j = i + 1;
@@ -79,8 +61,7 @@ void SuffixSort(int n){
             buckets++;
         }
         if (buckets == n) break; // We are done! Lucky bastards!
-        //{suffixes are separted in buckets containing strings starting with the same h characters}
-
+        
         for (int i = 0; i < n; i = nxt[i]){
             cnt[i] = 0;
             for (int j = i; j < nxt[i]; ++j){
@@ -118,12 +99,10 @@ void SuffixSort(int n){
 // End of suffix array algorithm
 
 
-// Begin of the O(n) longest common prefix algorithm
 int lcp[MAXN];
-// lcp[i] = length of the longest common prefix of suffix pos[i] and suffix pos[i-1]
-// lcp[0] = 0
+
 void getLcp(int n){
-    for (int i=0; i<n; ++i) rnk[pos[i]] = i;
+    //for (int i=0; i<n; ++i) rnk[pos[i]] = i;
     lcp[0] = 0;
     for (int i=0, h=0; i<n; ++i){
         if (rnk[i] > 0){
@@ -136,8 +115,10 @@ void getLcp(int n){
 }
 // End of the longest common prefix algorithm
 
-int tree[MAXN][30];
-Int maskTree[MAXN][30];
+int tree[MAXN][22];
+Int maskTree[MAXN][22];
+int len[MAXN];
+int ppp[MAXN];
 
 void build() {
     int pw = 1;
@@ -157,43 +138,41 @@ void build() {
         pw += 1;
         base *= 2;
     }
+
+    pw = 0;
+    Int bs = 1;
+    
+    for (int i = 1; i < L; i++) {
+        if (bs * 2LL == i) {
+            pw += 1;
+            bs *= 2LL;
+        }
+        len[i] = pw;
+        ppp[i] = bs;        
+    }
 }
 
 int query(int l, int r) {
-    int len = r - l + 1;
- 
-    if (len == 1) return tree[l][0];
-  
-    int ps = 1;
-    int pw = 0;
-	
-    while (l + 2 * ps <= r) {
-        ps *= 2;
-        pw += 1;
-    }
- 
-    int a = tree[l][pw];
-    int b = tree[r - ps + 1][pw];
+    int ll = r - l + 1;
+
+    if (ll == 1) return tree[l][0];
+
+    //cout << l << " " << r << " " << len[ll] << " " << ppp[ll] << endl;
+    //cout << r - ppp[ll] + 1 << endl;
+    int a = tree[l][len[ll]];
+    int b = tree[r - ppp[ll] + 1][len[ll]];
  
     return min(a, b);
 }
 
 Int queryMask(int l, int r) {
-    int len = r - l + 1;
+    int ll = r - l + 1;
+
+    if (ll == 1) return maskTree[l][0];
+       
+    Int a = maskTree[l][len[ll]];
+    Int b = maskTree[r - ppp[ll] + 1][len[ll]]; 
     
-    if (len == 1) return maskTree[l][0];
-    
-    int ps = 1;
-    int pw = 0;
-	
-    while (l + 2 * ps <= r) {
-        ps *= 2;
-        pw += 1;
-    }
- 
-    Int a = maskTree[l][pw];
-    Int b = maskTree[r - ps + 1][pw];
- 
     return a | b;
 }
 
@@ -234,9 +213,13 @@ int funcR(int l, int r, int lbound, int val) {
 }
 
 int main(void) {
+    cin.tie(0);
+    ios_base::sync_with_stdio(false);
+
     while (cin >> N && N != 0) {
         string all = "";
-        map<string, int> unique;
+        unordered_map<string, int> unique;
+        int ps = 0;
         
         for (int i = 0; i < N; i++) {
             cin >> S[i];
@@ -251,8 +234,7 @@ int main(void) {
         }        
 
         L = (int) all.size();
-        int ps = 0;
-        
+
         for (int i = 0; i < L; i++) {
             str[i] = all[i];
 

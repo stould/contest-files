@@ -51,75 +51,75 @@ inline void rd(int &x) {
 
 
 int func(int l, int r) {
-	if (l > r) {
-		return 0;
-	} else {
-		int& ans = dp[l][r];
+    if (l > r) {
+        return 0;
+    } else {
+        int& ans = dp[l][r];
 
-		if (ans == -1) {
-			ans = L;
+        if (ans == -1) {
+            ans = L;
 
-			if (len[l] > r) {
-				ans = func(l + 1, r);
-			} else {
-				for (int i = l; i <= len[l]; i++) {
-					chmin(ans, 1 + func(l, i - 1) + func(i + 1, r));
-				} 
-			}
-		}
+            if (len[l] > r) {
+                ans = func(l + 1, r);
+            } else {
+                for (int i = l; i <= len[l]; i++) {
+                    chmin(ans, 1 + func(l, i - 1) + func(i + 1, r));
+                } 
+            }
+        }
 
-		return ans;
-	}
+        return ans;
+    }
 }
 
 int main(void) {
-	for ( ; ; ) {
-		rd(N);
-		rd(M);
+    for ( ; ; ) {
+        rd(N);
+        rd(M);
 
-		if (N == 0 && M == 0) break;
+        if (N == 0 && M == 0) break;
 
-		char ch;
-		for (int i = 0; i < N; i++) {
-			sL[i] = 0;
-			for ( ; ; ) {
-				ch = getchar_unlocked();
-				if (ch == '\n') break;
-				S[i][sL[i]++] = ch;
-			}
-		}
+        char ch;
+        for (int i = 0; i < N; i++) {
+            sL[i] = 0;
+            for ( ; ; ) {
+                ch = getchar_unlocked();
+                if (ch == '\n') break;
+                S[i][sL[i]++] = ch;
+            }
+        }
 
-		int ans = 0;
+        int ans = 0;
 
-		for (int i = 0; i < M; i++) {
-			L = 0;
-			for ( ; ; ) {
-				ch = getchar_unlocked();
-				if (ch == '\n') break;
-				buff[L++] = ch;			
-			}
+        for (int i = 0; i < M; i++) {
+            L = 0;
+            for ( ; ; ) {
+                ch = getchar_unlocked();
+                if (ch == '\n') break;
+                buff[L++] = ch;			
+            }
 
-			memset(dp, -1, sizeof(dp));
+            memset(dp, -1, sizeof(dp));
 
-			for (int i = 0; i < L; i++) {
-				len[i] = L;
+            for (int i = 0; i < L; i++) {
+                len[i] = L;
 				
-				for (int j = 0; j < N; j++) {
-					if (i + sL[j] <= L) {
-						int ed = 0;
-						while (ed < sL[j] && buff[i + ed] == S[j][ed]) {
-							ed += 1;
-						}
-						if (ed == sL[j]) {
-							chmin(len[i], i + sL[j] - 1);
-						}
-					}
-				}				
-			}
+                for (int j = 0; j < N; j++) {
+                    if (i + sL[j] <= L) {
+                        int ed = 0;
+                        while (ed < sL[j] && buff[i + ed] == S[j][ed]) {
+                            ed += 1;
+                        }
+                        if (ed == sL[j]) {
+                            chmin(len[i], i + sL[j] - 1);
+                        }
+                    }
+                }				
+            }
 
-			ans += func(0, L - 1);
-		}
-		printf("%d\n", ans);
-	}
+            ans += func(0, L - 1);
+        }
+        printf("%d\n", ans);
+    }
     return 0;
 }
