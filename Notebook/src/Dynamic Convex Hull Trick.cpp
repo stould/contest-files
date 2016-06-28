@@ -13,7 +13,7 @@ struct Line {
         }
         Int x = rhs.m;
         //invert operator to get minimum
-        return b - s->b< > (s->m - m) * x;
+        return b - s->b < (s->m - m) * x;
     }
 };
 
