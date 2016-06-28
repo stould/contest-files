@@ -1,5 +1,5 @@
 const int MAXN = 101010;
-const int INF = 101011;
+const int INF = 101;
 
 struct edge {
     int to,rev;
@@ -31,7 +31,7 @@ void bfs(int s) {
     while(!que.empty()) {
         int v = que.front();
         que.pop();
-        for (int i = 0; i < G[v].size(); i++) {
+        for (int i = 0; i < (int) G[v].size(); i++) {
             edge& e = G[v][i];
             if(e.cap > 0 && level[e.to] < 0) {
                 level[e.to] = level[v] + 1;
