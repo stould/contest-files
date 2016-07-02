@@ -24,7 +24,7 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 200;
+const int MAXN = 100;
 const int ALPHA_SIZE = 26;
 
 int N, M;
@@ -58,7 +58,7 @@ void aho() {
         int v = sig[0][i];
 
         if (v) {
-            Q.push (v);
+            Q.push(v);
             T[v] = 0;
         }
     }
@@ -81,10 +81,13 @@ void aho() {
 
             int y = sig[v][i];
             Q.push(x);
+            
             T[x] = y;
 
-            for (int j = 0; j < (int) term[y].size(); j++) {                
-                term[x].push_back(term[y][j]);
+            if (!term[y].empty()) {
+                for (int j = 0; j < (int) term[y].size(); j++) {                
+                    term[x].push_back(term[y][j]);
+                }
             }
         }
     }
@@ -116,11 +119,7 @@ Int func(int pos, int trie_pos, int mask) {
                 for (int j = 0; j < (int) term[next_pos].size(); j++) {
                     next_mask |= (1 << term[next_pos][j]);
                 }
-                if (!term[next_pos].empty()) {                    
-                    ans += func(pos + 1, 0, next_mask);
-                } else {
-                    ans += func(pos + 1, next_pos, next_mask);
-                }
+                ans += func(pos + 1, next_pos, next_mask);                
             }
         }
 
@@ -148,14 +147,8 @@ void rec(int pos, int trie_pos, int mask, string arg) {
             for (int j = 0; j < (int) term[next_pos].size(); j++) {
                 next_mask |= (1 << term[next_pos][j]);
             }
-            if (!term[next_pos].empty()) {                
-                if (func(pos + 1, 0, next_mask) > 0) {
-                    rec(pos + 1, 0, next_mask, arg + char('a' + i));
-                }
-            } else {
-                if (func(pos + 1, next_pos, next_mask) > 0) {
-                    rec(pos + 1, next_pos, next_mask, arg + char('a' + i));
-                }
+            if (func(pos + 1, next_pos, next_mask) > 0) {
+                rec(pos + 1, next_pos, next_mask, arg + char('a' + i));            
             }
         }
     }
