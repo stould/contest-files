@@ -25,19 +25,37 @@ double dp[MAXN][MAXN][2];
 bool mm[MAXN][MAXN][2];
 
 double func(int w, int b, int pos) {
-    if (w == 0) {
-        return 0.0;
+    if (pos == 0) {
+        if (w <= 0) {
+            return 0;
+        } else if (b <= 0) {
+            return 1;
+        }
     } else {
-        double& ans = dp[w][b][pos];
-
-        if (!mm[w][b][pos]) {
-            mm[w][b][pos] = 1;
-
-            if (pos == 0) {
-
-            }
+        if (w <= 0 or b <= 0) {
+            return 0;
         }
     }
+        
+    double& ans = dp[w][b][pos];
+    
+    if (mm[w][b][pos] == false) {
+        mm[w][b][pos] = true;
+
+        ans = 0;
+
+        double all = w + b;
+            
+        if (pos == 0) {
+            ans += (w / all);
+            ans += (b / all) * func(w, b - 1, pos ^ 1);                
+        } else {
+            ans += (b / all) * ((b - 1) / (all - 1)) * func(w, b - 2, pos ^ 1);
+            ans += (b / all) * (w / (all - 1)) * func(w - 1, b - 1, pos ^ 1);
+        }
+    }
+        
+    return ans;
 }
 
 int main(void) {
@@ -46,5 +64,7 @@ int main(void) {
 
     memset(mm, false, sizeof(mm));
 
+    cout << fixed << setprecision(9) << func(W, B, 0) << endl;
+    
     return 0;
 }

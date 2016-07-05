@@ -1,39 +1,58 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
+
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-int n, dp[100001], memo[100001];
+#ifdef ONLINE_JUDGE
+#define debug(args...)
+#else
+#define debug(args...) fprintf(stderr,args)
+#endif
+
+typedef long long Int;
+typedef unsigned long long uInt;
+typedef unsigned uint;
+
+const int MAXN = 100005;
+
+int N;
+pair<int, int> P[MAXN];
 
 int main(void) {
-    cin >> n;
-    for(int i = 0; i < n; i++) {
-        cin >> memo[i];
-    }
-    dp[n - 1] = n - 1;
+    cin >> N;
 
-    vector<int> ans;
-    ans.push_back(-1);
-    for(int i = n - 2; i >= 0; i--) {
-        if((memo[i] == memo[dp[i + 1]]) || (memo[i] < memo[dp[i + 1]])) {
-            dp[i] = i;
-        } else {
-            for(int j = dp[i] + 1, k = dp[i] - 1; j < n || k >= 0; j++, k--) {
-                if(j < n && memo[j] < memo[i]) dp[i] = j;
-            }
-        }
-        int count = (dp[i]) - (i + 1);
-        if(dp[i] == i) {
-            ans.push_back(-1);
-        } else {
-            ans.push_back(count);
-        }
+    vector<int> ans(N, -1);
+    
+    for (int i = 0; i < N; i++) {
+        cin >> P[i].first;
+        P[i].second = i;
     }
-    reverse(ans.begin(), ans.end());
-    for(int i = 0; i < n-1; i++) {
+
+    sort(P, P + N);
+
+    int best = 0;
+
+    for (int i = 0; i < N; i++) {
+        ans[P[i].second] = max(-1, best - P[i].second - 1);
+        best = max(best, P[i].second);
+    }
+
+    for (int i = 0; i < N; i++) {
         cout << ans[i] << " ";
     }
-    cout << ans[n - 1] << endl;
+    cout << endl;
+
+    
     return 0;
 }

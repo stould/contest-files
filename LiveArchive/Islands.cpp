@@ -23,69 +23,112 @@ int T, Z;
 int N, M;
 
 int arr[MAXN][MAXN];
-bool vis[MAXN][MAXN];
+int dx[4] = {-1, 1, 0, 0};
+int dy[4] = {0, 0, -1, 1};
 
-int dx[4] = {0, 0, -1, 1};
-int dy[4] = {1, -1, 0, 0};
+struct UnionFind {
+    int N, *id, *sz;
 
-void bfs(int x, int y, int curr) {
-	vis[x][y] = true;
-	queue<pair<int, int> > q;
-	q.push(make_pair(x, y));
+    UnionFind(int _N) {
+        id = new int[_N];
+        sz = new int[_N];
+        for(int i = 0; i < _N; i++) {
+            id[i] = i;
+            sz[i] = 1;
+        }
+        N = _N;
+    }
+    int root(int i) {
+        while(i != id[i]) {
+            id[i] = id[id[i]];
+            i = id[i];
+        }
+        return i;
+    }
+    bool find(int p, int q) {
+        return root(p) == root(q);
+    }
+    int unite(int p, int q) {
+        int i = root(p);
+        int j = root(q);
 
-	for ( ; !q.empty(); ) {
-		int px = q.front().first;
-		int py = q.front().second;
-		q.pop();
-		int k;
+        if(i == j) return 0;
+
+		if(sz[i] < sz[j]) {
+            id[i] = j; sz[j] += sz[i];
+        } else {
+            id[j] = i; sz[i] += sz[j];
+        }
 		
-		for (k = 0; k < 4; k++) {
-			int xx = px + dx[k];
-			int yy = py + dy[k];
-			
-			if (xx >= 0 && yy >= 0 && xx < N && yy < M && !vis[xx][yy] && arr[xx][yy] > curr) {
-				vis[xx][yy] = true;
-				q.push(make_pair(xx, yy));
-			}
-		}
-	}
+		return 1;
+    }
+};
+
+int conv(int i, int j) {
+	return i * M + j;
 }
 
 int main(void) {
 	Z = in();
 
-	int curr;
-
 	for ( ; Z--; ) {
 		N = in();
 		M = in();
 
+		vector<pair<int, pair<int, int> > > val;
+		vector<pair<int, pair<int, int> > >::iterator it;
+		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
 				arr[i][j] = in();
+				val.push_back(make_pair(arr[i][j], make_pair(i, j)));
 			}
 		}
 
+		sort(val.begin(), val.end());
+		
 		T = in();
 
+		vector<int> h(T);
+
 		for (int x = 0; x < T; x++) {
-			int ans = 0;
+			cin >> h[x];
+		}
+		
+		UnionFind uf(N * M);
+		vector<int> ans;
+		
+		int biggest_reached = INT_MAX;
+		int component = 0;
 
-			curr = in();
-
-			memset(vis, false, sizeof(vis));
-
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < M; j++) {
-					if (arr[i][j] > curr && !vis[i][j]) {
-						ans += 1;
-						bfs(i, j, curr);
+		for (int i = T - 1; i >= 0; i--) {			
+			int curr_h = h[i];
+			it = lower_bound(val.begin(), val.end(), make_pair(curr_h + 1, make_pair(0, 0)));
+			//cout << curr_h << " " << it->first << "\n";
+			//if (it != val.end() && it->first < curr_h) it++;
+			for ( ; it != val.end() && it->first < biggest_reached; it++) {
+				component += 1;
+							
+				for (int k = 0; k < 4; k++) {
+					int pi = it->second.first  + dx[k];
+					int pj = it->second.second + dy[k];
+					
+					if (pi >= 0 && pj >= 0 && pi < N && pj < M) {
+						if (arr[pi][pj] > curr_h) {
+							if (uf.unite(conv(it->second.first, it->second.second), conv(pi, pj))) {
+								component -= 1;
+							}
+						}
 					}
 				}
 			}
-			printf("%d ", ans);			
+			ans.push_back(component);
+			biggest_reached = curr_h + 1;
 		}
-
+		
+		for (int i = 0; i < T; i++) {
+			printf("%d ", ans[T - i - 1]);
+		}
 		printf("\n");
 	}
 

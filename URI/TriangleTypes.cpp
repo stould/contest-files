@@ -46,7 +46,12 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+double EPS = 1e-8;
 double A, B, C;
+
+bool eq(double a, double b) {
+	return fabs(a - b) < EPS;
+}
 
 int main(void) {
     cin >> A >> B >> C;
@@ -55,10 +60,10 @@ int main(void) {
     if (A < C) swap(A, C);
     if (B < C) swap(B, C);
 
-    if (A > B + C) {
+    if (A > B + C - EPS) {
         puts("NAO FORMA TRIANGULO");
     } else {
-        if (A * A == B * B + C * C) {
+        if (eq(A * A, B * B + C * C)) {
             puts("TRIANGULO RETANGULO");
         }
         if (A * A > B * B + C * C) {
@@ -67,10 +72,10 @@ int main(void) {
         if (A * A < B * B + C * C) {
             puts("TRIANGULO ACUTANGULO");
         }
-        if (A == B && A == C && B == C) {
+        if (eq(A, B) && eq(A, C) && eq(B, C)) {
             puts("TRIANGULO EQUILATERO");
         }
-        if ((A == B && B != C) || (B == C && A != B) || (A == C && B != A)) {
+        if ((eq(A, B) && !eq(B, C)) || (eq(B, C) && !eq(A, B)) || (eq(A, C) && !eq(B, A))) {
             puts("TRIANGULO ISOSCELES");
         }
     }

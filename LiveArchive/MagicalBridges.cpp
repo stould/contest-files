@@ -93,8 +93,7 @@ map<path, int> mp;
 vector<bridge> graph[MAXN];
 
 int main(void) {
-    freopen("i.in", "r", stdin);
-    scanf("%d", &T);
+	scanf("%d", &T);
     for( ; T--; ) {
         scanf("%d%d%d", &N, &F, &M);
 
@@ -118,7 +117,7 @@ int main(void) {
             mp[path(bi, fi, bj, fj)] = ts;
             mp[path(bj, fj, bi, fi)] = ts;
 
-            printf("%d %d - %d %d -> %d\n", bi, fi, bj, fj, mp[path(bi, fi, bj, fj)]);
+            //printf("%d %d - %d %d -> %d\n", bi, fi, bj, fj, mp[path(bi, fi, bj, fj)]);
         }
 
         for(int i = 1; i <= N; i++) {

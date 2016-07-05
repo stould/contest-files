@@ -58,7 +58,7 @@ int main(void) {
 
         if (has_zero) {
             if (all_eq) {
-                cout << "1\n" << A[0] << "\n";
+				 cout << "1\n" << A[0] << "\n";
             } else {
                 cout << "0\n";
             }

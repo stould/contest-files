@@ -1,11 +1,73 @@
 /*******Guia de Referencia - UNITAU **********//
+
+Numbero de Divisores de um numero: p1^x1 * p2^x2 * ... pn^xn = for i 1..n ans *= (xi + 1);
+
+//**********************************************
+//Solver for mathematical expressions
+void doOp(stack<double> &num, stack<char> &op){
+        double A = num.top(); num.pop();
+        double B = num.top(); num.pop();
+        char oper = op.top(); op.pop();
+        double ans;
+        if(oper == '+'){
+                ans = A+B;
+        }else if(oper == '-'){
+                ans = B-A;
+        }else if(oper == '*'){
+                ans = A*B;
+        }else{
+                if(A != 0){
+                        ans = B/A;
+                }else{
+                        //division by 0
+                        ans = -1;
+                }
+        }
+        num.push(ans);
+}
+ 
+double parse(string s){
+    stack<char> op;
+    stack<double> num;
+    map<char,int> priority;
+    //setting the priorities, greater values with higher priority
+    priority['+'] = 0;
+    priority['-'] = 0;
+    priority['*'] = 1;
+    priority['/'] = 1;
+    for(int i = 0; i < s.size(); i++){
+        if(s[i] == ')'){
+            while(!op.empty() && op.top() != '('){
+                doOp(num,op);
+            }
+            op.pop();
+        }else if(s[i] == '('){
+                        op.push('(');
+        }else if(!(s[i] >= '0' && s[i] <= '9')){
+            while(!op.empty() && priority[s[i]] <= priority[op.top()] && op.top() != '('){
+                doOp(num,op);
+            }
+            op.push(s[i]);
+        }else{
+            double ans = 0;
+            while(i < s.size() && s[i] >= '0' && s[i] <= '9'){
+                ans = ans * 10 + (s[i] - '0');
+                i++;
+            }
+            i--;
+            num.push(ans);
+        }
+    }
+    while(op.size()){
+        doOp(num,op);
+    }
+    return num.top();
+}
 //**********************************************
 //Fast IO Read
 inline void rd(int &x) {
-    register int c = getchar_unlocked();
-
+    register int c = getchar_unlocked();	
     x = 0;
-
     int neg = 0;
 
     for (; ((c<48 || c>57) && c != '-'); c = getchar_unlocked());
@@ -28,7 +90,7 @@ inline void rd(int &x) {
 boolean next_permutation(int[] p) {
 	for (int a = p.length - 2; a >= 0; --a)
 		if (p[a] < p[a + 1])
-			for (int b = p.length - 1;; --b)
+			for (int b = p.length - 1; --b)
 				if (p[b] > p[a]) {
 					int t = p[a];
 					p[a] = p[b];
@@ -138,7 +200,7 @@ void heapsort() {
 }
 
 //**********************************************
-//Merge contando inversões
+//Merge Sort counting inversions (it's better to use Fenwick Tree to count inversions)
 int merge(int arr[], int temp[], int left, int mid, int right);
  
 int _mergeSort(int arr[], int temp[], int left, int right) {
@@ -189,7 +251,6 @@ int merge(int arr[], int temp[], int left, int mid, int right) {
 }
 //**********************************************
 //Median in O(1)
-
 int median_retrieve(void) {
 	if (minHeap.empty() && maxHeap.empty()) return 0;
 	
@@ -224,7 +285,7 @@ void median_insert(int x) {
 	}
 }
 //**********************************************
-//Kadade 2D simplificaco
+//Simplified 2D Kadane
 int best = 0;
 for(int i = 1; i <= n; i++){
 	for(int j = i; j <= n; j++){
@@ -373,6 +434,7 @@ vector<int> manacher(string s) {
   // P[i] is the length of the largest palindrome centered at i
   return P;
 }
+//**********************************************
 //Z-Function O(n) => Z[i] = biggest prefix of a substring starting from i which is as a prefix of s
 vector<int> z_function (string s) {
 	int n = (int) s.length();
@@ -990,6 +1052,7 @@ struct edge {
 //Sendo 'M' o numero de arestas, 'u' uma implementação do conjunto disjunto 'UnionFind' e 'ans' o menor custo
 vector<edge> edges; //Populado com as arestas
 int ans = 0;
+UnionFind u(N);
 for(i = 0; i < m; i++) {
 	if(!u.find(edges[i].from, edges[i].to)) {
 		u.unite(edges[i].from, edges[i].to);
@@ -1343,29 +1406,36 @@ while(start != -1) {
 	start = prev[start];
 }
 //*******************************************************
-//counting bridges
-int a, b, n, m, cont, ct, vis[1010], nivel[1010], menor[1010], pai[1010];
-vector<int> graph[1010];
-void dfs(int x) {
-	vis[x] = 1;
-	nivel[x] = menor[x] = cont++;
-	int sons = 0;
-	for(int i = 0; i < graph[x].size(); i++) {
-		if(vis[graph[x][i]] == 0) {
-		sons += 1;
-		pai[graph[x][i]] = x;
-		dfs(graph[x][i]);
-		if(menor[graph[x][i]] < menor[x]) menor[x] = menor[graph[x][i]];
-			if(menor[graph[x][i]] == nivel[graph[x][i]]) {
-				ct++;
-			}
-		} else if(vis[graph[x][i]] == 1 && pai[x] != graph[x][i]) {
-			if(nivel[graph[x][i]] < menor[x]) menor[x] = nivel[graph[x][i]];
-		}
-	}
-	vis[x] = 2;
+//Counting Bridges in Graph
+int dfsct, bridges, num[MAXN], low[MAXN], parent[MAXN];
+ 
+void bridge(int atual){
+    num[atual] = low[atual] = dfsct++;
+    for(int i = 0; i < graph[atual].size(); i++){
+        int next = graph[atual][i];
+        if(num[next] == -1){
+            parent[next] = atual;
+            bridge(next);
+            if(low[next] > num[atual]){
+                bridges++;
+            }
+            low[atual] = min(low[atual], low[next]);
+        }else if(next != parent[atual]){
+            low[atual] = min(low[atual], num[next]);
+        }
+    }
 }
-ct = numero final de pontes
+ 
+void countBridges(){
+    dfsct = bridges = 0;
+    for(int i = 0; i < n; i++){
+        num[i] = -1;
+        parent[i] = 0;
+    }
+    for(int i = 0; i < n; i++){
+        if(num[i] == -1) bridge(i);
+    }
+}
 //*******************************************************
 //Achando Vertices de Articulação um Grafo
 vector<int> graph[410];
@@ -1392,6 +1462,257 @@ int dfs(int u){
 times = 1;
 ans.clear();
 dfs(0);
+//*******************************************************
+//Heavy Light Decomposition
+vector<vector<pair<int,int> > > g(MAXN);
+int cnt[MAXN], prev[MAXN], chainNode[MAXN], chainHead[MAXN], posInChain[MAXN], base[MAXN], level[MAXN], chainIdx, idxSegTree;
+int H[MAXN], L[MAXN << 1], E[MAXN << 1], idx;
+ 
+struct LCA{        
+        int tree[MAXN * 8];
+        LCA(int root, int n){
+                build(1, 0, 2*n-1);
+        }
+ 
+        //NlogN build the segtree and minimize the height of the I'th visited node
+        void build(int node, int l, int r){
+                if(l > r) return;
+                if(l == r){
+                        tree[node] = l;
+                }else{
+                        int mid = (l+r) >> 1;
+                        build(node*2, l, mid);
+                        build(node*2+1, mid+1, r);
+                        int A = tree[node*2];
+                        int B = tree[node*2+1];
+                        if(L[A] <= L[B]){
+                                tree[node] = A;
+                        }else{
+                                tree[node] = B;
+                        }
+                }
+        }
+ 
+        //Get the vertex with the minimum height, then it will be the LCA of A and B.
+        int rmq(int node, int l, int r, int ra, int rb){
+                if(l > rb || r < ra){
+                        return -1;
+                }else if(l >= ra && r <= rb){
+                        return tree[node];
+                }else{
+                        int mid = (l+r) >> 1;
+                        int q1 = rmq(node*2, l, mid, ra, rb);
+                        int q2 = rmq(node*2+1, mid+1, r, ra, rb);
+                        if(q1 == -1){
+                                return q2;
+                        }else if(q2 == -1){
+                                return q1;
+                        }else{
+                                if(L[q1] <= L[q2]){
+                                        return q1;
+                                }else{
+                                        return q2;
+                                }
+                        }
+                }
+        }
+ 
+        int getLCA(int u, int v, int n){
+                int goFrom = H[u];
+                int goTo = H[v];
+                if(goFrom > goTo){
+                        swap(goFrom, goTo);
+                }
+                return E[rmq(1, 0, 2*n-1, goFrom, goTo)]; //is the LCA of A and B;
+         }
+};
+ 
+struct SegTree{
+ 
+                int tree[MAXN*4];
+ 
+                SegTree(){
+                        memset(tree,0,sizeof(tree));
+                }
+       
+ 
+        void build(int node, int l, int r){
+                if(l > r) return;
+                if(l == r){
+                        tree[node] = l;
+                }else{
+                        int mid = (l+r) >> 1;
+                        build(node*2, l, mid);
+                        build(node*2+1, mid+1, r);
+                        int A = tree[node*2];
+                        int B = tree[node*2+1];
+                        tree[node] = base[A] > base[B] ? A : B;
+                }
+        }
+ 
+        int rmq(int node, int l, int r, int ra, int rb){
+                if(l > rb || r < ra){
+                        return -1;
+                }else if(l >= ra && r <= rb){
+                        return tree[node];
+                }else{
+                        int mid = (l+r) >> 1;
+                        int q1 = rmq(node*2, l, mid, ra, rb);
+                        int q2 = rmq(node*2+1, mid+1, r, ra, rb);
+                        if(q1 == -1){
+                                return q2;
+                        }else if(q2 == -1){
+                                return q1;
+                        }else{
+                                return base[q1] > base[q2] ? q1 : q2;
+                        }
+                }
+        }
+       
+        void update(int node, int l, int r, int pos, int value) {
+                if (l > r) return;     
+                if (l == r) {
+                        base[pos] = value;
+                } else {
+                    int m = (l + r) >> 1;
+                    if (pos <= m) {
+                        update(2 * node, l, m, pos, value);
+                    } else {
+                        update(2 * node + 1, m + 1, r, pos, value);
+                    }
+                    tree[node] = base[tree[2 * node]] > base[tree[2 * node + 1]] ? tree[2 * node] : tree[2 * node + 1];
+                }
+        }
+};
+ 
+//Decompose the tree into chains
+void HLD(int node, int cost, int parent){
+        if(chainHead[chainIdx] == -1){
+                chainHead[chainIdx] = node;
+        }
+        chainNode[node] = chainIdx;
+        posInChain[node] = idxSegTree;
+        base[idxSegTree++] = cost;
+        int nodeHeavy = -1, nextCost;
+        //seeking the special child (the one with most childs on the subtrees)
+        for(int i = 0; i < g[node].size(); i++){
+                int next = g[node][i].first;
+                if(next != parent && (nodeHeavy == -1 || cnt[next] > cnt[nodeHeavy])){
+                        nodeHeavy = next;
+                        nextCost = g[node][i].second;
+                }
+        }
+        if(nodeHeavy > -1){
+                //expanding the current chain
+                HLD(nodeHeavy, nextCost, node);
+        }
+       
+        for(int i = 0; i < g[node].size(); i++){
+                int next = g[node][i].first;
+                if(next != nodeHeavy && next != parent){
+                        chainIdx++;
+                        HLD(next, g[node][i].second, node);
+                }
+        }
+ 
+}
+ 
+void dfsCnt(int node, int parent, int depth = 0){
+        if(H[node] == -1) H[node] = idx;//mark first time the i'th node is visited
+        L[idx] = depth;//when you visit a node you should mark the the depth you have found it.
+        E[idx++] = node;//the i'th recursion, global variable
+                level[node] = depth;
+        cnt[node] = 1;
+        for(int i = 0; i < g[node].size(); i++){
+                int next = g[node][i].first;
+                if(next != parent){
+                        prev[next] = node;
+                        dfsCnt(next, node, depth + 1);
+                        cnt[node] += cnt[next];
+                        L[idx] = depth;
+                        E[idx++] = node;
+                }
+        }      
+}
+ 
+int walkChain(int U, int V, SegTree &q, int n){
+        if(U == V) return 0;
+        int ans = 0;
+        while(chainNode[U] != chainNode[V]){
+                int Left = posInChain[chainHead[chainNode[U]]];
+                int Right = posInChain[U];
+                int val = base[q.rmq(1, 0, n-1, Left, Right)];
+                if(val > ans) ans = val;
+                U = prev[chainHead[chainNode[U]]];
+        }
+        if(U == V) return ans;
+        int val = base[q.rmq(1, 0, n-1, posInChain[V]+1, posInChain[U])];
+        if(val > ans) ans = val;
+        return ans;
+}
+ 
+int getMax(int U, int V, LCA &ref, SegTree &q, int n){
+        int lca = ref.getLCA(U, V, n),a=0,b=0;
+        if(lca != U)
+                a = walkChain(U, lca, q, n);
+        if(lca != V)
+                b = walkChain(V, lca, q, n);
+        return max(a,b);
+}
+ 
+void update(int a, int b, int c, SegTree &q, int n){
+        if(level[a] < level[b]){//update b
+                q.update(1,0,n-1,posInChain[b], c);
+        }else{//update a
+                q.update(1,0,n-1,posInChain[a], c);
+        }
+}
+void add(int a, int b, int c){
+        g[a].push_back(make_pair(b,c));
+        g[b].push_back(make_pair(a,c));
+}
+ 
+int n, t, from[MAXN], to[MAXN], cost[MAXN], A, B;
+char TYPE[20];
+ 
+int main(void){
+        scanf("%d", &t);
+        while(t--){
+                scanf("%d", &n);
+                chainIdx = idxSegTree = idx = 0;
+                for(int i = 0; i <= n; i++){
+                        cnt[i] = prev[i] = chainNode[i] = base[i] = level[i] = 0;
+                        chainHead[i] = posInChain[i] = H[i] = -1;
+                        g[i].clear();
+                }
+                memset(L,0,sizeof(L));
+                memset(E,0,sizeof(E));
+                for(int i = 0; i < n - 1; i++){
+                        scanf("%d%d%d", &from[i], &to[i], &cost[i]);
+                        from[i]--;
+                        to[i]--;
+                        add(from[i], to[i], cost[i]);
+                }
+                dfsCnt(0,-1);
+                LCA lca(0,n);
+                HLD(0,-1, -1);
+                SegTree query;
+                query.build(1,0,n-1);
+                while(1){
+                        scanf("%s", TYPE);
+                        if(TYPE[0] == 'D') break;
+                        scanf("%d%d", &A, &B);
+                        A--;
+                        if(TYPE[0] == 'Q'){    
+                                B--;
+                                printf("%d\n", getMax(A, B, lca, query, n));
+                        }else if(TYPE[0] == 'C'){
+                                update(from[A], to[A], B, query, n);
+                        }
+                }
+        }
+    return 0;
+}
 //*******************************************************
 //Fluxo-Máximo - Edmonds-Karp O(N*M^2)
 int max_flow(int source, int sink) {
@@ -2522,7 +2843,7 @@ int lcs(string a, string b) {
 	}
 	for(int i = 1; i <= n; i++) {
 		for(int j = 1; j <= m; j++) {
-			if(a[i] == b[j]) {
+			if(a[i - 1] == b[j - 1]) {
 				dp[i][j] = dp[i - 1][j - 1] + 1;
 			} else {
 				dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
@@ -2532,6 +2853,23 @@ int lcs(string a, string b) {
 	return dp[n][m];
 }
 //*******************************************************
+//Longest Commom Subsequence - (LCS) O(n^2) - O(n) in space
+int m[2][1000]; // instead of [1000][1000]
+for (i = M; i >= 0; i--) {
+	int ii = i&1; 
+	for (int j = N; j >= 0; j--) {
+		if (i == M || j == N) {
+			m[ii][j]=0; continue;
+		}
+		if (s1[i] == s2[j]) {
+			m[ii][j] = 1 + m[1-ii][j+1];
+		} else {
+			m[ii][j] = max(m[ii][j+1], m[1-ii][j]);
+		}
+	}
+ }
+cout<<m[0][0];
+//*******************************************************	
 //Menor string que contem duas strings S1 e S2 como subsequencia
 
 char S1[MAXS], S2[MAXS];
@@ -2595,72 +2933,15 @@ for(int k = 2; k < N; k++) {
         dp[i][i + k] = dp[i + 1][i + k - 1] && str[i] == str[i + k];
     }
 }
-//*******************************************************
-//Manacher algorithm (Check for palindromes in linear time)
-string preProcess(string s) {
-  int n = s.length();
-  if (n == 0) return "^$";
-  string ret = "^";
-  for (int i = 0; i < n; i++)
-    ret += "#" + s.substr(i, 1);
-  
-  ret += "#$";
-  return ret;
-}
-  
-vector<int> manacher(string s, int id) {
-  string T = preProcess(s);
-  int n = T.length();
-  vector<int> P(n);
- 
-  map<string, bool> seen;
- 
-  int C = 0, R = 0;
-  for (int i = 1; i < n-1; i++) {
-      int i_mirror = 2*C-i;
-       
-      P[i] = (R > i) ? min(R-i, P[i_mirror]) : 0;
-       
-      while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
-          P[i]++;
-      }
- 
-      int ulen = P[i];
-      while (ulen >= 1) {
-          string curr = s.substr((i - 1 - ulen)/2, ulen);
-           
-          if (curr != "" && !seen[curr]) {
-              seen[curr] = 1;
-              memo[curr] += 1;
-               
-              if (id == N - 1 && memo[curr] == N) {
-                  chmax(ans, (int) curr.size());
-              }
-          }
-          ulen--;
-      }
-  
-      if (i + P[i] > R) {
-          C = i;
-          R = i + P[i];
-      }
-  }
-   
-  int maxLen = 0;
-  int centerIndex = 0;
-  for (int i = 1; i < n-1; i++) {
-      if (P[i] > maxLen) {
-          maxLen = P[i];
-          centerIndex = i;
-      }
-  }
-  //to return actual longets substring
-  //  return s.substr((centerIndex - 1 - maxLen)/2, maxLen);
- 
-  // P[i] is the length of the largest palindrome centered at i
-  return P;
-}
-//*******************************************************
+//Find string period
+vector<int> prefix = KMP(S); //KMP Prefix function array
+for (int i = 0; i < (int) prefix.size(); i++) {
+	if (prefix[i] >= (int)  S.size() / 2) {
+		period_len = i - prefix[i];		
+	}
+ }
+
+2//*******************************************************
 //Domino perfect matching - recursive
 int a, b, i, j, k, n, ok, teste = 1, mem[7][7];
 
@@ -2736,6 +3017,23 @@ int main(void) {
     }
 }
 /* *************************** Data Structures ***************************/
+//******************************************************
+//Order statistics tree inside STL
+#include<bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+int main(){
+	ordered_set<int>  s;
+	s.insert(1); 
+	s.insert(3);
+	cout << s.order_of_key(2) << endl; // the number of elements in the s less than 2
+	cout << *s.find_by_order(0) << endl; // print the 0-th smallest number in s(0-based)
+}
 //******************************************************
 //Splay Tree
 template< typename T, typename Comp = std::less< T > >
@@ -3063,234 +3361,104 @@ int sum(int[][] t, int r1, int c1, int r2, int c2) {
 	return sum(t, r2, c2) - sum(t, r1 - 1, c2) - sum(t, r2, c1 - 1) + sum(t, r1 - 1, c1 - 1);
 }
 //*******************************************************
-//Simple Segment Tree
-const int MAXN = 4;
-const int INF = 10000010;
-
-int a[10];
-
-template<typename T>
-struct SegmentTree {
-    int N;
-    T tree[3*MAXN];
-
-    SegmentTree(int _N) {
-        N = _N;
-        for(int i = 0; i < 3*MAXN; i++) tree[i] = 0;
+//Segment Tree with Lazy Propagation
+void goDown(int node, int l, int r) {    
+    if (lazy[node]) {
+        tree[node] += lazy[node];
+        
+        if (l != r) {
+            lazy[2 * node] += lazy[node];
+            lazy[2 * node + 1] += lazy[node];
+        } 
     }
-
-    void build(T a[], int v, int tl, int tr) {
-        if (tl == tr) {
-            tree[v] = a[tl];
-        } else {
-            int mid = (tl + tr) / 2;
-            build(a, v*2, tl, mid);
-            build(a, v*2+1, mid+1, tr);
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
-
-    void build(T a[]) {
-        build(a, 1, 0, N);
-    }
-
-    T sum(int v, int tl, int tr, int l, int r) {
-        if (l > r) {
-            return 0;
-        }
-        if(l == tl && r == tr) {
-            return tree[v];
-        }
-        int mid = (tl + tr) / 2;
-        return sum(v*2, tl, mid, l, min(r,mid)) + sum(v*2+1, mid+1, tr, max(l,mid+1), r);
-    }
-
-    T sum(int l, int r) {
-        return sum(1, 0, N, l, r);
-    }
-
-    //Only works if you change the routine of build and update the tree
-    T prod(int v, int tl, int tr, int l, int r) {
-        if(l > r) {
-            return 1;
-        }
-        if(l == tl && r == tr) {
-            return tree[v];
-        }
-        int mid = (tl + tr) / 2;
-        return prod(v*2, tl, mid, l, min(r,mid)) * prod(v*2+1, mid+1, tr, max(l,mid+1), r);
-    }
-
-    T prod(int l, int r) {
-        return prod(1, 0, N, l, r);
-    }
-
-    void update_change(int v, int tl, int tr, int pos, T new_val) {
-        if (tl == tr) {
-            tree[v] = new_val;
-        } else {
-            int mid = (tl + tr) >> 1;
-            if(pos <= mid) {
-                update_change(v*2, tl, mid, pos, new_val);
-            } else {
-                update_change(v*2+1, mid+1, tr, pos, new_val);
-            }
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
-
-    void update_change(int pos, T new_val) {
-        update_change(1, 0, N, pos, new_val);
-    }
-
-    void update_add_single(int v, int tl, int tr, int pos, T add) {
-        if (tl == tr) {
-            tree[v] += add;
-        } else {
-            int mid = (tl + tr) >> 1;
-            if(pos <= mid) {
-                update_add_single(v*2, tl, mid, pos, add);
-            } else {
-                update_add_single(v*2+1, mid+1, tr, pos, add);
-            }
-            tree[v] = tree[v*2] + tree[v*2+1];
-        }
-    }
-
-    void update_add_single(int pos, T add) {
-        update_add_single(1, 0, N, pos, add);
-    }
-
-    void update_add_range_helper(int v, int tl, int tr, int l, int r, T add) {
-        if(l > r) {
-            return;
-        }
-        if(l == tl && tr == r) {
-            tree[v] += add;
-        } else {
-            int mid = (tl + tr) >> 1;
-            update_add_range_helper(v*2, tl, mid, l, min(r,mid), add);
-            update_add_range_helper(v*2+1, mid+1, tr, max(l,mid+1), r, add);
-            tree[v] = tree[v*2] + tree[v*2 + 1];
-        }
-    }
-
-    void update_add_range(int v, int tl, int tr, int l, int r, int add) {
-        if(tl == l && tr == r) {
-            update_add_range_helper(v, tl, tr, l + 1, r - 1, add);
-            update_add_single(v, tl, tr, l, add);
-        } else {
-            update_add_range_helper(v, tl, tr, l, r, add);
-        }
-    }
-
-    void update_add_range(int l, int r, T add) {
-        update_add_range(1, 0, N, l, r, add);
-    }
-
-};//*******************************************************
-//Segment Tree which find max and min value of an interval [l, r)
-#define MAXN 1000
-#define INF 10000000
-
-
-int a[4*MAXN];
-pair<int,int> t[4*MAXN];
-
-pair<int,int> combine (pair<int,int> a, pair<int,int> b) {
-	if (a.first > b.first)
-		return a;
-	if (b.first > a.first)
-		return b;
-	return make_pair (a.first, a.second + b.second);
+    lazy[node] = 0;
 }
 
-pair<int,int> combine2(pair<int,int> a, pair<int,int> b) {
-	if (a.first < b.first)
-		return a;
-	if (b.first < a.first)
-		return b;
-	return make_pair(a.first, a.second + b.second);
+void build(int node, int l, int r) {
+    if (l == r) {
+        tree[node] = A[l];
+    } else {
+        int m = (l + r) / 2;
+        
+        build(2 * node, l, m);
+        build(2 * node + 1, m + 1, r);
+        
+        tree[node] = max(tree[2 * node], tree[2 * node + 1]);
+    }
 }
 
-void build (int a[], int v, int tl, int tr) {
-	if (tl == tr)
-		t[v] = make_pair (a[tl], 1);
-	else {
-		int tm = (tl + tr) / 2;
-		build (a, v*2, tl, tm);
-		build (a, v*2+1, tm+1, tr);
-		t[v] = combine (t[v*2], t[v*2+1]);
-	}
+Int query(int node, int l, int r, int bl, int br) {
+    goDown(node, l, r);
+    if (l >= bl && r <= br) {
+        return tree[node];
+    } else if (l > br || r < bl) { 
+        return -INF;
+    } else {
+        int m = (l + r) / 2;
+        
+        Int a = query(2 * node, l, m, bl, br);
+        Int b = query(2 * node + 1, m + 1, r, bl, br);
+        
+        return max(a, b);
+    }
 }
 
-pair<int,int> get_max (int v, int tl, int tr, int l, int r) {
-	if (l > r)
-		return make_pair (-INF, 0);
-	if (l == tl && r == tr)
-		return t[v];
-	int tm = (tl + tr) / 2;
-	return combine (
-		get_max (v*2, tl, tm, l, min(r,tm)),
-		get_max (v*2+1, tm+1, tr, max(l,tm+1), r)
-	);
+void update(int node, int l, int r, int bl, int br, Int value) {    
+    goDown(node, l, r);
+    if (l > r) {
+        return;
+    } else if (l > br || r < bl) {
+        return;
+    } else if (l >= bl && r <= br) {
+        lazy[node] = value;    
+        goDown(node, l, r);
+    } else {
+        int m = (l + r) / 2;       
+        
+        update(2 * node, l, m, bl, br, value);
+        update(2 * node + 1, m + 1, r, bl, br, value);
+        
+        tree[node] = max(tree[2 * node], tree[2 * node + 1]);
+    }    
 }
-
-void update (int v, int tl, int tr, int pos, int new_val) {
-	if (tl == tr)
-		t[v] = make_pair (new_val, 1);
-	else {
-		int tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update (v*2, tl, tm, pos, new_val);
-		else
-			update (v*2+1, tm+1, tr, pos, new_val);
-		t[v] = combine (t[v*2], t[v*2+1]);
-	}
-}
-
 //*******************************************************
-//RMQ - Segment Tree
-const int MAXN = 20000;
-const int INF = 10000000;
+//Simple Segment Tree
+struct SegmentTree {
+	int N;
+	int tree[MAXN];
+	int lazy[MAXN];
 
-//0-Based Range Minimum Query Segment Tree
-template<typename T>
-struct SegmentTreeRMQ {
-    pair<T, T> t[MAXN*4];
-    void build(T a[], int v, int tl, int tr) {
-        if (tl == tr) t[v].first = a[tl];
-        else {
-            int tm = (tl + tr) >> 1;
-            build (a, 2*v,tl,tm);
-            build (a, 2*v+1,tm+1,tr);
-            t[v].first = min (t[2*v].first,t[2*v+1].first);
-        }
-    }
+	SegmentTree(int N, int base[MAXN]): N(N) {
+		build(1, 0, N - 1, base);
+	}	
 
-    void update(int v, int tl, int tr, int l, int r, T value) {
-        if (l > r) return;
-        if (tl == l && r == tr) {
-            t[v].second += value;
-        } else {
-            int tm = (tl + tr) >> 1;
-            update (2*v,tl,tm,l,min(tm,r),value);
-            update (2*v+1,tm+1,tr,max(tm+1,l),r,value);
-            t[v].first = min (t[2*v].first + t[2*v].second,t[2*v+1].first + t[2*v+1].second);
-        }
-    }
-    T rmq (int v, int tl, int tr, int l, int r) {
-        if (l > r) {
-            return INF;
-        }
-        if (tl == l && tr == r) {
-            return t[v].first + t[v].second;
-        } else {
-            int tm = (tl + tr) >> 1;
-            t[v].first = min (t[2*v].first + t[2*v].second,t[2*v+1].first + t[2*v+1].second);
-            return min(rmq(2*v,tl,tm,l,min(tm,r)),rmq(2*v+1,tm+1,tr,max(l,tm+1),r))+t[v].second;
-        }
-    }
+	void build(int node, int l, int r, int base[MAXN]) {
+		if (l == r) {
+			tree[node] = base[l];
+		} else {
+			int m = (l + r) / 2;
+
+			build(2 * node, l, m, base);
+			build(2 * node + 1, m + 1, r, base);
+
+			tree[node] = min(tree[2 * node], tree[2 * node + 1]);
+		}
+	}
+
+	int query(int node, int l, int r, int bl, int br) {
+		if (l > r || l > br || r < bl) {
+			return INT_MAX;
+		} else if (l >= bl && r <= br) {
+			return tree[node];
+		} else {
+			int m = (l + r) / 2;
+			
+			int a = query(2 * node, l, m, bl, br);
+			int b = query(2 * node + 1, m + 1, r, bl, br);
+
+			return min(a, b);
+		}
+	}
 };
 //*******************************************************
 // Segment Tree 2D
@@ -3448,6 +3616,75 @@ Int maxSlidingWindow(Int A[], int n, int w, Int B[]) {
 	return ans;
 }
 /**************************** NUMBER THEORY ***************************/
+//******************************************************
+//Counting number of ones in numbers from 1 to N
+Int func(Int x) {
+    Int ans = 0LL;
+    Int bits = 1LL;
+    Int range = 2LL;
+ 
+    int i;
+    Int len = (Int) floor(log10(x) / log10(2)) + 1;
+ 
+    for (i = 0; i < len; i++) {
+        if (x >= range) {
+            if (x % range == 0) {
+                ans += (Int) (x / range) * bits;
+            } else {
+                Int md = x % range + 1;
+                Int div = floor(x / range);
+ 
+                ans += div * bits + max(0LL, md - range / 2LL);
+            }
+        } else {
+                Int c_range = range - (range - x) + 1;
+                ans += max(0LL, c_range - range / 2LL);
+        }
+ 
+        bits *= 2LL;
+        range *= 2LL;
+    }
+ 
+    return ans;
+}
+//******************************************************
+//Return the N-th palindromic number
+ 
+std::string number_palindrome(int N) {
+    if(N < 10){
+        return std::string(1, char('0' + N));
+    }
+    long long sum = 0, digits = 1, v;
+    for(; ; digits++){
+        if(digits % 2 == 0){
+            v = std::pow(10, digits/2-1) * 9;
+        }else{
+            v = std::pow(10, (digits+1)/2-1) * 9;
+        }
+        if(v + sum >= N) break;
+        sum += v;
+    }
+    //I have to find the M-th palindromic number with X digits:
+    long long Mth = N-sum;
+    long long sz = (digits+1) / 2;
+    long long pattern = std::pow(10, sz-1);
+    pattern += (Mth-1);
+    std::vector<int> tmp;
+    while(pattern > 0){
+        tmp.insert(tmp.begin(), pattern % 10);
+        pattern /= 10;
+    }
+    int idx = digits-tmp.size() - 1;
+    std::string ans = "";
+    for(int i = 0; i < tmp.size(); i++){
+        ans += std::string(1, char('0' + tmp[i]));
+    }
+    for(;idx >= 0;){
+        ans += std::string(1, char('0' + tmp[idx--]));
+    }
+    return ans;
+}
+//******************************************************
 //Generate Highly Composite Numbers
 // for each HCN i, no number less than or equal i has more divisors than i.
 bool p[MAXN];
@@ -3557,14 +3794,15 @@ public static int sum(int a, int b) {
 //*******************************************************
 //modpow(a, n, mod) - calcula a^n % mod de maneira eficiente
 int modpow(int a, int n, int mod) {
-	int res(1);
-        while (n) {
-                if (n&1)
-                        res=(res*a)%mod;
-                a=(a*1ll*a)%mod;
-                n>>=1;
-        }
-        return res;
+	int res = 1;
+	while (n) {
+		if (n&1) {
+			res=(res*a)%mod;
+		}
+		a=(a*1ll*a)%mod;
+		n>>=1;
+	}
+	return res;
 }
 //*******************************************************
 //Calculando n-th numero de fibonnaci em O(n) (Deve ser Evitado)
@@ -3856,18 +4094,40 @@ int main() {
     return 0;
 }
 //*******************************************************
+// Count number of digits used from 1 to N
+//*******************************************************
+Int func(int val) {
+	int digitCount = (int) log10(val) + 1;
+	Int ans = 0LL;
+	Int p = 1LL;
+
+	for (int i = 0; i < digitCount - 1; i++) {
+		ans += p * 9 * (i + 1);
+		p *= 10;
+	}
+	
+	ans += (val - p + 1) * digitCount;
+	
+	return ans;
+}
+//*******************************************************
 //Euler Phi Function (Get coprime numbers) - Faster
- int fi(int n)
-     {
-       int result = n;
-       for(int i=2;i*i <= n;i++)
-       {
-         if (n % i == 0) result -= result / i;
-         while (n % i == 0) n /= i;
-       }
-       if (n > 1) result -= result / n;
-       return result;
-     }
+//*******************************************************
+int fi(int n) {
+	int result = n;
+	for (int i = 2; i * i <= n; i++) {
+		if (n % i == 0) {
+			result -= result / i;
+		}
+		while (n % i == 0) {
+			n /= i;
+		}
+	}
+	if (n > 1) {
+		result -= result / n;
+	}
+	return result;
+}
 
 //*******************************************************
 //Fast method to get factorial of N MOD P, in O(N log(P))
@@ -3901,6 +4161,16 @@ void getCatalan(int n){
             catalan[i] = sum;
         }
     }
+}
+//Preprocessing Fatorial numbers and Answer in O(1)
+Int catalan(int N) {
+	Int ans = fat[2 * N];
+	Int p = ((fat[N] * fat[N + 1]) % MOD) % MOD;
+	ans *= modpow(p, MOD - 2, MOD);
+	
+	ans = ((ans % MOD) + MOD) % MOD;
+	
+	return ans;
 }
 //*******************************************************
 //Euler phi function using less memory
@@ -3980,7 +4250,7 @@ public String decToOthers(int value, int toBase) {
 		} else {
 			ans = (char) (aux + '0') + ans;
 		}
-		value /= toBase;
+ 		value /= toBase;
 	}
 	return ans;
 }

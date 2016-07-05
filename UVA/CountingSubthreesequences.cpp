@@ -17,62 +17,31 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
-
-string S, P;
+string S;
 int N;
-
-int dp[MAXN][4];
-
-int func(int id, int sum) {
-	if (sum == 0) {
-		return 0;
-	}
-	if (id >= N) {
-		return 0;
-	} else {
-		int& ans = dp[id][sum];
-
-		if (ans == -1) {
-			ans = 0;
-			ans = func(id + 1, 1);
-
-			int s = 0;
-
-			for (int i = id; i < N; i++) {
-				s = (s + (P[i] - '0')) % 3;
-				if (s == 0) {
-					ans += 1 + func(i + 1, s);						
-				}
-			}
-		}
-
-		return ans;
-	}
-}
+Int dp[4];
 
 int main(void) {
-	for ( ; cin >> S; ) {
-		int ans = 0;
-		P = "";
-		for (int i = 0; i < (int) S.size(); i++) {
-			if (S[i] >= '0' && S[i] <= '9') {
-				P += S[i];
-			} else {
-				if (P == "") continue;
-				memset(dp, -1, sizeof(dp));
-				N = P.size();
-				ans += func(0, 1);
-				P = "";
-			}
-		}
-		if (P != "") {
-			memset(dp, -1, sizeof(dp));
-			N = (int) P.size();
-			ans += func(0, 1);
-		}
+    for ( ; cin >> S; ) {
+        Int ans = 0, curr = 0;
 		
-		cout << ans << "\n";
-	}
+        for (int i = 0; i < (int) S.size(); i++) {
+            if (S[i] >= '0' && S[i] <= '9') {
+                curr = curr * 10 + (S[i] - '0');
+                curr %= 3;
+
+                if (curr == 0) {
+                    ans += 1;
+                }
+				
+                ans += dp[curr];			
+                dp[curr] += 1;
+            } else {
+                memset(dp, 0, sizeof(dp));
+                curr = 0;
+            }
+        }		
+        cout << ans << "\n";
+    }
     return 0;
 }

@@ -119,7 +119,7 @@ int main(void) {
     int done = 0;
 
 	for ( ; scanf("%d", &N) == 1 && N != 0; ) {
-	    if (done) printf("\n");
+	    //if (done) printf("\n");
 	    done = 1;
 	    for (i = 0; i <= N; i++) {
             vis[i] = 0;
@@ -134,7 +134,7 @@ int main(void) {
 		}
 
         dfs(0, -2);
-x		parent[0] = -1;
+		parent[0] = -1;
 
 		init();
 
@@ -143,15 +143,14 @@ x		parent[0] = -1;
         int x;
 
         for (x = 0; x < Q; x++) {
+			if (x != 0) printf(" ");
             scanf("%d%d", &A, &B);
 
             int root = LCA(A, B);
 
             printf("%lld", (dist[A] - dist[root]) + (dist[B] - dist[root]));
-
-            if (x != Q - 1) printf(" ");
-            else printf("\n");
         }
+		printf("\n");
 	}
     return 0;
 }

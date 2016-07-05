@@ -17,77 +17,99 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
-const int MAXN = 100003;
+const Int INF = 10010010100LL;
+const int MAXN = 262145;
 
-int T, N, C;
-Int tree[4 * MAXN], lazy[4 * MAXN];
+int T;
+int P, Q, C, N;
+Int V;
 
-void propagate(int node, int l, int r) {
-	if (lazy[node] > 0) {
-		tree[node] = tree[node] + (r - l + 1) * lazy[node];
+struct SegmentTree {
+	Int tree[MAXN];
+	Int ladd[MAXN];
 
-		if (l != r) {
-			lazy[2 * node + 0] += lazy[node];
-			lazy[2 * node + 1] += lazy[node];
-		}
-
-		lazy[node] = 0;
+	void clear() {
+		for (int i = 0; i < MAXN; i++) {
+			tree[i] = ladd[i] = 0LL;
+		}				 
 	}
-}
-
-void update(int node, int l, int r, int bound_l, int bound_r, int val) {
-	propagate(node, l, r);	
-	if (l > r || l > bound_r || r < bound_l) {
-		return;
-	} else if (l >= bound_l && r <= bound_r) {
-		lazy[node] += val;
-		propagate(node, l, r);
-	} else {
-		int m = (l + r) / 2;
-
-		update(2 * node, l, m, bound_l, bound_r, val);
-		update(2 * node + 1, m + 1, r, bound_l, bound_r, val);
-
-		tree[node] = tree[2 * node] + tree[2 * node + 1];
-	}
-}
-
-Int query(int node, int l, int r, int bound_l, int bound_r) {
-	propagate(node, l, r);
-	if (l > r || l > bound_r || r < bound_l) {
-		return 0LL;
-	} else if (l >= bound_l && r <= bound_r) {
-		return tree[node];
-	} else {
-		int m = (l + r) / 2;
-		return query(2 * node, l, m, bound_l, bound_r) + query(2 * node + 1, m + 1, r, bound_l, bound_r);
-	}
-}
-
-int main(void) {
-	scanf("%d", &T);
-	for ( ; T--; ) {
-		scanf("%d%d", &N, &C);
-		
-		for (int i = 0; i < 4 * MAXN; i++) {
-			tree[i] = lazy[i] = 0;
-		}
-
-		int type, p, q, v;
-
-		for (int i = 0; i < C; i++) {
-			scanf("%d%d%d", &type, &p, &q);
-
-			p -= 1;
-			q -= 1;
-
-			if (type == 0) {
-				scanf("%d", &v);
-				update(1, 0, N - 1, p, q, v);
+	
+	void update(int node, int l, int r, int bound_l, int bound_r, Int add) {
+		if (l > bound_r || r < bound_l) {
+			return;
+		} else {
+			if (l >= bound_l && r <= bound_r) {
+				if (l != r) {
+					ladd[2 * node] += add;
+					ladd[2 * node + 1] += add;
+				}			
+				tree[node] += (Int) (r - l + 1LL) * add;			
 			} else {
-				printf("%lld\n", query(1, 0, N - 1, p, q)); 
+				int m = (l + r) / 2;
+				
+				update(2 * node, l, m, bound_l, bound_r, add);
+				update(2 * node + 1, m + 1, r, bound_l, bound_r, add);
+				
+				tree[node] += (Int) (min(r, bound_r) - max(l, bound_l) + 1) * add;
 			}
 		}
 	}
-    return 0;
+	
+	Int query(int node, int l, int r, int bound_l, int bound_r) {
+		if (l > bound_r || r < bound_l) {
+			return 0LL;
+		} else {
+			if (ladd[node] > 0LL) {
+				if (l != r) {
+					ladd[2 * node] += ladd[node];
+					ladd[2 * node + 1] += ladd[node];
+				}
+				tree[node] += ladd[node] * (Int) (r - l + 1LL);
+				ladd[node] = 0LL;
+			}
+
+			if (l >= bound_l && r <= bound_r) {
+				return tree[node];
+			} else {
+				int m = (l + r) / 2;
+
+				Int a = query(2 * node, l, m, bound_l, bound_r);
+				Int b = query(2 * node + 1, m + 1, r, bound_l, bound_r);
+
+				return a + b;
+			}
+		}
+	}
+};
+int main(void) {
+	T = in();
+
+	int kind;
+	SegmentTree tree;
+	
+	for ( ; T--; ) {
+		N = in();
+		C = in();
+
+		tree.clear();
+		
+		for ( ; C--; ) {
+			kind = in();
+
+			if (kind == 0) {
+				P = in();
+				Q = in();
+				V = in();
+
+				tree.update(1, 1, N, P, Q, V);
+			} else {
+				P = in();
+				Q = in();
+
+				printf("%lld\n", tree.query(1, 1, N, P, Q));
+			}
+		}
+	}
+
+	return 0;
 }

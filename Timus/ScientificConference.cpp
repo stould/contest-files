@@ -20,28 +20,28 @@ typedef unsigned uint;
 int N;
 pair<int, int> P[101000];
 
-int dp[40005];
-
+bool cmp(pair<int, int> a, pair<int, int> b) {
+	return a.second < b.second;
+}
 int main(void) {
 	for ( ; scanf("%d", &N) == 1; ) {
-		int ed = 0;
 		for (int i = 0; i < N; i++) {
 			scanf("%d%d", &P[i].first, &P[i].second);
-			dp[P[i].first] = dp[P[i].second] = 1;
 		}
 
-		sort(P, P + N);
+		sort(P, P + N, cmp);
 
-		int ans = 1;
+		int ans = 0;
 
 		for (int i = 0; i < N; i++) {
-			for (int j = N - 1; j >= 0; j--) {
-				if (P[j].first <= P[i].second) {
-					break;
-				}
-				dp[P[j].second] = max(dp[P[j].second], dp[P[i].second] + 1);
-				ans = max(ans, dp[P[j].second]);
+			ans += 1;
+			
+			int j = i;
+
+			while (j < N && P[j].first <= P[i].second) {
+				j += 1;
 			}
+			i = j - 1;
 		}
 		printf("%d\n", ans);
 	}

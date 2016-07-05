@@ -25,39 +25,53 @@ int S[MAXN];
 
 int main(void) {
 	T = in();
-
-	int i;
-	int x;
-
-	for (x = 1; x <= T; x++) {
+	
+	for (int t = 1; t <= T; t++) {
 		N = in();
 
-		for (i = 0; i < N; i++) {
+		for (int i = 0; i < N; i++) {
 			S[i] = in();
 		}
 
-		printf("Case %d: ", x);
+		printf("Case %d: ", t);
 
-		if (N == 1) {
-			printf("%d\n", S[0]);
-		} else {
-			sort(S, S + N);
+		sort(S, S + N);
+		
+		vector<int> sp(N);
+		int sa = N / 2, pa = N - 1;
+		int sb = (N + 1) / 2, pb = 0;
 
-			vector<int> sp;
-			swap(S[0], S[1]);
-
-			int ans = 0;
-
-			for (i = 0; i < N / 2; i++) {
-				sp.push_back(S[i]);
-				sp.push_back(S[N - i - 1]);				
-			}			
-			for (i = 1; i < N; i++) {
-				//printf("%d ", sp[i]);
-				ans += abs(sp[i] - sp[i - 1]);
-			}						
-			printf("%d\n", ans);
+		for (int i = 0; i < N / 2; i++) {
+			if (sa >= 0) {
+				if (pa % 2 == 0) {
+					sp[pa] = S[sa];
+					sa -= 1;
+				} else {
+					sp[pa] = S[sb];
+					sb += 1;
+				}
+				sa -= 1;
+				pa -= 1;
+			}
+			if (sb < N) {
+				if (pb % 2 == 1) {
+					sp[pb] = S[sb];
+					sb += 1;
+				} else {
+					sp[pb] = S[sa];
+					sa -= 1;
+				}
+				pb += 1;
+			}
 		}
+		
+		int ans = 0;
+		
+		for (int i = 1; i < N; i++) {
+			//cout << sp[i] << " ";
+			ans += abs(sp[i] - sp[i - 1]);
+		}						
+		printf("\n%d\n", ans);		
 	}
     return 0;
 }
