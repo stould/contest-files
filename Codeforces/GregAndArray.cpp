@@ -17,6 +17,52 @@ using namespace std;
 typedef long long Int;
 typedef unsigned uint;
 
+<<<<<<< HEAD
+const int MAXN = 10005;
+
+int N, M, K;
+int P[MAXN], L[MAXN], R[MAXN], D[MAXN], S[MAXN];
+int seen[MAXN];
+
+int main(void) {
+  cin >> N >> M >> K;
+
+  for (int i = 1; i <= N; i++) {
+    cin >> P[i];
+  }
+  
+  for (int i = 1; i <= M; i++) {
+    cin >> L[i] >> R[i] >> D[i];
+  }
+
+  for (int i = 1; i <= K; i++) {
+    int X, Y;
+    cin >> X >> Y;
+
+    S[X] += 1;
+    S[Y + 1] -= 1;
+  }
+  
+  Int sc = 0LL;
+
+  for (int i = 1; i <= M; i++) {
+    sc += S[i];
+    seen[L[i]] += D[i] * sc;
+    seen[R[i] + 1] -= D[i] * sc;
+  }
+  
+  sc = 0LL;
+  
+  for (int i = 1; i <= N; i++) {
+    sc += seen[i];
+
+    cout << P[i] + sc << " ";
+  }
+
+  cout << endl;
+  
+  return 0;
+=======
 const int MAXN = 100005;
 
 int N, M, K;
@@ -61,4 +107,5 @@ int main(void) {
 	cout << endl;
   
 	return 0;
+>>>>>>> 70b60322e79a65b8e102c09641f727a36816dbe3
 }

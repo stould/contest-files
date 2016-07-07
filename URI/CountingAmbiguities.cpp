@@ -26,88 +26,88 @@ vector<int> inter[110];
 Int dp[110];
 
 struct Trie {
-	char type;
-	int end;	
-	map<char, Trie> child;
+    char type;
+    int end;	
+    map<char, Trie> child;
 	
-	Trie() {
-		this->type = '$';
-		this->end = 0;
-	}
+    Trie() {
+        this->type = '$';
+        this->end = 0;
+    }
 
-	void insert(string s, int pos) {
-		if (pos >= s.size()) return;
+    void insert(string s, int pos) {
+        if (pos >= s.size()) return;
 
-		child[s[pos]].type = s[pos];
+        child[s[pos]].type = s[pos];
 
-		if (pos == s.size() - 1) {
-			child[s[pos]].end += 1;
-		}
-		child[s[pos]].insert(s, pos + 1);				
-	}
+        if (pos == s.size() - 1) {
+            child[s[pos]].end += 1;
+        }
+        child[s[pos]].insert(s, pos + 1);				
+    }
 
-	void seek(string s, int start, int pos) {
-		if (end) {
-			inter[start].push_back(start + pos - 1);
-		} 
+    void seek(string s, int start, int pos) {
+        if (end) {
+            inter[start].push_back(start + pos - 1);
+        } 
 
-		if (pos >= s.size()) return;
+        if (pos >= s.size()) return;
 		
-		child[s[pos]].seek(s, start, pos + 1);					
-	}	
+        child[s[pos]].seek(s, start, pos + 1);					
+    }	
 };
 
 Int func(int len) {
-	if (len >= L - 1) {
-		return 1LL;
-	} else {
-		Int& ans = dp[len];
+    if (len >= L - 1) {
+        return 1LL;
+    } else {
+        Int& ans = dp[len];
 
-		if (ans == -1LL) {
-			ans = 0LL;
+        if (ans == -1LL) {
+            ans = 0LL;
 
-			for (int i = 0; i < (int) inter[len].size(); i++) {
-				ans = ((ans % MOD) + (func(inter[len][i] + 1) % MOD)) % MOD;
-			}
-		}
+            for (int i = 0; i < (int) inter[len].size(); i++) {
+                ans = ((ans % MOD) + (func(inter[len][i] + 1) % MOD)) % MOD;
+            }
+        }
 
-		return ans % MOD;
-	}
+        return ans % MOD;
+    }
 }
 
 void run(void) {
-	for ( ; cin >> N; ) {
-		Trie root;
+    for ( ; cin >> N; ) {
+        Trie root;
 
-		for (int i = 0; i < N; i++) {
-			cin >> S;
-			root.insert(S, 0);
-		}
+        for (int i = 0; i < N; i++) {
+            cin >> S;
+            root.insert(S, 0);
+        }
 
-		cin >> M;
+        cin >> M;
 
-		for ( ; M--; ) {
-			cin >> S;
+        for ( ; M--; ) {
+            cin >> S;
 
-			L = (int) S.size();
+            L = (int) S.size();
 
-			for (int i = 0; i < 110; i++) {
-				inter[i].clear();
-			}
+            for (int i = 0; i < 110; i++) {
+                inter[i].clear();
+            }
 
-			for (int i = 0; i < L; i++) {
-				root.seek(S.substr(i, L - i), i, 0);
-			}
+            for (int i = 0; i < L; i++) {
+                root.seek(S.substr(i, L - i), i, 0);
+            }
 
-			memset(dp, -1LL, sizeof(dp));
+            memset(dp, -1LL, sizeof(dp));
 
-			cout << func(0) << "\n";
-		}
-	}	
+            cout << func(0) << "\n";
+        }
+    }	
 }
 
 int main(void) {
-	run();
+    run();
 
-	return 0;
+    return 0;
 }

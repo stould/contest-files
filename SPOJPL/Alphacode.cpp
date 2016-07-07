@@ -23,34 +23,34 @@ string S;
 Int dp[MAXN];
 
 Int func(int pos) {
-	if (pos >= S.size()) {
-		return 1LL;
-	} else if (S[pos] == '0') {
-		return 0LL;
-	} else {
-		Int& ans = dp[pos];
+    if (pos >= (int) S.size()) {
+        return 1LL;
+    } else if (S[pos] == '0') {
+        return 0LL;
+    } else {
+        Int& ans = dp[pos];
 
-		if (ans == -1) {
-			ans = 0;
+        if (ans == -1) {
+            ans = 0;
 			
-			int curr = 0;
+            int curr = 0;
 
-			for ( ; pos < S.size(); ) {
-				curr = curr * 10 + (S[pos] - '0');
-				if (curr > 26) break;
-				ans += func(pos + 1);
-				pos++;
-			}
-		}
+            for ( ; pos < S.size(); ) {
+                curr = curr * 10 + (S[pos] - '0');
+                if (curr > 26) break;
+                ans += func(pos + 1);
+                pos++;
+            }
+        }
 		
-		return ans;
-	}
+        return ans;
+    }
 }
 
 int main(void) {
-	while (cin >> S && S != "0") {
-		memset(dp, -1LL, sizeof(dp));
-		cout << func(0) << endl;
-	}
+    while (cin >> S && S != "0") {
+        memset(dp, -1LL, sizeof(dp));
+        cout << func(0) << endl;
+    }
     return 0;
 }
