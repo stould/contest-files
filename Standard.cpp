@@ -14,12 +14,6 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define debug(args...)
-#else
-#define debug(args...) fprintf(stderr,args)
-#endif
-
 typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
