@@ -133,7 +133,7 @@ int main(void) {
 					l = m + 1;
 				} else {
 					h = m - 1;
-				}
+g				}
 			}
 			
 			if (beg >= 0) {				
