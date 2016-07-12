@@ -33,24 +33,34 @@ int dp[MAXN][5][5][5][5];
 
 //
 //pr = previous edge
-//uc = pre-previous edge
 //nx = next edge
+//si = next-next edge
 //hs = 1 if node is obligated to use a sargeant bot
 
-int func(int node, int prev, int pr, int uc, int nx, int hs) {
+int func(int node, int prev, int pr, int nx, int si) {
     if (tree[node].size() == 1 && prev != -1) {
-        if (pr == 1) {
-            return 0;
-        } else if (pr == 0 && uc == 1) {
+        if (uc == 0) {
+            return D;
+        } else if (pr == 0) {
             return min(C, D);
         } else {
-            return D;
+            return 0;
         }
     } else {
         int& ans = dp[node][pr][uc][nx][hs];
 		
         if (ans == -1) {
             ans = INF;
+            
+            //use soldier
+            int us = D;
+            for (int i = 0; i < (int) tree[node].size(); i++) {
+                int u = tree[node][i];
+                
+                us += func(u, node, 1, 1, 1, 0);
+            }             
+            chmin(ans, us);
+
             
             if (hs) {
                 ans = D;
@@ -97,12 +107,13 @@ int main(void) {
         }
 	
         int ans = INF;
+
+        memset(dp, -1, sizeof(dp));
         
         for (int i = 1; i <= N; i++) {
             if (tree[i].size() == 1) {
-                memset(dp, -1, sizeof(dp));
                 chmin(ans, func(i, -1, 1, 1, 0));
-                cout << i << " " << func(i, -1, 1, 1, 0) <<endl;
+                break;
             }
         }
 

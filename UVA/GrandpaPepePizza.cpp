@@ -21,40 +21,40 @@ int C, N;
 int T[100005];
 
 int main(void) {
-	for ( ; cin >> C >> N; ) {
-		bool ok = false;
+    for ( ; cin >> C >> N; ) {
+        bool ok = false;
 
-		int p = C / N;
+        int p = C / N;
 
-		for (int i = 0; i < N; i++) {
-			cin >> T[i];
-		}
+        for (int i = 0; i < N; i++) {
+            cin >> T[i];
+        }
 
-		T[N] = C + T[0];
+        T[N] = C + T[0];
 
-		for (int i = T[0]; i < T[1]; i++) {
-			bool fine = true;
-			int pos = i;
+        for (int i = T[0]; i < T[1]; i++) {
+            bool fine = true;
+            int pos = i;
 			
-			for (int j = 1; fine && j <= N; j++) {
-				if (pos < T[j] && pos + p >= T[j]) {
-					pos += p;
-				} else {
-					fine = false;
-				}
-			}
-			if (fine) {
-				ok = true;
-				break;
-			}			
-		}
+            for (int j = 1; fine && j <= N; j++) {
+                if (pos < T[j] && pos + p >= T[j]) {
+                    pos += p;
+                } else {
+                    fine = false;
+                }
+            }
+            if (fine) {
+                ok = true;
+                break;
+            }			
+        }
 
-		if (ok) {
-			cout << "S\n";
-		} else {
-			cout << "N\n";
-		}
-	}
+        if (ok) {
+            cout << "S\n";
+        } else {
+            cout << "N\n";
+        }
+    }
 	
     return 0;
 }

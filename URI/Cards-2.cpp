@@ -44,9 +44,11 @@ int main(void) {
             int parity = i % 2;
 
             for (int j = 0; j + i < N; j++) {
+                //buff[j] = max(buff[j], P[j] + min(dp[parity][j + 2], dp[parity][j + 1]));
+                //buff[j] = max(buff[j], P[j + i] + min(dp[parity][j], dp[parity][j + 1]));
                 dp[parity ^ 1][j] = -INF;
-                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j] + max(dp[parity][j + 2], dp[parity][j + 1]));
-                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j + i] + max(dp[parity][j], dp[parity][j + 1]));
+                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j] + min(dp[parity][j + 2], dp[parity][j + 1]));
+                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j + i] + min(dp[parity][j], dp[parity][j + 1]));
             }
 
             for (int j = 0; j < N; j++) {
