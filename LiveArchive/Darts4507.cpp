@@ -20,14 +20,14 @@ typedef unsigned uint;
 
 const int MAXN = 505;
 int N;
-double dp[MAXN][MAXN][2][2];
-int memo[MAXN][MAXN][2][2];
+double dp[MAXN][MAXN][2][2][110];
+int memo[MAXN][MAXN][2][2][110];
 int id = 1;
 vector<int> wheel = {20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5};
 
 double func(int sa, int sb, int now, int st, int depth) {
-    if (depth >= 5000) {
-        return 1.0;
+    if (depth >= 50) {
+        return 0.0;
     } else if (sa == 0 || sb == 0) {
         if (sa == 0) {
             if (st == 0) {
@@ -43,17 +43,14 @@ double func(int sa, int sb, int now, int st, int depth) {
             }
         }
     } else {
-        double& ans = dp[sa][sb][now][st];
+        double& ans = dp[sa][sb][now][st][depth];
 
-        if (memo[sa][sb][now][st] != id) {
-            memo[sa][sb][now][st] = id;
-            
-            ans = 0.0;
-            
+        if (memo[sa][sb][now][st][depth] != id) {
+            memo[sa][sb][now][st][depth] = id;
+
             //double rev = 0.0;
             double ia = 0;
-            double fb = 10000000.0;
-            double mb = 0.0;
+            double mb = 1000000.0;
             
             for (int i = 0; i < (int) wheel.size(); i++) {                
                 if (now == 0) {
@@ -61,32 +58,28 @@ double func(int sa, int sb, int now, int st, int depth) {
                         ia += func(sa - wheel[i], sb, now ^ 1, st, depth + 1);
                     } else {
                         ia += func(sa, sb, now ^ 1, st, depth + 1);
-                        //rev = (1.0 / (double) wheel.size());
                     }
                 } else {
-                    if (sb - wheel[i] >= 0) {
-                        fb = min(fb, (1.0 / 3.0) * func(sa, sb - wheel[i], now ^ 1, st, depth + 1));
-                        mb = max(mb, (1.0 / 3.0) * func(sa, sb - wheel[i], now ^ 1, st, depth + 1));
-                    } else {
-                        fb = min(fb, (1.0 / 3.0) * func(sa, sb, now ^ 1, st, depth + 1) / 3.0);
-                        mb = max(mb, (1.0 / 3.0) * func(sa, sb, now ^ 1, st, depth + 1) / 3.0);
-                        //ans += func(sa, sb, now ^ 1, st, depth + 1);
-                        //rev = (1.0 / 3.0);
+                    double curr_prob = 0.0;
+                    
+                    for (int j = -1; j <= 1; j++) {
+                        int curr = (i + j) % 20;
+                        
+                        if (sb - wheel[curr] >= 0) {
+                            curr_prob += func(sa, sb - wheel[curr], now ^ 1, st, depth + 1);
+                        } else {
+                            curr_prob += func(sa, sb, now ^ 1, st, depth + 1);
+                        }
                     }
+                    
+                    mb = min(mb, curr_prob);
                 }
             }
-            if (st == 0) {
-                if (now == 0) {
-                    ans = 1 - ia / 20.0;
-                } else {
-                    ans = fb;
-                }
+            cout << sa << " " << sb << " " << depth << " " << ia << endl;
+            if (now == 0) {
+                ans = 1 - ia / 20.0;
             } else {
-                if (now == 1) {
-                    ans = 1 - mb;
-                } else {
-                    ans = ia / 20.0;
-                }
+                ans = 1 - mb / 3.0;
             }
         }
 
