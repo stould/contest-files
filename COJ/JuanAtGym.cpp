@@ -18,64 +18,45 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const double EPS = 1e-7;
-const Int MUL = 10000000000LL;
+const double EPS = 1e-8;
+const uInt MUL = 100ULL;
 
 int N;
 double P, B;
-Int PP, BB;
+uInt PP, BB;
 double A[25];
-Int PA[25];
-map<Int, int> dp[25];
-
-int func(int pos, Int sum) {
-    if (pos >= N) {
-        return (sum + BB + EPS) >= PP;
-    } else {
-        if (dp[pos].find(sum) == dp[pos].end()) {
-            int ans = 0;
-
-            ans += func(pos + 1, sum);
-            ans += func(pos + 1, sum + 2.0 * PA[pos]);
-
-            dp[pos][sum] = ans;
-        }
-
-        return dp[pos][sum];
-    }
-}
+uInt PA[25];
 
 int main(void) {
-    cin >> N >> P >> B;
-
-    PP = P * MUL;
-    BB = B * MUL;
-    
-    for (int i = 0; i < N; i++) {
-        cin >> A[i];
-        PA[i] = A[i] * MUL;
-    }
-    
-    int ans = 0;
-
-    for (int i = 1; i < (1 << N); i++) {
-        Int sum = BB;
-
+    while (cin >> N >> P >> B) {        
+        PP = P * MUL;
+        BB = B * MUL;
         
-        for (int j = 0; j < N; j++) {
-            if (i & (1 << j)) {
-                sum += 2 * PA[j];
+        for (int i = 0; i < N; i++) {
+            cin >> A[i];
+            PA[i] = A[i] * MUL;
+        }
+        
+        int ans = 0;
+        
+        for (int i = 0; i < (1 << N); i++) {
+            uInt sum = BB;
+            
+            for (int j = 0; j < N; j++) {
+                if (i & (1 << j)) {
+                    sum += 2LL * PA[j];
+                }
+            }
+            if (sum >= PP) {
+                ans += 1;
             }
         }
-        if (sum + EPS >= PP) {
-            ans += 1;
+        
+        if (ans == 0) {
+            cout << "Strong\n";
+        } else {
+            cout << ans << "\n";
         }
-    }
-
-    if (ans == 0) {
-        cout << "Strong\n";
-    } else {
-        cout << func(0, 0) << "\n";
     }
     return 0;
 }
