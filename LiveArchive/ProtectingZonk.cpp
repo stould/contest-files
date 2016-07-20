@@ -112,7 +112,7 @@ int main(void) {
         
         for (int i = 1; i <= N; i++) {
             if (tree[i].size() == 1) {
-                chmin(ans, func(i, -1, 1, 1, 0));
+                chmin(ans, func(i, -1, 1, 1, 0)   );
                 break;
             }
         }
