@@ -14,105 +14,50 @@ int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define debug(args...)
-#else
-#define debug(args...) fprintf(stderr,args)
-#endif
-
 typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 200005;
-
-int N;
-int A[MAXN];
-vector<int> G[MAXN];
-int vis[MAXN];
-set<pair<int, int> > rev;
-int rt = -1;
-
-void dfs(int node, int pr) {
-    vis[node] = 1;
-
-    for (int i = 0; i < (int) G[node].size(); i++) {
-        int next = G[node][i];
-
-        if (next == pr) continue;
-        
-        if (vis[next]) {
-            if (rt == -1) {
-                rt = min(node, next);
-            }
-            rev.insert(make_pair(min(node, next), max(node, next)));
-        } else {
-            dfs(next, node);
-        }
-    }
-}
+int N, K;
+double L, V1, V2;
 
 int main(void) {
-    cin >> N;
+    cin >> N >> L >> V1 >> V2 >> K;
 
-    int ans = 0;
+    double pos = 0.0;
+    double ans = 0.0;
 
-    int cnt = 0;
-    
-    map<int, int> cnt_root;
-    set<int> seen_root;
+    while (N > 0) {
+        double d1 = L - pos;
 
-    for (int i = 1; i <= N; i++) {
-        cin >> A[i];
+        ans += d1 / V2;
+        N -= K;
+        if (N <= 0) break;
+        pos += V1 * (d1 / V2);
 
-        if (A[i] == i) {
-            seen_root.insert(i);
-        }
-        cnt_root[A[i]] += 1;
-    }
+        double l = 0, h = 1000000000000, m;
+        
+        for (int i = 0; i < 500; i++) {
+            m = (l + h) / 2.0;
 
-    for (set<int>::iterator it = seen_root.begin(); it != seen_root.end(); it++) {
-        if (cnt_root[*it] > cnt) {
-            cnt = cnt_root[*it];
-            rt = *it;
-        }
-    }
+            double p1 = pos + V1 * m;
+            double p2 = L - V2 * m;
 
-    for (int i = 1; i <= N; i++) {
-        if (A[i] == i) {
-            if (i != rt) {
-                ans += 1;
-                A[i] = rt;
+            if (p2 < p1) {
+                h = m;
+            } else {
+                l = m;
             }
         }
-    }
-    
-    for (int i = 1; i <= N; i++) {
-        if (A[i] == i) continue;
-        G[A[i]].push_back(i);
-        G[i].push_back(A[i]);
-    }
-    
-    dfs(rt, -1);
-    
-    for (int i = 1; i <= N; i++) {
-        if (!vis[i]) {
-            dfs(i, -1);
-        }
-    }
 
-    ans += (int) rev.size();
-
-    for (auto& it: rev) {
-        A[it.first] = rt;
+        //cout << ans << endl;
+        //cout << m << endl;        
+        pos += V1 * m;
+        ans += m;
+        cout << ans << endl;
+        if (pos >= L) break;
     }
     
-    cout << ans << "\n";
-    
-    for (int i = 1; i <= N; i++) {
-        cout << A[i] << " ";
-    }
-    cout << "\n";
-    
+    cout << fixed << setprecision(12) << ans << endl;
     return 0;
 }

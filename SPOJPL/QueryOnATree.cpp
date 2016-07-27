@@ -1,5 +1,28 @@
+#include <bits/stdc++.h>
+
+template<typename T> T gcd(T a, T b) {
+    if(!b) return a;
+    return gcd(b, a % b);
+}
+template<typename T> T lcm(T a, T b) {
+    return a * b / gcd(a, b);
+}
+
+template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
+template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
+int in() { int x; scanf("%d", &x); return x; }
+
+using namespace std;
+
+typedef long long Int;
+typedef unsigned long long uInt;
+typedef unsigned uint;
+
+const int MAXN = 10005;
+const int INF = INT_MAX / 3;;
+
 vector<vector<pair<int,int> > > g(MAXN);
-int cnt[MAXN], prev[MAXN], chainNode[MAXN], chainHead[MAXN], posInChain[MAXN], base[MAXN], level[MAXN], chainIdx, idxSegTree;
+int cnt[MAXN], prv[MAXN], chainNode[MAXN], chainHead[MAXN], posInChain[MAXN], base[MAXN], level[MAXN], chainIdx, idxSegTree;
 int H[MAXN], L[MAXN << 1], E[MAXN << 1], idx;
  
 struct LCA{        
@@ -160,7 +183,7 @@ void dfsCnt(int node, int parent, int depth = 0){
     for(int i = 0; i < g[node].size(); i++){
         int next = g[node][i].first;
         if(next != parent){
-            prev[next] = node;
+            prv[next] = node;
             dfsCnt(next, node, depth + 1);
             cnt[node] += cnt[next];
             L[idx] = depth;
@@ -177,7 +200,7 @@ int walkChain(int U, int V, SegTree &q, int n){
         int Right = posInChain[U];
         int val = base[q.rmq(1, 0, n-1, Left, Right)];
         if(val > ans) ans = val;
-        U = prev[chainHead[chainNode[U]]];
+        U = prv[chainHead[chainNode[U]]];
     }
     if(U == V) return ans;
     int val = base[q.rmq(1, 0, n-1, posInChain[V]+1, posInChain[U])];
@@ -215,7 +238,7 @@ int main(void){
         scanf("%d", &n);
         chainIdx = idxSegTree = idx = 0;
         for(int i = 0; i <= n; i++){
-            cnt[i] = prev[i] = chainNode[i] = base[i] = level[i] = 0;
+            cnt[i] = prv[i] = chainNode[i] = base[i] = level[i] = 0;
             chainHead[i] = posInChain[i] = H[i] = -1;
             g[i].clear();
         }

@@ -42,9 +42,9 @@ void add(string& arg) {
         int c = (int) arg[i];
         if (sig[x][c] == 0) term[cnt] = 0, sig[x][c] = cnt++;
         x = sig[x][c];
-        cerr << arg[i] << " " << x << endl;;
+        //cerr << arg[i] << " " << x << endl;;
     }
-    cerr << endl;
+    //cerr << endl;
     term[x] = 1;
     matchPos[x] = arg.size();
 }
@@ -89,10 +89,11 @@ int busca (string& arg){
         
         if (sig[pos][(int) arg[i]] != 0){
             pos = sig[pos][(int) arg[i]];
-        }
-        else {
-            if (pos != 0) i--;
-            pos = T[pos];
+        } else {
+            while (pos != 0 && sig[pos][(int) arg[i]] == 0) {
+                pos = T[pos];
+            }
+            pos = sig[pos][(int) arg[i]];
         }
         if (matchPos[pos]) {
             ans = i;                
