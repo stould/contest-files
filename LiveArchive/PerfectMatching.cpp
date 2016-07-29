@@ -23,40 +23,40 @@ int T, N;
 string S[MAXN];
 
 bool func(string& a, string& b) {
-	string buff = a + b;
-	int N = (int) buff.size();
+    string buff = a + b;
+    int N = (int) buff.size();
 
-	for (int i = 0; i < N / 2; i++) {
-		if (buff[i] != buff[N - i - 1]) {
-			return false;
-		}
-	}
+    for (int i = 0; i < N / 2; i++) {
+        if (buff[i] != buff[N - i - 1]) {
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 int main(void) {
-	cin >> T;
+    cin >> T;
 
-	for (int x = 1; x <= T; x++) {
-		cin >> N;	
+    for (int x = 1; x <= T; x++) {
+        cin >> N;	
 
-		for (int i = 0; i < N; i++) {
-			cin >> S[i];
-		}
+        for (int i = 0; i < N; i++) {
+            cin >> S[i];
+        }
 
-		int ans = 0;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				if (i != j) {
-					if (func(S[i], S[j])) {
-						ans += 1;
-					}
-				}
-			}
-		}
+        int ans = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (i != j) {
+                    if (func(S[i], S[j])) {
+                        ans += 1;
+                    }
+                }
+            }
+        }
 
-		cout << "Case #" << x << ": " << ans << "\n";
-	}
+        cout << "Case #" << x << ": " << ans << "\n";
+    }
     return 0;
 }
