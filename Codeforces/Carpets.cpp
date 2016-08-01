@@ -27,8 +27,6 @@ bool vis[110][110];
 int fillRect(int bi, int bj, int li, int lj, bool kind) {
     int ans = 0;
 
-    if (bi + li - 1 >= N || bj + lj - 1 >= M) return false;
-    
     for (int i = bi; i < bi + li; i++) {
         for (int j = bj; j < bj + lj; j++) {
             if (vis[i][j] != kind) {
@@ -42,10 +40,11 @@ int fillRect(int bi, int bj, int li, int lj, bool kind) {
 }
 
 bool match(int bi, int bj, int li, int lj) {
-    if (bi + li - 1 >= N || bj + lj - 1 >= M) return false;
-    
     for (int i = bi; i < bi + li; i++) {
+        if (i >= N) return false;
         for (int j = bj; j < bj + lj; j++) {
+            if (j >= M) return false;
+            
             if (vis[i][j]) {
                 return false;
             }
@@ -57,6 +56,15 @@ bool match(int bi, int bj, int li, int lj) {
 
 void dfs(int mask, int used, int avail, int r, int c) {
     //cout << r << " " << c << " " << __builtin_popcount(mask) << endl;
+    //cout << used << endl;
+    //cout << r << " " << c << " " << __builtin_popcount(mask) << endl;
+    //for (int j = 0; j < N; j++) {
+    //    for (int k = 0; k < M; k++) {
+    //      cout << vis[j][k];
+    //        }
+    //        cout << endl;
+    //    }
+    //    cout << endl;
     if (fine) return;
     if (used == N * M) {
         fine = true;
@@ -68,31 +76,45 @@ void dfs(int mask, int used, int avail, int r, int c) {
     } else {
         for (int i = 0; !fine && i < K; i++) {
             if (mask & (1 << i)) continue;
+
+            //cout << "Try " << NI[i] << " " << MI[i] << endl;
             
             if (match(r, c, NI[i], MI[i])) {
+                //cout << "In " << NI[i] << " " << MI[i] << endl;
                 fillRect(r, c, NI[i], MI[i], true);
                 bool found = false;
-                for (int i = 0; !found && i < N; i++) {
-                    for (int j = 0; !found && j < M; j++) {
-                        if (vis[i][j] == 0) {
+                int nj = N, nk = M;
+                
+                for (int j = 0; !found && j < N; j++) {
+                    for (int k = 0; !found && k < M; k++) {
+                        if (vis[j][k] == 0) {
+                            nj = j;
+                            nk = k;
                             found = true;
-                            dfs(mask | (1 << i), used + NI[i] * MI[i], avail - NI[i] * MI[i], i, j);
                         }
                     }
                 }
+                dfs(mask | (1 << i), used + NI[i] * MI[i], avail - NI[i] * MI[i], nj, nk);
                 fillRect(r, c, NI[i], MI[i], false);                                            
             }
+
+            //            cout << "Try " << MI[i] << " " << NI[i] << endl;
             if (match(r, c, MI[i], NI[i])) {
+                //  cout << "In " << MI[i] << " " << NI[i] << endl;
                 fillRect(r, c, MI[i], NI[i], true);
                 bool found = false;
-                for (int i = 0; !found && i < N; i++) {
-                    for (int j = 0; !found && j < M; j++) {
-                        if (vis[i][j] == 0) {
+                int nj = N, nk = M;
+                    
+                for (int j = 0; !found && j < N; j++) {
+                    for (int k = 0; !found && k < M; k++) {
+                        if (vis[j][k] == 0) {
+                            nj = j;
+                            nk = k;
                             found = true;
-                            dfs(mask | (1 << i), used + MI[i] * NI[i], avail - MI[i] * NI[i], i, j);
                         }
                     }
                 }
+                dfs(mask | (1 << i), used + MI[i] * NI[i], avail - MI[i] * NI[i], nj, nk);
                 fillRect(r, c, MI[i], NI[i], false);                                            
             }        
         }
@@ -118,7 +140,7 @@ int main(void) {
     }
 
     K = (int) NI.size();
-    cout << K << endl;
+
     fine = false;
     
     dfs(0, 0, avail, 0, 0);
