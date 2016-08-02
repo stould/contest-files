@@ -1,0 +1,9 @@
+void dfs(int node, int p) {
+    ini[node] = cnt++;
+    for (int i = 0; i < (int) graph[node].size(); i++) {
+        int next = graph[node][i];
+        if (next != p) {			
+            dfs(next, node);
+        }
+    }
+}

@@ -39,10 +39,8 @@ int dp[MAXN][5][5][5][5];
 
 int func(int node, int prev, int pr, int nx, int si) {
     if (tree[node].size() == 1 && prev != -1) {
-        if (uc == 0) {
-            return D;
-        } else if (pr == 0) {
-            return min(C, D);
+        if (pr == 1) {
+            return 0;
         } else {
             return 0;
         }

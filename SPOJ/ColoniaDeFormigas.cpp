@@ -114,43 +114,42 @@ int LCA(int p, int q){
 int t, l;
 
 int main(void) {
-    int i;
-
     int done = 0;
+    
+    for ( ; scanf("%d", &N) == 1 && N != 0; ) {
+        if (done) {
+            printf("\n");
+        }
+        done = 1;
 
-	for ( ; scanf("%d", &N) == 1 && N != 0; ) {
-	    //if (done) printf("\n");
-	    done = 1;
-	    for (i = 0; i <= N; i++) {
+        for (int i = 0; i <= N; i++) {
             vis[i] = 0;
             L[i] = parent[i] = -1;
             dist[i] = 0LL;
             adj[i].clear();
-	    }
-		for (i = 1; i < N; i++) {
-			scanf("%d%d", &t, &l);
-			adj[i].push_back(make_pair(t, l));
-			adj[t].push_back(make_pair(i, l));
-		}
-
+        }
+        for (int i = 1; i < N; i++) {
+            scanf("%d%d", &t, &l);
+            adj[i].push_back(make_pair(t, l));
+            adj[t].push_back(make_pair(i, l));
+        }
+        
         dfs(0, -2);
-		parent[0] = -1;
-
-		init();
-
+        parent[0] = -1;
+        
+        init();
+        
         scanf("%d", &Q);
-
-        int x;
-
-        for (x = 0; x < Q; x++) {
-			if (x != 0) printf(" ");
+        
+        for (int x = 0; x < Q; x++) {
+            if (x != 0) printf(" ");
             scanf("%d%d", &A, &B);
-
+            
             int root = LCA(A, B);
-
+            
             printf("%lld", (dist[A] - dist[root]) + (dist[B] - dist[root]));
         }
-		printf("\n");
-	}
+        printf("\n");
+    }
     return 0;
 }

@@ -31,88 +31,88 @@ int bits[MAXN];
 int dp[MAXN][1 << LEN];
 
 int func(int pos, int mask) {
-	if (pos >= N) {
-		return 0;
-	} else {
-		int& ans = dp[pos][mask];
+    if (pos >= N) {
+        return 0;
+    } else {
+        int& ans = dp[pos][mask];
 		
-		if (ans == -1) {
-			ans = INF;
+        if (ans == -1) {
+            ans = INF;
 			
-			for (int i = 1; i <= MAX_VAL; i++) {
-				if ((bits[i] & mask) == 0) {
-					chmin(ans, abs(A[pos] - i) + func(pos + 1, mask | bits[i]));
-				}
-			}
-		}
+            for (int i = 1; i <= MAX_VAL; i++) {
+                if ((bits[i] & mask) == 0) {
+                    chmin(ans, abs(A[pos] - i) + func(pos + 1, mask | bits[i]));
+                }
+            }
+        }
 		
-		return ans;
-	}
+        return ans;
+    }
 }
 
 void rec(int pos, int mask) {
-	if (pos == N) {
-		return;
-	} else {
-		int best = 0, val = INF;
+    if (pos == N) {
+        return;
+    } else {
+        int best = 0, val = INF;
 		
-		for (int i = 1; i <= MAX_VAL; i++) {
-			if ((bits[i] & mask) == 0) {
-				int now = abs(A[pos] - i) + func(pos + 1, mask | bits[i]);
+        for (int i = 1; i <= MAX_VAL; i++) {
+            if ((bits[i] & mask) == 0) {
+                int now = abs(A[pos] - i) + func(pos + 1, mask | bits[i]);
 
-				if (val > now) {
-					val = now;
-					best = i;
-				}
-			}
-		}
-		ans.push_back(best);
-		rec(pos + 1, mask | bits[best]);
-	}	
+                if (val > now) {
+                    val = now;
+                    best = i;
+                }
+            }
+        }
+        ans.push_back(best);
+        rec(pos + 1, mask | bits[best]);
+    }	
 }
 
 int main(void) {
-	cin >> N;
+    cin >> N;
 
-	memset(P, true, sizeof(P));
+    memset(P, true, sizeof(P));
 	
-	for (int i = 2; i <= MAX_VAL; i++) {
-		if (P[i]) {
-			for (int j = i * i; j <= MAX_VAL; j += i) {
-				P[j] = false;
-			}			
-			primes.push_back(i);
-		}
-	}
+    for (int i = 2; i <= MAX_VAL; i++) {
+        if (P[i]) {
+            for (int j = i * i; j <= MAX_VAL; j += i) {
+                P[j] = false;
+            }			
+            primes.push_back(i);
+        }
+    }
 
-	for (int i = 2; i <= MAX_VAL; i++) {
-		int val = i;
-		for (int j = 0; j < (int) primes.size(); j++) {
-			if (val % primes[j] == 0) {
-				bits[i] |= (1 << j);
+    for (int i = 2; i <= MAX_VAL; i++) {
+        int val = i;
+        for (int j = 0; j < (int) primes.size(); j++) {
+            if (val % primes[j] == 0) {
+                bits[i] |= (1 << j);
 				
-				while (val % primes[j] == 0) {
-					val /= primes[j];
-				}
-			}
-		}		
-	}
+                while (val % primes[j] == 0) {
+                    val /= primes[j];
+                }
+            }
+        }		
+    }
 	
-	for (int i = 0; i < N; i++) {
-		cin >> A[i];
-	}
+    for (int i = 0; i < N; i++) {
+        cin >> A[i];
+    }
 	
-	memset(dp, -1, sizeof(dp));
+    memset(dp, -1, sizeof(dp));
 	
-	int sf = func(0, 0);
-	rec(0, 0);
+    int sf = func(0, 0);
+    rec(0, 0);
 
-	int ed = 0;
+    int ed = 0;
 	
-	for (int i = 0; i < (int) ans.size(); i++) {
-		cout << ans[i] << " ";
-	}
-	cout << "\n";
+    for (int i = 0; i < (int) ans.size(); i++) {
+        cout << ans[i] << " ";
+    }
+    cout << "\n";
 	
-	return 0;
+    return 0;
 }
