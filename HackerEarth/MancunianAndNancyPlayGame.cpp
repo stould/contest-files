@@ -19,7 +19,7 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 100005;
-const int INF = 10000005;
+const int INF = 1000000005;
 
 int N, E, K, Q;
 vector<int> G[MAXN];
@@ -69,6 +69,11 @@ int main(void) {
     vector<int> dist_mt = func(mt);
 
     int ans = 0;
+
+    if (dist_mf[mt] >= INF || dist_mt[mf] >= INF) {
+        cout << "0\n";
+        return 0;
+    }
 
     while (Q--) {
         cin >> nf >> nt;
