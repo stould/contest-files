@@ -1,9 +1,5 @@
-#define MAXS 1000
-#define MAXT 100000
-#define MAX 100000
-#define cc  52
 
-int T[MAX], term[MAX], sig[MAX][cc], cnt;
+int T[MAX_AHO], term[MAX_AHO], sig[MAX_AHO][MAX_ALPHA], cnt;
 vector <int> indice[MAX];
 
 void add(string& arg) {
@@ -21,19 +17,19 @@ void add(string& arg) {
 }
 
 
-void aho (){
-    queue <int> Q;
+void aho() { 
+    queue <int> q;
     for (int i = 0; i < cc; i++){
         int v = sig[0][i];
 
-        if (v) {
-            Q.push (v);
+        if (v > 0) {
+            q.push(v);
             T[v] = 0;
         }
     }
-    while (!Q.empty()){
-        int u = Q.front();
-        Q.pop();
+    while (!q.empty()){
+        int u = q.front();
+        q.pop();
         
         for (int i = 0; i < cc; i++){
             int x = sig[u][i];
@@ -49,7 +45,8 @@ void aho (){
             }
 
             int y = sig[v][i];
-            Q.push(x);
+            q.push(x);
+            
             T[x] = y;
             term[x] |= term[y];
         }
