@@ -108,6 +108,9 @@ int main(void) {
             R[i].clear();
         }
 
+        add(1, 1);
+        //add(-1, -1);
+
         for (int i = 0; i < M; i++) {
             int a, b;
             cin >> a >> b;
