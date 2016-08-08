@@ -73,6 +73,7 @@ for (int i = 0; i < q; i++) {
     pt newQ;
     cin >> newQ.l >> newQ.r;
     newQ.id = i;
+    //This is problem dependent, there are cases when newQ.r++ is necessary
     newQ.l--;
     cons[newQ.l / BLOCK_SIZE].push_back(newQ);
  }
