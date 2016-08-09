@@ -18,24 +18,25 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
+int T;
 
 int main(void) {
-    cin >> N;
+    cin >> T;
 
-    string ans = "";
+    while (T--) {
+        int now;
 
-    for (int i = 0; i < N; i++) {
-        if (i > 0) ans += "that ";
-        if (i % 2 == 0) {
-            ans += "I hate ";
-        } else {
-            ans += "I love ";
+        Int in = 0;
+        Int outside = 0;
+        
+        while (cin >> now && now != 0) {
+            if (now != 1) {
+                outside += max(0LL, now - in * 2LL);
+            }
+            in = now;
         }
+
+        cout << outside << "\n";
     }
-    
-    ans += "it";
-    
-    cout << ans << "\n";
-    return 0;    
+    return 0;
 }

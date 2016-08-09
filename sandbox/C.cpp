@@ -13,50 +13,42 @@ template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 
 using namespace std;
 
-
 typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-string S;
+const int MAXN = 300005;
 
+int N, Q;
+int pr[MAXN], all[MAXN];
+map<int, int> st;
 
 int main(void) {
-    cin >> N >> S;
+    cin >> N >> Q;
 
-    set<char> st;
-    map<char, int> cnt;
+    int ans = 0;
+    int bg = 0;
     
-    for (int i = 0; i < N; i++) {
-        st.insert(S[i]);
-    }
+    for (int i = 1; i <= Q; i++) {
+        int type, val;
+        
+        cin >> type >> val;
+        
+        if (type == 1) {
+            all[i] = val;
+            pr[st[val]];
+            st[val] = i;
+            ans += 1;
+        } else if (type == 2) {
+            int pos = st[val];
 
-    int ans = N;
-    int l = 0, r = 0, add = 0;
-
-    while (r < N) {
-        if (cnt[S[r]] == 0) {
-            add += 1;
-        }
-        cnt[S[r]] += 1;
-
-        if (add == (int) st.size()) {
-            ans = min(ans, r - l + 1);
-        }
-
-        while (add == (int) st.size()) {
-            cnt[S[l]] -= 1;
-            if (cnt[S[l]] == 0) {
-                add -= 1;
+            while (pos > bg) {
+                
             }
-            l++;
-            if (add == (int) st.size()) {
-                ans = min(ans, r - l + 1);
-            }
+        } else {
         }
-        r += 1;
+
+        cout << ans << "\n";
     }
-    cout << ans << "\n";
     return 0;
 }

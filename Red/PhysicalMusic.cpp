@@ -18,24 +18,34 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
+const int MAXN = 100005;
+
+int T, N;
+int P[MAXN];
 
 int main(void) {
-    cin >> N;
+    cin >> T;
 
-    string ans = "";
+    while (T--) {
+        cin >> N;
 
-    for (int i = 0; i < N; i++) {
-        if (i > 0) ans += "that ";
-        if (i % 2 == 0) {
-            ans += "I hate ";
-        } else {
-            ans += "I love ";
+        set<int> st;
+        
+        for (int i = 1; i <= N; i++) {
+            cin >> P[i];
+        }
+        
+        for (int i = N; i >= 1; i--) {
+            if (P[i] < i) {
+                st.insert(i);
+            }            
+        }
+
+        cout << st.size() << endl;
+
+        for (set<int>::iterator it = st.begin(); it != st.end(); it++) {
+            cout << *it << endl;
         }
     }
-    
-    ans += "it";
-    
-    cout << ans << "\n";
-    return 0;    
+    return 0;
 }
