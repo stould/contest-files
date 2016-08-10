@@ -10,15 +10,8 @@ template<typename T> T lcm(T a, T b) {
 
 template<typename T> void chmin(T& a, T b) { a = (a > b) ? b : a; }
 template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
-int in() { int x; scanf("%d", &x); return x; }
 
 using namespace std;
-
-#ifdef ONLINE_JUDGE
-#define debug(args...)
-#else
-#define debug(args...) fprintf(stderr,args)
-#endif
 
 typedef long long Int;
 typedef unsigned long long uInt;
@@ -26,27 +19,29 @@ typedef unsigned uint;
 
 const int MAXN = 100005;
 const int ALPHA_LEN = 256;
-
+const int INF = 1001010010;
 int N, M;
+string W[10005];
 string S;
 int cnt;
-int term[MAXN];
+vector<int> term[MAXN];
 int matchPos[MAXN];
 int sig[MAXN][260];
 int T[MAXN];
 
-void add(string& arg) {
+void add(string& arg, int id) {
     int x = 0, n = (int) arg.size();
 
     for (int i = 0; i < n; i++){
-        int c = (int) arg[i];
-        if (sig[x][c] == 0) term[cnt] = 0, sig[x][c] = cnt++;
+        int c = (int) arg[i] + 128;
+        if (sig[x][c] == 0) {
+            sig[x][c] = cnt++;
+        }
         x = sig[x][c];
         //cerr << arg[i] << " " << x << endl;;
     }
     //cerr << endl;
-    term[x] = 1;
-    matchPos[x] = arg.size();
+    term[x].push_back(id);;
 }
 
 
@@ -74,30 +69,35 @@ void aho (){
 
             Q.push(x);
             T[x] = y;
-            term[x] |= term[y];
+            term[x].insert(term[x].begin(), term[y].begin(), term[y].end());
         }
     }
 }
 
 int busca (string& arg){
     int n = (int) arg.size();
-    int ans = -1;
+    int ans = INF;
     
     int pos = 0;
     
     for (int i = 0; i < n; i++){
+        int val = (int) arg[i] + 128;
         
-        if (sig[pos][(int) arg[i]] != 0){
-            pos = sig[pos][(int) arg[i]];
+        if (sig[pos][val] != 0){
+            pos = sig[pos][val];
         } else {
-            while (pos != 0 && sig[pos][(int) arg[i]] == 0) {
+            while (pos != 0 && sig[pos][val] == 0) {
                 pos = T[pos];
             }
-            pos = sig[pos][(int) arg[i]];
+            pos = sig[pos][val];
         }
-        if (matchPos[pos]) {
-            ans = i;                
-        }                    
+        //cout << i << " " << arg[i] << " " << pos << " " << term[pos].size() << "\n";
+        for (int j = 0; j < (int) term[pos].size(); j++) {
+            chmin(ans, i - (int) W[term[pos][j]].size() + 2);
+        }                        
+    }
+    if (ans == INF) {
+        ans = -1;
     }
     return ans;
 }
@@ -108,11 +108,12 @@ int main(void) {
     getline(cin, S);
     
     cnt = 1;
+    
     for (int i = 0; i < N; i++) {
-        getline(cin, S, '\n');
-        S = S.substr(0, S.size() - 1);
-        reverse(S.begin(), S.end());
-        add(S);
+        getline(cin, W[i], '\n');
+        W[i] = W[i].substr(0, W[i].size() - 1);
+        //cout << W[i] << endl;
+        add(W[i], i);
     }
     
     cin >> M;
@@ -122,13 +123,12 @@ int main(void) {
 
     for (int i = 0; i < M; i++) {
         getline(cin, S, '\n');
-        S = S.substr(0, S.size() - 1);
-        reverse(S.begin(), S.end());
+        //S = S.substr(0, S.size() - 1);
         
         int ans = busca(S);
 
         if (ans != -1) {
-            cout << i + 1 << " " << S.size() - ans << endl;
+            cout << i + 1 << " " << ans << endl;
             return 0;
         }
     }
