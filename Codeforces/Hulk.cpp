@@ -19,22 +19,23 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 int N;
-double A, B;
 
 int main(void) {
-    cin >> A >> B >> N;
+    cin >> N;
 
-    double ans = 1000000000000000.0;
-    
+    string ans = "";
+
     for (int i = 0; i < N; i++) {
-        double X, Y, V;
-        cin >> X >> Y >> V;
-
-        double dist = hypot(A - X, B - Y);
-
-        chmin(ans, dist / V);
+        if (i > 0) ans += "that ";
+        if (i % 2 == 0) {
+            ans += "I hate ";
+        } else {
+            ans += "I love ";
+        }
     }
-
-    cout << fixed << setprecision(12) << ans << endl;
+    
+    ans += "it";
+    
+    cout << ans << "\n";
     return 0;    
 }

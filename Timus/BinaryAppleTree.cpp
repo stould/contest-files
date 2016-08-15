@@ -19,32 +19,33 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 110;
-const int INF = 1001010;
+const int INF = 100001010;
 
 int N, K;
 vector<pair<int, int> > tree[MAXN];
 int apple[MAXN], subTree[MAXN], subSize[MAXN];
 int dp[MAXN][MAXN];
-int dp2[MAXN][MAXN];
+int memo[MAXN][MAXN];
 vector<int> line;
 
-int func(int pos, int used, int sum) {
-    if (pos == (int) line.size()) {
-        return used == 0 ? 0 : -INF;
+int func(int pos, int used) {
+    if (pos >= (int) line.size()) {        
+        if (used == 0) {
+            return 0;
+        } else {
+            return -INF;
+        }
     } else {
-        int& ans = dp2[pos][used];
+        int& ans = memo[pos][used];
         
         if (ans == -1) {
-            ans = 0;
-            
-            for (int i = 0; i <= used; i++) {
-                if (i >= subSize[line[pos]]) break;
-                cout << "Going " << line[pos] << " " << i << " " << dp[line[pos]][i] << "\n";
-                chmax(ans, dp[line[pos]][i] + func(pos + 1, used - i, sum + dp[line[pos]][i]));
+            ans = -INF;
+
+            for (int i = 0; i <= subSize[line[pos]]; i++) {
+                int next = dp[line[pos]][i] + func(pos + 1, used - i);
+                chmax(ans, next);
             }
         }
-
-        //cout << "ans " << pos << " " << used << " " << ans << endl;
         
         return ans;
     }
@@ -66,7 +67,12 @@ void dfs(int node, int parent) {
     }
 
     dp[node][0] = subTree[node];
-    dp[node][subSize[node]] = 0;
+    
+    if (subSize[node] == 1) {
+        dp[node][subSize[node]] = 0;
+    } else {
+        dp[node][subSize[node] - 1] = apple[node];
+    }
 
     line.clear();
 
@@ -78,24 +84,10 @@ void dfs(int node, int parent) {
         }
     }
 
-    for (int i = 1; i <= subSize[node]; i++) {
-        memset(dp2, -1, sizeof(dp2));
-        cout << node << " " << i << " " << max(0, func(0, i, 0)) << "\n";
-        dp[node][i] = max(0, func(0, i, 0));
+    for (int i = 1; i < subSize[node]; i++) {
+        memset(memo, -1, sizeof(memo));
+        dp[node][i] = apple[node] + func(0, i);
     }
-    /*
-      for (int i = 0; i < (int) tree[node].size(); i++) {
-        int next = tree[node][i].first;
-        
-        if (next != parent) {
-            for (int j = 0; j <= K; j++) {
-                for (int k = 0; k <= K; k++) {
-                    dp2[node][j] = max(dp2[node][j], dp2[next][j - k] + dp[next][j]);
-                }
-            }
-        }
-    } 
-    */  
 }
 
 int main(void) {
@@ -112,6 +104,7 @@ int main(void) {
 
     dfs(1, -1);
 
-    cout << dp[1][K] << "\n";
+    cout << dp[1][subSize[1] - 1 - K] << "\n";
+    
     return 0;
 }

@@ -18,7 +18,7 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 100005;
+const int MAXN = 105005;
 const int MAX_LOG = 25;
 
 int N, M;
@@ -83,49 +83,16 @@ int update(int node, int l, int r, int pos, int val) {
     return now;
 }
 
-int query(int l_node, int r_node, int lca_parent, int lca_value, int l, int r, int pos) {
-    //cout << seg_tree[l_node] << " " << seg_tree[r_node] << "\n";
-    if (l == r) {
-        int cnt = 0;
-
-        cnt += seg_tree[l_node];
-        cnt += seg_tree[r_node];
-        cnt -= 2 * seg_tree[lca_parent];
-
-        if (P[lca_value] == pos) {
-            cnt -= 1;
-        }
-
-        if (cnt < 0) {
-            assert(false);
-        }
-        //if (lca_node == lca_parent) {
-        //cout << "cu\n";
-        //}
-        //cout << pos << " " << cnt << endl;
-        return cnt > 0 ? 1 : 0;
-    } else {
-        int m = (l + r) / 2;
-        
-        if (pos <= m) {
-            return query(L[l_node], L[r_node], L[lca_parent], lca_value, l, m, pos);
-        } else {
-            return query(R[l_node], R[r_node], R[lca_parent], lca_value, m + 1, r, pos);
-        }
-    }
-}
-
-////// BRUTE
-int dumb(int node, int l, int r, int pos) {
+int query(int node, int l, int r, int pos) {
     if (l == r) {
         return seg_tree[node];
     } else {
         int m = (l + r) / 2;
         
         if (pos <= m) {
-            return dumb(L[node], l, m, pos);
+            return query(L[node], l, m, pos);
         } else {
-            return dumb(R[node], m + 1, r, pos);
+            return query(R[node], m + 1, r, pos);
         }
     }
 }
@@ -137,18 +104,14 @@ void dfs(int node, int parent) {
         lca[node][i] = lca[lca[node][i - 1]][i - 1];
     }
 
-    if (node == 1) {
-        root[node] = update(root[0], 0, N, P[node], 1);
-    } else {
-        root[node] = update(root[parent], 0, N, P[node], 1);
-    }
-
     for (auto& it : tree[node]) {
         if (it != parent) {
-            dfs(it, node);
-
+            root[it] = update(root[node], 0, MAXN - 1, P[it], 1);
+            
             level[it] = level[node] + 1;
             par[it] = node;
+            
+            dfs(it, node);
         }
     }
 }
@@ -178,44 +141,49 @@ int getLca(int a, int b) {
 }
 
 int main(void) {
-    cin.tie(0);
-    ios_base::sync_with_stdio(false);
-
-    while (cin >> N >> M) {
+    while (scanf("%d%d", &N, &M) == 2) {
         clean();
-        
+
         for (int i = 1; i <= N; i++) {
-            cin >> P[i];
+            scanf("%d", &P[i]);
         }
-
-
         
         for (int i = 0; i < N - 1; i++) {
             int a, b;
-            cin >> a >> b;
+
+            scanf("%d%d", &a, &b);
             
             tree[a].push_back(b);
             tree[b].push_back(a);
         }
-
-        root[0] = update(0, 0, N, 0, 0);
+        
+        root[1] = update(root[0], 0, MAXN - 1, P[1], 1);
         dfs(1, 1);
-
+        
         for (int i = 0; i < M; i++) {
             int a, b, c;
-            cin >> a >> b >> c;
+            
+            scanf("%d%d%d", &a, &b, &c);
             
             int lc = getLca(a, b);
-
-            int res = query(root[a], root[b], root[par[lc]], lc, 0, N, c);
             
+            int res = 0;
+            
+            res += query(root[a], 0, MAXN - 1, c);
+            res += query(root[b], 0, MAXN - 1, c);
+            res -= 2 * query(root[lc], 0, MAXN - 1, c);
+
+            if (P[lc] == c) {
+                res += 1;
+            }
+
             if (res > 0) {
-                cout << "Find\n";
+                puts("Find");
             } else {
-                cout << "NotFind\n";
+                puts("NotFind");
             }
         }
-        cout << "\n";
+        puts("");
     }
     
     return 0;

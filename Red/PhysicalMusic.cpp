@@ -20,38 +20,32 @@ typedef unsigned uint;
 
 const int MAXN = 100005;
 
-int N, Q;
-Int P[MAXN];
+int T, N;
+int P[MAXN];
 
 int main(void) {
-    cin >> N;
-    
-    for (int i = 0; i < N; i++) {
-        cin >> P[i];
-    }
+    cin >> T;
 
-    sort(P, P + N);
+    while (T--) {
+        cin >> N;
 
-    cin >> Q;
-
-    for (int i = 0; i < Q; i++) {
-        Int B;
-        cin >> B;
+        set<int> st;
         
-        int l = 0, h = N - 1;
-        int ans = 0;
-
-        while (l <= h) {
-            int m = (l + h) / 2;
-
-            if (P[m] <= B) {
-                ans = m + 1;
-                l = m + 1;
-            } else {
-                h = m - 1;
-            }
+        for (int i = 1; i <= N; i++) {
+            cin >> P[i];
         }
-        cout << ans << endl;
+        
+        for (int i = N; i >= 1; i--) {
+            if (P[i] < i) {
+                st.insert(i);
+            }            
+        }
+
+        cout << st.size() << endl;
+
+        for (set<int>::iterator it = st.begin(); it != st.end(); it++) {
+            cout << *it << endl;
+        }
     }
     return 0;
 }

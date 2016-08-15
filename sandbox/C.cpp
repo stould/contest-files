@@ -13,50 +13,72 @@ template<typename T> void chmax(T& a, T b) { a = (a < b) ? b : a; }
 
 using namespace std;
 
-
 typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-string S;
+const int MAXN = 100005;
+const Int INF = 1001001010000010LL;
 
+int N;
+Int P[MAXN];
+string S[MAXN];
+string R[MAXN];
+Int dp[MAXN][3];
+int mark[MAXN][3];
+
+Int func(int pos, int is_last) {
+    if (pos == N) {
+        return 0;
+    } else {
+        Int& ans = dp[pos][is_last];
+
+        if (!mark[pos][is_last]) {
+            mark[pos][is_last] = true;
+
+            ans = INF;
+
+            if (pos == 0) {
+                chmin(ans, func(pos + 1, 0));
+                chmin(ans, P[pos] + func(pos + 1, 1));                    
+            } else {
+                if (is_last == 0) {
+                    if (S[pos] >= S[pos - 1]) {
+                        chmin(ans, func(pos + 1, 0));
+                    }
+                    if (R[pos] >= S[pos - 1]) {
+                        chmin(ans, P[pos] + func(pos + 1, 1));
+                    }
+                } else {
+                    if (S[pos] >= R[pos - 1]) {
+                        chmin(ans, func(pos + 1, 0));
+                    }
+                    if (R[pos] >= R[pos - 1]) {
+                        chmin(ans, P[pos] + func(pos + 1, 1));
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }            
+}
 
 int main(void) {
-    cin >> N >> S;
+    cin >> N;
 
-    set<char> st;
-    map<char, int> cnt;
-    
     for (int i = 0; i < N; i++) {
-        st.insert(S[i]);
+        cin >> P[i];
     }
+    for (int i = 0; i < N; i++) {
+        cin >> S[i];
+        R[i] = S[i];
 
-    int ans = N;
-    int l = 0, r = 0, add = 0;
-
-    while (r < N) {
-        if (cnt[S[r]] == 0) {
-            add += 1;
-        }
-        cnt[S[r]] += 1;
-
-        if (add == (int) st.size()) {
-            ans = min(ans, r - l + 1);
-        }
-
-        while (add == (int) st.size()) {
-            cnt[S[l]] -= 1;
-            if (cnt[S[l]] == 0) {
-                add -= 1;
-            }
-            l++;
-            if (add == (int) st.size()) {
-                ans = min(ans, r - l + 1);
-            }
-        }
-        r += 1;
+        reverse(R[i].begin(), R[i].end());
     }
-    cout << ans << "\n";
+    Int ans = func(0, 0);
+    if (ans >= INF) ans = -1;
+    cout << ans << endl;
+    
     return 0;
 }

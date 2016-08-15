@@ -18,23 +18,25 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-int N;
-double A, B;
+int T;
 
 int main(void) {
-    cin >> A >> B >> N;
+    cin >> T;
 
-    double ans = 1000000000000000.0;
-    
-    for (int i = 0; i < N; i++) {
-        double X, Y, V;
-        cin >> X >> Y >> V;
+    while (T--) {
+        int now;
 
-        double dist = hypot(A - X, B - Y);
+        Int in = 0;
+        Int outside = 0;
+        
+        while (cin >> now && now != 0) {
+            if (now != 1) {
+                outside += max(0LL, now - in * 2LL);
+            }
+            in = now;
+        }
 
-        chmin(ans, dist / V);
+        cout << outside << "\n";
     }
-
-    cout << fixed << setprecision(12) << ans << endl;
-    return 0;    
+    return 0;
 }

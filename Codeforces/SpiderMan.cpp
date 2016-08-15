@@ -18,40 +18,46 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 100005;
+int N;
+Int P;
+int memo[100];
 
-int N, Q;
-Int P[MAXN];
+int getGrundy(int x) {
+    if (x == 1) {
+        return 0;
+    } else {
+        int& ans = memo[x];
+
+        if (ans != -1) return ans;
+        ans = 0;
+        
+        set<int> st;
+        
+        for (int i = 1; i < x; i++) {
+            st.insert(getGrundy(i) ^ getGrundy(x - i));
+        }
+
+        while (st.count(ans)) ans++;
+
+        return ans;
+    }
+}
 
 int main(void) {
     cin >> N;
+
+    int x = 1;
     
     for (int i = 0; i < N; i++) {
-        cin >> P[i];
-    }
+        cin >> P;
 
-    sort(P, P + N);
+        x ^= (P % 2 == 0 ? 1 : 0);
 
-    cin >> Q;
-
-    for (int i = 0; i < Q; i++) {
-        Int B;
-        cin >> B;
-        
-        int l = 0, h = N - 1;
-        int ans = 0;
-
-        while (l <= h) {
-            int m = (l + h) / 2;
-
-            if (P[m] <= B) {
-                ans = m + 1;
-                l = m + 1;
-            } else {
-                h = m - 1;
-            }
+        if (x == 0) {
+            cout << "1\n";
+        } else {
+            cout << "2\n";
         }
-        cout << ans << endl;
     }
     return 0;
 }
