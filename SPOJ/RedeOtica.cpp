@@ -31,7 +31,7 @@ bool vis[2000000];
 int i, j, n, p, t = 1;
 
 int main(void) {
-    freopen("i.in", "r", stdin);
+    //freopen("i.in", "r", stdin);
     while(scanf("%d%d", &n, &p)) {
         if(!n && !p) break;
         for(i = 1; i <= n; i++) vis[i] = false;

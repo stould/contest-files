@@ -18,49 +18,60 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1010;
+const int MAXN = 110;
 const int INF = 1001010;
 
 int T;
 int N, M;
 char S[200][200];
+int dp[MAXN][MAXN][MAXN][2];
 
-int dist[MAXN][MAXN];
-int buffDist[MAXN][MAXN];
+int func(int row, int c1, int c2, int turn) {
+    if (row >= N || c1 >= M || c2 >= M) {
+        return -INF;
+    } else if (S[row][c1] == '#' || S[row][c2] == '#') {
+        return -INF;
+    } else if (row == N - 1 && (c1 == M - 1 && c2 == M - 1)) {
+        return 0;
+    } else {
+        int& ans = dp[row][c1][c2][turn];
 
-int dx[2] = {1, 0};
-int dy[2] = {0, 1};
+        if (ans == -1) {
+            ans = -INF;
 
-int cv(int i, int j) {
-    return i * (M + 1) + j;
-}
-
-void bfs(int si, int sj) {
-    queue<pair<int, int> > q;
-    q.push(make_pair(si, sj));
-
-    memset(buffDist, 63, sizeof(buffDist));
-
-    for ( ; !q.empty(); ) {
-        int xx = q.front().first;
-        int yy = q.front().second;
-        q.pop();
-
-        int now = cv(xx, yy);
-        
-        for (int i = 0; i < 2; i++) {
-            int ii = xx + dx[i];
-            int jj = yy + dy[i];
+            int cnt = 0;
             
-            if (ii >= 0 && ii < N && jj >= 0 && jj < M && S[ii][jj] != '#') {
-                int pos = cv(ii, jj);
+            if (row + 1 < N) {
+                cnt = 0;
                 
-                if (buffDist[pos] > buffDist[now] + 1) {
-                    buffDist[pos] = buffDist[now] + 1;
-                    q.push(make_pair(ii, jj));
+                if (S[row + 1][c1] == '*') {
+                    cnt += 1;
                 }
+                if (S[row + 1][c2] == '*') {
+                    cnt += 1;
+                }
+
+                if (cnt == 2) {
+                    cnt = 1;
+                }
+                chmax(ans, cnt + func(row + 1, c1, c2));
+                
+                cnt = 0;
+                if (S[row + 1][c1 + 1] == '*') {
+                    cnt += 1;
+                }
+                chmax(ans, cnt + func(row + 1, c1 + 1, c2));
+            }
+                
+            if (c2 + 1 < M) {
+                cnt = 0;
+                if (S[row + 1][c2 + 1] == '*') {
+                    cnt += 1;
+                }
+                chmax(ans, cnt + func(row + 1, c1, c2 + 1));                
             }
         }
+        return ans;
     }
 }
 
@@ -70,37 +81,20 @@ int main(void) {
     for (int t = 1; t <= T; t++) {
         cin >> M >> N;
 
-        for (int i = 0; i <= N; i++) {
-            for (int j = 0; j <= M; j++) {
-                dist[i][j] = INF;
-            }
-        }
-
+        memset(dp, -1, sizeof(dp));
         
         for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                cin >> S[i][j];
-            }
+            cin >> S[i];            
+            cout << S[i] << endl;
         }
 
+        int ans = func(0, 0, 0);
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if ((i == 0 && j == 0) || (i == N - 1 && j == M - 1) || (S[i][j] == '*')) {
-                    bfs(i, j);
-                }
-            }
+        if (S[0][0] == '*') {
+            ans += 1;
         }
 
-        pair<Flow, Cost> ans = flow(G, cv(1, 1), cv(N, M), 2);
-
-        int as = -ans.second;
-
-        if (S[1][1] == '#') {
-            as += 1;
-        }
-        
-        cout << ans.first << " " << as << endl;
+        cout << ans << endl;
     }
     return 0;
 }
