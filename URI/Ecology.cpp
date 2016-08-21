@@ -37,7 +37,7 @@ bool cmp(pair<int, int> a, pair<int, int> b) {
 
 uInt getHash(vector<pair<int, int> > arg) {
     uInt ans = 10000007ULL;
-
+    
     for (int i = 0; i < (int) arg.size(); i++) {
         ans = ans * 1234567891 + abs(arg[i].first) + 1074178147781ULL;
         ans = ans * 1234567891 + abs(arg[i].second) + 1074178147781ULL;
@@ -63,12 +63,6 @@ vector<vector<pair<int, int> > > generatePoly(int len) {
 
         if (len == (int) now.size()) {
             ans.push_back(now);
-            /*
-            for (int i = 0; i < (int) now.size(); i++) {
-                cout << now[i].first << " " << now[i].second << " ";
-            }
-            cout << endl;
-            */
             continue;
         }
 		
@@ -79,7 +73,7 @@ vector<vector<pair<int, int> > > generatePoly(int len) {
 
                 pair<int, int> curr = make_pair(now_i, now_j);
                 
-                if (find(now.begin(), now.end(), curr) == now.end()) {
+                if (!binary_search(now.begin(), now.end(), curr)) {
                     vector<pair<int, int> > poss = now;
 					
                     poss.push_back(curr);
@@ -120,73 +114,72 @@ int main(void) {
     cin.tie(0);
     ios_base::sync_with_stdio(false);
 	
-    cin >> N >> M;
+    while (cin >> N >> M) {
+        
+        vector<vector<pair<int, int> > > poly = generatePoly(M);
 
-    vector<vector<pair<int, int> > > poly = generatePoly(M);
-
-
-    //cout << poly.size() << endl;
-    /*
-      for (int i = 0; i < (int) poly.size(); i++) {
-      vector<string> check;
+        //cout << poly.size() << endl;
+        /*
+          for (int i = 0; i < (int) poly.size(); i++) {
+          vector<string> check;
 		
-      for (int k = 0; k < 7; k++) {
-      check.push_back("##########");
-      }
+          for (int k = 0; k < 7; k++) {
+          check.push_back("##########");
+          }
 		
-      for (int j = 0; j < (int) poly[i].size(); j++) {
-      cout << poly[i][j].first << " " << poly[i][j].second << endl;
-      int ni = 3 + poly[i][j].first;
-      int nj = 3 + poly[i][j].second;
+          for (int j = 0; j < (int) poly[i].size(); j++) {
+          cout << poly[i][j].first << " " << poly[i][j].second << endl;
+          int ni = 3 + poly[i][j].first;
+          int nj = 3 + poly[i][j].second;
 
-      if (ni >= 0 && nj >= 0 && ni < 10 && nj < 10) {
-      check[ni][nj] = '$';
-      } else {
-      assert(false);
-      }
-      }
-      for (int j = 0; j < 7; j++) {
-      cout << check[j] << endl;
-      }
-      cout << endl;
-      cout << endl;
-      }
-    */
-    int ans = 0;
+          if (ni >= 0 && nj >= 0 && ni < 10 && nj < 10) {
+          check[ni][nj] = '$';
+          } else {
+          assert(false);
+          }
+          }
+          for (int j = 0; j < 7; j++) {
+          cout << check[j] << endl;
+          }
+          cout << endl;
+          cout << endl;
+          }
+        */
+        int ans = 0;
 
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            cin >> P[i][j];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                cin >> P[i][j];
+            }
         }
-    }
 
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            for (int k = 0; k < (int) poly.size(); k++) {
-                int in = 0;
-                int sum = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                for (int k = 0; k < (int) poly.size(); k++) {
+                    int in = 0;
+                    int sum = 0;
 
-                for (int a = 0; a < (int) poly[k].size(); a++) {
-                    int ni = i + poly[k][a].first;
-                    int nj = j + poly[k][a].second;
+                    for (int a = 0; a < (int) poly[k].size(); a++) {
+                        int ni = i + poly[k][a].first;
+                        int nj = j + poly[k][a].second;
 
-                    if (ni >= 0 && nj >= 0 && ni < N && nj < N) {
-                        in += 1;
+                        if (ni >= 0 && nj >= 0 && ni < N && nj < N) {
+                            in += 1;
 
-                        sum += P[ni][nj];
-                    } else {
-                        break;
+                            sum += P[ni][nj];
+                        } else {
+                            break;
+                        }
                     }
-                }
 				
-                if (in == M) {
-                    chmax(ans, sum);
+                    if (in == M) {
+                        chmax(ans, sum);
+                    }
                 }
             }
         }
-    }
 
-    cout << ans << endl;
-	
+        cout << ans << endl;
+    }
     return 0;
 }
