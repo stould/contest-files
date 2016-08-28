@@ -55,8 +55,6 @@ int main(void) {
         ans += dp[(N % 2)][M][i] % MOD;
         ans %= MOD;
     }
-    
     cout << ans << "\n";
     return 0;
 }
-  
