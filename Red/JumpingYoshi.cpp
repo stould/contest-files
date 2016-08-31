@@ -64,11 +64,11 @@ int main(void) {
             q.pop();
 
             ans = max(ans, now);
-            
+
             if (now + P[now] < N) {
                 for (int i = 0; i < (int) reach[now + P[now]].size(); i++) {
                     int next = reach[now + P[now]][i];
-                    int ds   = 1;;
+                    int ds   = 1;
 
                     if (dist[next] > dist[now] + ds) {
                         dist[next] = dist[now] + ds;

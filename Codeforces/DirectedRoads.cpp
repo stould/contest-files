@@ -60,7 +60,6 @@ int main(void) {
                 vis[s] = 1;
                 len += 1;
                 s = G[s];
-                cout << i << " " << s << " " <<"\n";                
                 if (vis[s] == i) {
                     int len = level[pr] + 1 - level[s];
 
