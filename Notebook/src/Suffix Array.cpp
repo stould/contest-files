@@ -62,8 +62,9 @@ void SuffixSort(int n){
 
         cnt[rnk[n - h]]++;
         b2h[rnk[n - h]] = true;
-        for (int i = 0; i < n; i = nxt[i]){
-            for (int j = i; j < nxt[i]; ++j){
+        
+        for (int i = 0; i < n; i = nxt[i]) {
+            for (int j = i; j < nxt[i]; ++j) {
                 int s = pos[j] - h;
                 if (s >= 0){
                     int head = rnk[s];
@@ -73,17 +74,19 @@ void SuffixSort(int n){
             }
             for (int j = i; j < nxt[i]; ++j){
                 int s = pos[j] - h;
-                if (s >= 0 && b2h[rnk[s]]){
-                    for (int k = rnk[s]+1; !bh[k] && b2h[k]; k++) b2h[k] = false;
+                if (s >= 0 && b2h[rnk[s]]) {
+                    for (int k = rnk[s]+1; !bh[k] && b2h[k]; k++) {
+                        b2h[k] = false;
+                    }
                 }
             }
         }
-        for (int i=0; i<n; ++i){
+        for (int i=0; i<n; ++i) {
             pos[rnk[i]] = i;
             bh[i] |= b2h[i];
         }
     }
-    for (int i=0; i<n; ++i){
+    for (int i=0; i<n; ++i) {
         rnk[pos[i]] = i;
     }
 }
