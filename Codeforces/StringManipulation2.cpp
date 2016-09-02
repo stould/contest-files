@@ -78,10 +78,10 @@ int main(void) {
             
             int cnt = get(kind - 'a', m);
 
-            if (cnt > pos) {
+            if (cnt >= pos) {
+                goal = m;
                 h = m - 1;
             } else {
-                goal = m;
                 l = m + 1;
             }
         }
