@@ -43,13 +43,24 @@ struct event {
         } else {
             si = K[pos];
         }
-        
         if (e.kind == 'c') {
+            if (e.in) {
+                sj = P[e.pos].first;
+            } else {
+                sj = P[e.pos].second;
+            }
+        } else {
             sj = K[pos];
         }
-
-        
-        return si < sj;
+        if (si != sj) {
+            return si < sj;
+        } else {
+            if (in != e.in) {
+                return in > e.in;
+            } else {
+                return kind == 'l';
+            }
+        }
     }
 };
 
@@ -72,10 +83,43 @@ int main(void) {
         for (int i = 0; i < M; i++) {
             scanf("%d", &K[i]);
             ve.push_back(event('l', 1, i));
-            ve.push_back(event('l', 0, i));
         }
 
+        vector<int> ans(M, INF);
+
         sort(ve.begin(), ve.end());
+
+        multiset<int> bL;
+        multiset<int> bR;
+
+        for (int i = 0; i < (int) ve.size(); i++) {
+            int pos = ve[i].pos;
+
+            if (ve[i].kind == 'c') {
+                if (ve[i].in) {
+                    bL.insert(P[pos].first);
+                    bR.insert(P[pos].second);
+                } else {
+                    bL.erase(bL.find(P[pos].first));
+                    bR.erase(bR.find(P[pos].second));
+                }
+            } else {
+                auto la = bR.lower_bound(K[pos]);
+                auto lb = bL.upper_bound(K[pos]);
+
+                if (la != bR.end()) {
+                    cout << K[pos] << " "<< *la << endl;
+                    chmin(ans[pos], *la - K[pos]);
+                }
+                if (lb != bL.end()) {
+                    chmin(ans[pos], K[pos] - *lb);
+                }
+            }
+        }
+        
+        for (int i = 0; i < M; i++) {
+            printf("%d\n", ans[i]);
+        }
     }
     return 0;
 }
