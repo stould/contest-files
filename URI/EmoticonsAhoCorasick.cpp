@@ -32,8 +32,8 @@ int N, M;
 string EM[110];
 string S;
 int dp[110][MAXN];
-
 int T[MAXN], term[MAXN], sig[MAXN][MAX_ALPHA], cnt;
+int ahoMemo[MAXN][MAX_ALPHA];
 
 void add(string arg) {
     int x = 0, n = (int) arg.size();
@@ -49,6 +49,16 @@ void add(string arg) {
     term[x] = 1;
 }
 
+int next(int tr, int read) {
+    if (ahoMemo[tr][read] == -1) {
+        while (tr > 0 && sig[tr][read] == 0) {
+            tr = T[tr];
+        }
+        ahoMemo[tr][read] = sig[tr][read];
+    }
+    
+    return ahoMemo[tr][read];
+}
 
 void aho() {
     queue<int> Q;
@@ -91,11 +101,9 @@ int func(int pos, int tr) {
 
         if (ans == -1) {
             ans = INF;
+            
+            tr = next(tr, (int) S[pos]);
 
-            while (tr != 0 && sig[tr][(int) S[pos]] == 0) {
-                tr = T[tr];
-            }
-            tr = sig[tr][(int) S[pos]];
             if (term[tr] == 0) {
                 ans = func(pos + 1, tr);
             }
@@ -112,11 +120,8 @@ void rec(int pos, int tr) {
         return;
     } else if (pos == (int) S.size()) {
         return;
-    } else {        
-        while (sig[tr][(int) S[pos]] == 0) {
-            tr = T[tr];
-        }
-        tr = sig[tr][(int) S[pos]];
+    } else {
+        tr = next(tr, (int) S[pos]);
 
         int ba = INF;
         int bb = INF;
@@ -141,7 +146,8 @@ void rec(int pos, int tr) {
 int main(void) {
     while (cin >> N >> M && !(N == 0 && M == 0)) {
         cnt = 1;
-        
+
+        memset(ahoMemo, -1, sizeof(ahoMemo));
         memset(sig, 0, sizeof(sig));
         
         for (int i = 0; i < N; i++) {

@@ -1,6 +1,7 @@
 
 int T[MAX_AHO], term[MAX_AHO], sig[MAX_AHO][MAX_ALPHA], cnt;
 vector <int> indice[MAX];
+int ahoMemo[MAX_AHO][MAX_ALPHA];
 
 void add(string& arg) {
     int x = 0, n = (int) arg.size();
@@ -16,6 +17,15 @@ void add(string& arg) {
     term[x] = 1;
 }
 
+int next(int tr, int read) {
+    if (ahoMemo[tr][read] == -1) {
+        while (tr > 0 && sig[tr][read] == 0) {
+            tr = T[tr];
+        }
+        ahoMemo[tr][read] = sig[tr][read];
+    }    
+    return ahoMemo[tr][read];
+}
 
 void aho() { 
     queue <int> q;
@@ -39,7 +49,7 @@ void aho() {
             }
             
             int v = T[u];
-
+            
             while (sig[v][i] == 0 && v != 0) {
                 v = T[v];
             }
@@ -71,22 +81,3 @@ void busca (char s[MAXT]){
         }
     }
 }
-
-int main (){
-    char t[MAXS]; char texto[MAXT];
-    int N;
-    scanf("%d", &N);
-    for (int i = 0; i < MAX; i++) indice[i].clear();
-    cnt = 1;
-    memset (sig, 0, sizeof (sig));
-    for (int i = 0; i < N; i++){
-        scanf("%s", t);
-        add (t, i);
-    }
-    aho();
-    scanf("%s", texto);
-    busca (texto);
-    return 0;
-}
-
-
