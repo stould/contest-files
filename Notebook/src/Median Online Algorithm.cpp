@@ -1,5 +1,4 @@
 //Get median of a sequence in O(log(n))
-
 void balance() {	
     while (abs((int) (minHeap.size() - maxHeap.size())) > 1) {
         if (minHeap.size() > maxHeap.size()) {
