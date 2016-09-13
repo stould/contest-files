@@ -17,32 +17,50 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 110;
-const Int INF = 10100100000010LL;
+const int MAX_TRIE = 2000005;
 
-int N, M, K;
-int C[MAXN];
-Int P[MAXN][MAXN];
-Int dp[MAXN][MAXN][MAXN];
-int memo[MAXN][MAXN][MAXN];
+int T;
+int trie[MAX_TRIE][2];
+int sum[MAX_TRIE];
+int cnt = 1;
+string str;
 
-Int func(int pos, int k, int last) {
-    if (pos == N) {
-        return k == K ? 0 : INF;
+void add(string arg) {
+    int x = 0;
+
+    for (int i = 0; i < (int) arg.size(); i++) {
+        int now = (arg[i] - '0') % 2;
+
+        if (trie[x][now] == 0) {
+            trie[x][now] = cnt++;
+        }
+        x = trie[x][now];
+
+        sum[x] += 1;
+    }
+}
+
+void remove(string arg) {
+    int x = 0;
+
+    for (int i = 0; i < (int) arg.size(); i++) {
+        int now = (arg[i] - '0') % 2;
+        x = trie[x][now];
+        sum[x] -= 1;
+    }
+}
+
+Int query(int pos, int tr) {
+    if (pos >= (int) str.size()) {
+        return sum[tr];
     } else {
-        Int& ans = dp[pos][k][last];
+        Int ans = 0;
         
-        if (!memo[pos][k][last]) {
-            memo[pos][k][last] = 1;
-
-            ans = INF;
-
-            if (C[pos] != 0) {
-                ans = func(pos + 1, k + (C[pos] != last), C[pos]);
-            } else {
-                for (int i = 1; i <= M; i++) {
-                    ans = min(ans, P[pos][i] + func(pos + 1, k + (i != last), i));
-                }
+        int cr = str[pos] - '0';
+        
+        for (int i = 0; i <= 1; i++) {
+            if (i == cr && trie[tr][i] != 0) {
+                ans += query(pos + 1, trie[tr][i]);
             }
         }
 
@@ -51,24 +69,26 @@ Int func(int pos, int k, int last) {
 }
 
 int main(void) {
-    cin >> N >> M >> K;
+    cin >> T;
 
-    for (int i = 0; i < N; i++) {
-        cin >> C[i];
-    }
-    for (int i = 0; i < N; i++) {
-        for (int j = 1; j <= M; j++) {
-            cin >> P[i][j];
+    while (T--) {
+        string kind, S;
+        cin >> kind >> S;
+
+        while (S.size() < 18) {
+            S = "0" + S;
+        }
+
+        reverse(S.begin(), S.end());
+        
+        if (kind == "+") {
+            add(S);
+        } else if (kind == "-") {
+            remove(S);
+        } else {
+            str = S;
+            cout << query(0, 0) << "\n";
         }
     }
-
-    memset(dp, -1, sizeof(dp));
-
-    Int ans = func(0, 0, 0);
-
-    if (ans >= INF) {
-        ans = -1;
-    }
-    cout << ans <<"\n";
     return 0;
 }
