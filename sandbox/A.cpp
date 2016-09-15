@@ -18,35 +18,18 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1010;
-
-int N;
-string S[MAXN];
+Int L[2], R[2], K;
 
 int main(void) {
-    cin >> N;
+    for (int i = 0; i < 2; i++) {
+        cin >> L[i] >> R[i];
+    }
+    cin >> K;
 
-    bool fine = false;
+    Int ans = min(R[0], R[1]) - max(L[0], L[1]) + 1;
     
-    for (int i = 0; i < N; i++) {
-        cin >> S[i];
+    if (K >= max(L[0], L[1]) && K <= min(R[0], R[1])) ans -= 1;
 
-        if (!fine && S[i][0] == 'O' && S[i][1] == 'O') {
-            S[i][0] = S[i][1] = '+';
-            fine = true;
-        }
-        if (!fine && S[i][3] == 'O' && S[i][4] == 'O') {
-            S[i][3] = S[i][4] = '+';
-            fine = true;
-        }
-    }
-    if (fine) {
-        cout << "YES\n";
-        for (int i= 0; i < N; i++) {
-            cout << S[i] << "\n";
-        }
-    } else {
-        cout << "NO\n";
-    }
+    cout << max(0LL, ans) << "\n";
     return 0;    
 }

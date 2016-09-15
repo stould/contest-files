@@ -18,6 +18,18 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
+
+void gen() {
+    const int n = 3000;
+    const int val = 100;
+    cout << n << "\n";
+    for (int i = 0; i < n; i++) {
+        cout << 1 + (rand() % val) << " ";
+    }
+    cout << "\n";
+}
+
 int main(void) {
+    gen();
     return 0;
 }
