@@ -19,6 +19,7 @@ typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 10010;
+const int INF = 100010010;
 
 int N;
 string S[MAXN], ans[MAXN];
@@ -118,10 +119,12 @@ int main(void) {
     cin >> N;
 
     string whole = "";
-    vector<int> divPos;
+    vector<string> ans(N);
     
     for (int i = 0; i < N; i++) {
         cin >> S[i];
+
+        ans[i] = S[i];
 
         if (i == 0) {
             whole += S[i];
@@ -132,29 +135,58 @@ int main(void) {
     }
 
     int L = (int) whole.size();
+    vector<int> sml(L), endS(L);
     int curr = 0;
     
     for (int i = 0; i < L; i++) {
 	str[i] = whole[i];
 
         if (str[i] == '$') {
+            endS[curr] = i;
             curr += 1;
+            parent[i] = -1;
         } else {
             parent[i] = curr;
-            divPos.push_back(i);
         }
     }
     
     SuffixSort(L);
     getLcp(L);
     vector<string> st;
-    
+    cout << whole << "\n";
     for (int i = 0; i < L; i++) {
+        //cout << pos[i] << " " << whole.substr(i, whole.size() - i) << "\n";
         st.push_back(whole.substr(i, whole.size() - i));
     }
     sort(st.begin(), st.end());
+    int cr = 0;
+    for (int i = L - 1; i >= 0; i--) {
+        cr = max(cr, lcp[i]);
+        
+        sml[i] = cr + 1;
+
+        if (lcp[i] == 0) {
+            cr = 0;
+        } 
+    }
     for (int i = 0; i < L; i++) {
-        cout << lcp[i] << " " << st[i] << endl;
+        cout << lcp[i] << " " << sml[i] << " " << st[i] << endl;
+    }
+    cout << "\n";
+    for (int i = 0; i < L; i++) {        
+        if (sml[i] < INF && parent[pos[i]] != -1) {
+            string curr = whole.substr(pos[i], sml[i]);
+
+            cout << parent[pos[i]] << " " << sml[i] << " " << curr << "\n";
+            chmax(ans[parent[pos[i]]], curr);
+        }
+        //cout << parent[pos[i]] << " " << st[i] << endl;
+        //cout << lcp[i] << " " << st[i] << endl;
+
+        //int len = 
+    }
+    for (int i = 0; i < N; i++) {
+        cout << ans[i] << "\n";
     }
     return 0;
 }
