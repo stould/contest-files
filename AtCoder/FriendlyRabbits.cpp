@@ -18,30 +18,26 @@ typedef long long Int;
 typedef unsigned long long uInt;
 typedef unsigned uint;
 
-const int MAXN = 1000005;
+const int MAXN = 100005;
 
-int N, C;
-Int P[MAXN];
+int N;
+int P[MAXN];
 
 int main(void) {
-    cin >> N >> C;
+    cin >> N;
+
+    for (int i = 1; i <= N; i++) {
+        cin >> P[i];
+    }
 
     int ans = 0;
     
-    
-    for (int i = 0; i < N; i++) {
-        cin >> P[i];
-
-        if (i == 0) {
+    for (int i = 1; i <= N; i++) {
+        if (P[P[i]] == i) {
             ans += 1;
-        } else {
-            if (abs(P[i] - P[i - 1]) > C) {
-                ans = 1;
-            } else {
-                ans += 1;
-            }
         }
     }
-    cout << ans << "\n";
-    return 0;    
+    
+    cout << ans / 2 << endl;
+    return 0;
 }
