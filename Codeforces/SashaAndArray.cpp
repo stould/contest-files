@@ -35,7 +35,7 @@ void goDown(int node, int l, int r) {
         if (l != r) {
             lazy[2 * node] += lazy[node];
             lazy[2 * node + 1] += lazy[node];
-        } 
+        }
     }
     
     lazy[node] = 0;
@@ -80,7 +80,7 @@ void update(int node, int l, int r, int bl, int br, Int value) {
         lazy[node] += value;    
         goDown(node, l, r);
     } else {
-        int m = (l + r) / 2;       
+        int m = (l + r) / 2;
         
         update(2 * node, l, m, bl, br, value);
         update(2 * node + 1, m + 1, r, bl, br, value);
