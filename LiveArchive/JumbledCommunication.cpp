@@ -2,28 +2,27 @@
 
 using namespace std;
 
-int N, P;
+long long N, P;
 
 int main() {
-	cin >> N;
-
+    while (cin >> N) {
 	for (int i = 0; i < N; i++) {
-		cin >> P;
+            cin >> P;
 
-		for (int j = 0; j <= 255; j++) {
-			int val = j ^ (j << 1);
+            for (int j = 0; j <= 256; j++) {
+                long long val = j ^ (j << 1LL);
 
-			for (int k = 8; k <= 31; k++) {
-				val &= ~(1 << k);
-			}
+                for (int k = 8; k <= 32; k++) {
+                    val &= ~(1LL << k);
+                }
       
-			if (val == P) {
-				cout << (int) j << " ";
-				break;
-			}
-		}    
+                if (val == P) {
+                    cout << j << " ";
+                    break;
+                }
+            }    
 	}
 	cout << "\n";
-    
-	return 0;
+    }
+    return 0;
 }

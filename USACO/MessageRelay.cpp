@@ -43,8 +43,7 @@ typedef long long ll;
 typedef long double ld;
 
 const int MAXN = 1010;
-int N, ans, next[MAXN], done[MAXN];
-
+int N, ans, nx[MAXN], done[MAXN];
 
 int main(void) {
     freopen("relay.in", "r", stdin);
@@ -52,14 +51,14 @@ int main(void) {
     scanf("%d", &N);
 
     for(int i = 1; i <= N; i++) {
-        scanf("%d", &next[i]);
+        scanf("%d", &nx[i]);
 
-        if(next[i] == 0) done[i] = 1;
+        if(nx[i] == 0) done[i] = 1;
         else done[i] = 0;
     }
 
     for(int i = 1; i <= N; i++) for(int j = 1; j <= N; j++) {
-        if(done[next[j]] == 1) done[j] = 1;
+        if(done[nx[j]] == 1) done[j] = 1;
     }
 
     ans = 0;

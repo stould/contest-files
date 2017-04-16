@@ -15,49 +15,48 @@ int in() { int x; scanf("%d", &x); return x; }
 using namespace std;
 
 typedef long long Int;
+typedef unsigned long long uInt;
 typedef unsigned uint;
 
 const int MAXN = 10005;
-const Int INF = 101010100101000LL;
-int N, P[MAXN];;
-Int dp[MAXN][MAXN];
+const Int INF = 100001010010100101LL;
 
-Int func(int l, int r) {
-	if (l >= r) {
-		return 0LL;
-	} else {
-		Int& ans = dp[l][r];
-
-		if (ans == -1) {
-			ans = -INF;
-
-			ans = max(ans, P[l] + func(l + 1, r - 1));
-			ans = max(ans, P[r] + func(l + 1, r - 1));
-			ans = max(ans, P[l] + func(l + 2, r));
-			ans = max(ans, P[r] + func(l, r - 2));
-
-		}
-
-		return ans;
-	}
-}
+int N;
+int P[MAXN];
+Int dp[2][MAXN];
 
 int main(void) {
-	for ( ; scanf("%d", &N) == 1; ) {
-		for (int i = 0; i < N; i++) {
-			scanf("%d", &P[i]);
-			for (int j = i; j < N; j++) {
-				dp[i][j] = -INF;
-			}
-		}
-		for (int i = 0; i < N; i++) {
-			for (int j = i + 1; j < N; j++) {
-				
-			}
-		}
-		
-		//		memset(dp, -1LL, sizeof(dp));
-		printf("%lld\n", func(0, N - 1));
-	}
+    cin.tie(0);
+    ios_base::sync_with_stdio(false);
+    
+    while (cin >> N) {
+        for (int i = 0; i < N; i++) {
+            cin >> P[i];
+
+            dp[0][i] = P[i];
+
+            if (i > 0) {
+                dp[1][i - 1] = max(P[i - 1], P[i]);
+            }
+        }
+
+        for (int i = 3; i < N; i += 2) {
+            int parity = i % 2;
+
+            for (int j = 0; j + i < N; j++) {
+                dp[parity ^ 1][j] = -INF;
+                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j] + max(dp[parity][j + 2], dp[parity][j + 1]));
+                dp[parity ^ 1][j] = max(dp[parity ^ 1][j], P[j + i] + max(dp[parity][j], dp[parity][j + 1]));
+            }
+
+            for (int j = 0; j < N; j++) {
+                dp[parity][j] = dp[parity ^ 1][j];
+            }
+        }
+
+        Int ans = max(dp[0][0], dp[1][0]);
+
+        cout << ans << "\n";
+    }
     return 0;
 }
