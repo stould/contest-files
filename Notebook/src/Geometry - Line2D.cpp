@@ -22,7 +22,7 @@ struct Line {
         } else {
             b = 1;
             a = m;
-            c = -p.y - a*p.x;
+            c = -p.y - a * p.x;
         }
     }
  
@@ -31,13 +31,20 @@ struct Line {
     }
  
     bool parallel(Line r) { // checking a and b
-        return (fabs( a-r.a) < EPS && fabs( b-r.b) < EPS);
+        return (fabs(a-r.a) < EPS && fabs(b-r.b) < EPS);
     }
     bool collinear(Line r) { // now checking c
-        return (parallel(r) && fabs( c-r.c) < EPS);
+        return (parallel(r) && fabs(c-r.c) < EPS);
     }
- 
-    // if there is put intersect point on p
+
+    Line perpendicular(Point p) {
+        double m;
+        if(a == 0) m = INF; // vertical line
+        else m = -1 / a;
+        return Line(p, m);
+    }
+    
+    // if true put intersect point on p
     bool intersect(Line r, Point& p) {
         if(collinear(r)) return false; // infinite points
         if(parallel(r)) return false; // no point
@@ -45,10 +52,11 @@ struct Line {
         p.x = (double) (r.b *  c -  b * r.c) / (r.a *  b -  a * r.b);
  
         if(b > EPS) { // check if it is not a vertical line
-            p.y = -(a * p.x + c) /  b;
+            p.y = -(a * p.x + c) / b;
         } else { // vertical line treatment
             p.y = -(r.a * p.x + r.c) / r.b;
         }
+        
         return true;
     }
 };
